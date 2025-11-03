@@ -13,7 +13,7 @@ export const presets = {
             type: 'component',
             label: 'End Users',
             description: 'External end users accessing the application',
-            position: { x: 50, y: 200 },
+            position: { x: 50, y: 250 },
             visible: true,
             icon: '👤'
           },
@@ -22,7 +22,7 @@ export const presets = {
             type: 'component',
             label: 'CDN',
             description: 'Shared CDN - CloudFlare for all tenants',
-            position: { x: 150, y: 200 },
+            position: { x: 180, y: 250 },
             visible: true,
             icon: '🌐'
           },
@@ -31,7 +31,7 @@ export const presets = {
             type: 'component',
             label: 'External LLM',
             description: 'External LLM providers - OpenAI, Anthropic, etc.',
-            position: { x: 250, y: 50 },
+            position: { x: 280, y: 80 },
             visible: true,
             icon: '🤖'
           },
@@ -40,7 +40,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Platform (NA)',
             description: 'North America region - Airia AI platform orchestration layer',
-            position: { x: 300, y: 200 },
+            position: { x: 320, y: 250 },
             visible: true,
             icon: '✨'
           },
@@ -49,7 +49,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Platform (EU)',
             description: 'Europe region - Airia AI platform orchestration layer',
-            position: { x: 300, y: 300 },
+            position: { x: 320, y: 350 },
             visible: false,
             icon: '✨'
           },
@@ -58,7 +58,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Platform (APAC)',
             description: 'Asia-Pacific region (Singapore, Australia) - Airia AI platform orchestration layer',
-            position: { x: 300, y: 400 },
+            position: { x: 320, y: 450 },
             visible: false,
             icon: '✨'
           },
@@ -67,7 +67,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Platform (MENA)',
             description: 'Middle East & North Africa region - Airia AI platform orchestration layer',
-            position: { x: 300, y: 500 },
+            position: { x: 320, y: 550 },
             visible: false,
             icon: '✨'
           },
@@ -76,7 +76,7 @@ export const presets = {
             type: 'component',
             label: 'Public Application Integrations',
             description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
-            position: { x: 250, y: 350 },
+            position: { x: 280, y: 420 },
             visible: true,
             icon: '🔗'
           }
@@ -90,7 +90,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Cloud Connector',
             description: 'Connector for customer on-premises systems to Airia Cloud',
-            position: { x: 450, y: 150 },
+            position: { x: 480, y: 180 },
             visible: true,
             icon: '🔌'
           },
@@ -99,7 +99,7 @@ export const presets = {
             type: 'component',
             label: 'Internal Users',
             description: 'Internal admins and support staff',
-            position: { x: 450, y: 400 },
+            position: { x: 480, y: 480 },
             visible: true,
             icon: '👨‍💼'
           },
@@ -108,7 +108,7 @@ export const presets = {
             type: 'component',
             label: 'Private LLM',
             description: 'Self-hosted LLM service for sensitive data',
-            position: { x: 600, y: 200 },
+            position: { x: 640, y: 220 },
             visible: true,
             icon: '🧠'
           },
@@ -117,7 +117,7 @@ export const presets = {
             type: 'component',
             label: 'Database',
             description: 'Customer on-premises database',
-            position: { x: 600, y: 300 },
+            position: { x: 640, y: 340 },
             visible: true,
             icon: '🗄️'
           },
@@ -126,7 +126,7 @@ export const presets = {
             type: 'component',
             label: 'Private API',
             description: 'Customer private API endpoints',
-            position: { x: 600, y: 400 },
+            position: { x: 640, y: 460 },
             visible: true,
             icon: '🔐'
           }
