@@ -140,10 +140,30 @@ export const presets = {
         type: 'component',
         label: 'Private LLM',
         description: 'Self-hosted LLM service for sensitive data',
-        position: { x: 550, y: 350 },
-        visible: false,
+        position: { x: 550, y: 200 },
+        visible: true,
         zone: 'private',
         icon: '🧠'
+      },
+      {
+        id: 'customer-database',
+        type: 'component',
+        label: 'Database',
+        description: 'Customer on-premises database',
+        position: { x: 550, y: 300 },
+        visible: true,
+        zone: 'private',
+        icon: '🗄️'
+      },
+      {
+        id: 'private-api',
+        type: 'component',
+        label: 'Private API',
+        description: 'Customer private API endpoints',
+        position: { x: 550, y: 400 },
+        visible: true,
+        zone: 'private',
+        icon: '🔐'
       }
     ],
     connections: [
@@ -151,6 +171,9 @@ export const presets = {
       { id: 'e0b', source: 'llm-public', target: 'airia-platform', animated: false },
       { id: 'e0c', source: 'user-private', target: 'cdn', animated: false },
       { id: 'e0d', source: 'airia-cloud-connector', target: 'cdn', animated: false },
+      { id: 'e0e', source: 'llm-private', target: 'airia-cloud-connector', animated: false },
+      { id: 'e0f', source: 'customer-database', target: 'airia-cloud-connector', animated: false },
+      { id: 'e0g', source: 'private-api', target: 'airia-cloud-connector', animated: false },
       { id: 'e1', source: 'cdn', target: 'airia-platform', animated: false },
       { id: 'e1b', source: 'cdn', target: 'loadbalancer', animated: false },
       { id: 'e2', source: 'loadbalancer', target: 'apigateway', animated: false },

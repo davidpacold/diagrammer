@@ -6,9 +6,9 @@ import { initialComponents, initialConnections } from './data/components';
 import { presets } from './data/presets';
 
 function App() {
-  const [currentPreset, setCurrentPreset] = useState('dedicated-saas'); // Default preset
-  const [components, setComponents] = useState(presets['dedicated-saas'].components);
-  const [connections, setConnections] = useState(presets['dedicated-saas'].connections);
+  const [currentPreset, setCurrentPreset] = useState('shared-saas'); // Default preset
+  const [components, setComponents] = useState(presets['shared-saas'].components);
+  const [connections, setConnections] = useState(presets['shared-saas'].connections);
 
   // Convert components to React Flow nodes
   const nodes = useMemo(() => {
