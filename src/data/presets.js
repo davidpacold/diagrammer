@@ -768,8 +768,7 @@ export const presets = {
         opacity: 0.3,
         regions: {
           customers: { x: -50, y: 50, width: 100 }, // Far left for customer nodes
-          managed: { x: 170, y: 80, width: 360, height: 360 }, // Airia Managed boundary
-          external: { x: 30, y: 450, width: 500 } // Below managed for external services
+          external: { x: 30, y: 450, width: 500 } // External services
         }
       },
       private: {
@@ -782,8 +781,9 @@ export const presets = {
         showBorder: true,
         borderColor: '#9ca3af',
         regions: {
-          connector: { x: 600, y: 200, width: 150 },
-          services: { x: 750, y: 100, width: 200 }
+          ingress: { x: 600, y: 40, width: 180 },
+          kubernetes: { x: 820, y: 20, width: 260 },
+          services: { x: 600, y: 200, width: 400 }
         }
       }
     },
@@ -791,8 +791,8 @@ export const presets = {
       public: {
         xRange: [0, 525],
         components: [
-          // PUBLIC ZONE - External Components (no parentBoundary)
-          // Column 1: Customers at x=20
+          // PUBLIC ZONE - External Components
+          // Customer (single)
           {
             id: 'customer-1',
             type: 'component',
@@ -802,51 +802,6 @@ export const presets = {
             visible: true,
             icon: '👥',
             zone: 'public'
-          },
-          {
-            id: 'customer-2',
-            type: 'component',
-            label: 'Customer B',
-            description: 'Customer B end users',
-            position: { x: 20, y: 190 },
-            visible: true,
-            icon: '👥',
-            zone: 'public'
-          },
-          {
-            id: 'customer-3',
-            type: 'component',
-            label: 'Customer C',
-            description: 'Customer C end users',
-            position: { x: 20, y: 340 },
-            visible: true,
-            icon: '👥',
-            zone: 'public'
-          },
-
-          // Airia Managed Components (parentBoundary='airia-managed')
-          // Positions RELATIVE to boundary at (260, 20)
-          {
-            id: 'cdn',
-            type: 'component',
-            label: 'CDN',
-            description: 'Shared CDN - CloudFlare for all tenants',
-            position: { x: 30, y: 30 },
-            visible: true,
-            icon: '🌐',
-            zone: 'public',
-            parentBoundary: 'airia-managed'
-          },
-          {
-            id: 'airia-key-llm',
-            type: 'component',
-            label: 'Airia Key LLM',
-            description: 'Airia-managed LLM service - Optimized models for key extraction',
-            position: { x: 30, y: 330 },
-            visible: true,
-            icon: '🔑',
-            zone: 'public',
-            parentBoundary: 'airia-managed'
           },
 
           // External Services
@@ -903,9 +858,11 @@ export const presets = {
         ]
       },
       private: {
-        xRange: [575, 900],
+        xRange: [575, 1200],
         components: [
-          // Private zone components
+          // PRIVATE ZONE COMPONENTS
+
+          // Column 1: Entry point and services (x=600)
           {
             id: 'user-private',
             type: 'component',
@@ -916,9 +873,49 @@ export const presets = {
             icon: '👨‍💼',
             zone: 'private'
           },
+          {
+            id: 'ingress',
+            type: 'component',
+            label: 'Ingress',
+            description: 'Kubernetes ingress controller for routing traffic',
+            position: { x: 600, y: 190 },
+            visible: true,
+            icon: '🚪',
+            zone: 'private'
+          },
+          {
+            id: 'blob-storage',
+            type: 'component',
+            label: 'Blob Storage',
+            description: 'Object storage for documents and files (S3-compatible)',
+            position: { x: 1120, y: 550 },  // Column 3, below AI Services container (510 + 40 spacing)
+            visible: true,
+            icon: '🗂️',
+            zone: 'private'
+          },
+          {
+            id: 'weaviate-private',
+            type: 'component',
+            label: 'Weaviate (Private)',
+            description: 'Self-hosted vector database for on-premises AI applications',
+            position: { x: 600, y: 490 },
+            visible: false,
+            icon: '🔷',
+            zone: 'private'
+          },
+          {
+            id: 'siem-private',
+            type: 'component',
+            label: 'SIEM (Private)',
+            description: 'On-premises SIEM - Splunk Enterprise, QRadar, etc.',
+            position: { x: 600, y: 640 },
+            visible: false,
+            icon: '🔒',
+            zone: 'private'
+          },
 
-          // Kubernetes Cluster Components (parentBoundary='kubernetes-cluster')
-          // Positions RELATIVE to boundary
+          // Column 2: Kubernetes Cluster (parentBoundary='kubernetes-cluster')
+          // Positions RELATIVE to boundary at (820, 20)
           {
             id: 'airia-platform-customer',
             type: 'component',
@@ -931,49 +928,45 @@ export const presets = {
             parentBoundary: 'kubernetes-cluster'
           },
 
-          // Blob Storage - Outside Kubernetes (absolute position in private zone)
+          // Column 3: Additional services (x=1120)
           {
-            id: 'blob-storage',
+            id: 'private-api',
             type: 'component',
-            label: 'Blob Storage',
-            description: 'Object storage for documents and files (S3-compatible)',
-            position: { x: 600, y: 250 },  // Column 1 below Internal Users and Weaviate
-            visible: true,
-            icon: '🗂️',
-            zone: 'private'
-          },
-          {
-            id: 'airia-cloud-connector',
-            type: 'component',
-            label: 'Airia Cloud Connector',
-            description: 'Connector for customer on-premises systems to Airia Cloud',
-            position: { x: 820, y: 40 },
+            label: 'Private API',
+            description: 'Customer private API endpoints',
+            position: { x: 1120, y: 40 },
             visible: false,
-            icon: '🔌',
+            icon: '🔐',
             zone: 'private'
           },
-          {
-            id: 'weaviate-private',
-            type: 'component',
-            label: 'Weaviate (Private)',
-            description: 'Self-hosted vector database for on-premises AI applications',
-            position: { x: 600, y: 190 },
-            visible: false,
-            icon: '🔷',
-            zone: 'private'
-          },
+
+          // AI Services Container Components (parentBoundary='ai-services-container')
+          // Positions RELATIVE to boundary at (1120, 190)
           {
             id: 'llm-private',
             type: 'component',
             label: 'Private LLM',
             description: 'Self-hosted LLM service for sensitive data',
-            position: { x: 820, y: 190 },
-            visible: false,
+            position: { x: 40, y: 40 },  // Relative to AI Services boundary
+            visible: true,
             icon: '🧠',
-            zone: 'private'
+            zone: 'private',
+            parentBoundary: 'ai-services-container'
           },
+          {
+            id: 'vision-model',
+            type: 'component',
+            label: 'Vision Model',
+            description: 'Self-hosted vision/multimodal AI model for image and video analysis',
+            position: { x: 40, y: 190 },  // Below Private LLM: 40 + 110 + 40 = 190
+            visible: true,
+            icon: '👁️',
+            zone: 'private',
+            parentBoundary: 'ai-services-container'
+          },
+
           // Database Container Components (parentBoundary='database-container')
-          // Positions RELATIVE to boundary
+          // Positions RELATIVE to boundary at (820, 250)
           {
             id: 'postgres-db',
             type: 'component',
@@ -995,93 +988,42 @@ export const presets = {
             icon: '💍',
             zone: 'private',
             parentBoundary: 'database-container'
-          },
-          {
-            id: 'private-api',
-            type: 'component',
-            label: 'Private API',
-            description: 'Customer private API endpoints',
-            position: { x: 820, y: 340 },
-            visible: false,
-            icon: '🔐',
-            zone: 'private'
-          },
-          {
-            id: 'siem-private',
-            type: 'component',
-            label: 'SIEM (Private)',
-            description: 'On-premises SIEM - Splunk Enterprise, QRadar, etc.',
-            position: { x: 600, y: 490 },
-            visible: false,
-            icon: '🔒',
-            zone: 'private'
           }
         ]
       }
     },
     connections: [
-      // Customers to CDN
-      { id: 'e0-customer1', source: 'customer-1', target: 'cdn', animated: false },
-      { id: 'e0-customer2', source: 'customer-2', target: 'cdn', animated: false },
-      { id: 'e0-customer3', source: 'customer-3', target: 'cdn', animated: false },
-      { id: 'e0c', source: 'user-private', target: 'cdn', animated: false },
+      // Customer to Ingress
+      { id: 'e0-customer-ingress', source: 'customer-1', target: 'ingress', animated: false },
 
-      // CDN to Airia Platform (in Kubernetes)
-      { id: 'e1-platform', source: 'cdn', target: 'airia-platform-customer', animated: false },
+      // Internal Users to Ingress
+      { id: 'e0-internal-ingress', source: 'user-private', target: 'ingress', animated: false },
+
+      // Ingress to Airia Platform (in Kubernetes)
+      { id: 'e1-ingress-platform', source: 'ingress', target: 'airia-platform-customer', animated: false },
 
       // Airia Platform to services
-      { id: 'e1a-platform', source: 'airia-platform-customer', target: 'airia-cloud-connector', animated: false },
-      { id: 'e2-platform', source: 'airia-platform-customer', target: 'llm-public', animated: false },
-      { id: 'e2a-platform', source: 'airia-platform-customer', target: 'airia-key-llm', animated: false },
-      { id: 'e3-platform', source: 'airia-platform-customer', target: 'public-app-integrations', animated: false },
-      { id: 'e4-platform', source: 'airia-platform-customer', target: 'pinecone', animated: false },
-      { id: 'e5-platform', source: 'airia-platform-customer', target: 'weaviate-public', animated: false },
-      { id: 'e6-platform', source: 'airia-platform-customer', target: 'weaviate-private', animated: false },
-      { id: 'e7-platform', source: 'airia-platform-customer', target: 'siem-public', animated: false },
+      { id: 'e2-platform-llm-public', source: 'airia-platform-customer', target: 'llm-public', animated: false },
+      { id: 'e3-platform-integrations', source: 'airia-platform-customer', target: 'public-app-integrations', animated: false },
+      { id: 'e4-platform-pinecone', source: 'airia-platform-customer', target: 'pinecone', animated: false },
+      { id: 'e5-platform-weaviate-public', source: 'airia-platform-customer', target: 'weaviate-public', animated: false },
+      { id: 'e6-platform-weaviate-private', source: 'airia-platform-customer', target: 'weaviate-private', animated: false },
+      { id: 'e7-platform-siem-public', source: 'airia-platform-customer', target: 'siem-public', animated: false },
 
-      // Airia Platform to Blob Storage (within Kubernetes)
-      { id: 'e-blob', source: 'airia-platform-customer', target: 'blob-storage', animated: false },
-
-      // Cloud connector to private services
-      { id: 'e0e', source: 'airia-cloud-connector', target: 'llm-private', animated: false },
-      { id: 'e0f', source: 'airia-cloud-connector', target: 'customer-database', animated: false },
-      { id: 'e0g', source: 'airia-cloud-connector', target: 'private-api', animated: false },
-      { id: 'e8-siem', source: 'airia-cloud-connector', target: 'siem-private', animated: false },
+      // Airia Platform to private services
+      { id: 'e8-platform-blob', source: 'airia-platform-customer', target: 'blob-storage', animated: false },
+      { id: 'e9-platform-postgres', source: 'airia-platform-customer', target: 'postgres-db', animated: false },
+      { id: 'e10-platform-cassandra', source: 'airia-platform-customer', target: 'cassandra-db', animated: false },
+      { id: 'e11-platform-llm-private', source: 'airia-platform-customer', target: 'llm-private', animated: false },
+      { id: 'e12-platform-private-api', source: 'airia-platform-customer', target: 'private-api', animated: false },
+      { id: 'e13-platform-siem-private', source: 'airia-platform-customer', target: 'siem-private', animated: false },
+      { id: 'e14-platform-vision', source: 'airia-platform-customer', target: 'vision-model', animated: false },
     ],
     boundaryBoxes: [
       {
-        id: 'airia-managed',
-        label: 'Airia Managed',
-        x: 260,
-        y: 20,
-        width: 270,
-        height: 320,  // Reduced height since platform moved to private zone
-        padding: 30,
-        color: '#3b82f6',
-        zone: 'public',
-        containmentRules: {
-          description: 'Airia-managed infrastructure components in the public cloud',
-          mustContain: [
-            'cdn',
-            'airia-key-llm'
-          ],
-          mustExclude: [
-            'customer-1',
-            'customer-2',
-            'customer-3',
-            'llm-public',
-            'pinecone',
-            'weaviate-public',
-            'public-app-integrations',
-            'siem-public'
-          ],
-          rule: 'Components with parentBoundary="airia-managed" must be Airia-owned infrastructure. Customer-facing and external services stay outside.'
-        }
-      },
-      {
         id: 'kubernetes-cluster',
         label: 'Kubernetes Cluster',
-        x: 820,  // In private zone: 820px ensures 40px spacing from Internal Users at 600
+        x: 820,  // In private zone, column 2
         y: 20,
         width: 260,  // Width: 40 (padding) + 180 (component) + 40 (padding) = 260
         height: 190,  // Height: 40 (padding) + 110 (Platform) + 40 (padding) = 190
@@ -1095,15 +1037,77 @@ export const presets = {
           ],
           mustExclude: [
             'user-private',
+            'ingress',
             'blob-storage',
-            'airia-cloud-connector',
             'weaviate-private',
             'llm-private',
-            'customer-database',
+            'postgres-db',
+            'cassandra-db',
             'private-api',
-            'siem-private'
+            'siem-private',
+            'vision-model'
           ],
           rule: 'Components with parentBoundary="kubernetes-cluster" must be containerized services running in K8s.'
+        }
+      },
+      {
+        id: 'database-container',
+        label: 'Databases',
+        x: 820,  // Same column as Kubernetes, below it
+        y: 250,  // Below Kubernetes: 20 (K8s y) + 190 (K8s height) + 40 (spacing) = 250
+        width: 260,  // Width: 40 (padding) + 180 (component) + 40 (padding) = 260
+        height: 320,  // Height: 40 (top pad) + 110 (PostgreSQL) + 40 (spacing) + 110 (Cassandra) + 20 (bottom pad) = 320
+        padding: 40,
+        color: '#059669',  // Database green
+        zone: 'private',
+        containmentRules: {
+          description: 'Database cluster with PostgreSQL and Cassandra',
+          mustContain: [
+            'postgres-db',
+            'cassandra-db'
+          ],
+          mustExclude: [
+            'user-private',
+            'ingress',
+            'blob-storage',
+            'weaviate-private',
+            'llm-private',
+            'airia-platform-customer',
+            'private-api',
+            'siem-private',
+            'vision-model'
+          ],
+          rule: 'Components with parentBoundary="database-container" must be database services.'
+        }
+      },
+      {
+        id: 'ai-services-container',
+        label: 'AI Services',
+        x: 1120,  // Column 3 - After Database/K8s containers (820 + 260 + 40 spacing = 1120)
+        y: 190,  // Below Private API: 40 (Private API y) + 110 (height) + 40 (spacing) = 190
+        width: 260,  // Width: 40 (padding) + 180 (component) + 40 (padding) = 260
+        height: 320,  // Height: 40 (top pad) + 110 (LLM) + 40 (spacing) + 110 (Vision) + 20 (bottom pad) = 320
+        padding: 40,
+        color: '#7c3aed',  // Purple for AI services
+        zone: 'private',
+        containmentRules: {
+          description: 'AI services including LLM and Vision models',
+          mustContain: [
+            'llm-private',
+            'vision-model'
+          ],
+          mustExclude: [
+            'user-private',
+            'ingress',
+            'blob-storage',
+            'weaviate-private',
+            'airia-platform-customer',
+            'private-api',
+            'siem-private',
+            'postgres-db',
+            'cassandra-db'
+          ],
+          rule: 'Components with parentBoundary="ai-services-container" must be AI/ML services.'
         }
       }
     ],

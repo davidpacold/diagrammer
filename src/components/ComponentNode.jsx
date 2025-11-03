@@ -19,8 +19,13 @@ const ComponentNode = ({ data, id }) => {
 
   // Check if component is in a boundary
   const isInBoundary = data.parentBoundary != null;
-  const boundaryBadge = isInBoundary ? 'Airia Managed' : 'External';
-  const boundaryBadgeColor = isInBoundary
+  // Database, AI services, and kubernetes-cluster containers should be marked as External
+  const isAiriaManaged = isInBoundary &&
+    data.parentBoundary !== 'database-container' &&
+    data.parentBoundary !== 'kubernetes-cluster' &&
+    data.parentBoundary !== 'ai-services-container';
+  const boundaryBadge = isAiriaManaged ? 'Airia Managed' : 'External';
+  const boundaryBadgeColor = isAiriaManaged
     ? 'bg-indigo-100 text-indigo-700 border-indigo-300'
     : 'bg-green-100 text-green-700 border-green-300';
 
@@ -67,7 +72,7 @@ const ComponentNode = ({ data, id }) => {
       </div>
 
       {/* Visual indicator for boundary membership */}
-      {isInBoundary && (
+      {isAiriaManaged && (
         <div className="absolute top-0 right-0 w-3 h-3 bg-indigo-500 rounded-bl-lg"
              title="Inside Airia Managed" />
       )}
