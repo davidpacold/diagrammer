@@ -22,7 +22,7 @@ const nodeTypes = {
 // Shifted right to give more space to public zone (more components there)
 const ZONE_BOUNDARY_X = 550;
 
-const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange }) => {
+const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNodeId, onPaneClick }) => {
   const { getNodes } = useReactFlow();
 
   const downloadImage = useCallback(() => {
@@ -64,6 +64,7 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange }) => {
         nodeTypes={nodeTypes}
         defaultViewport={{ x: 150, y: 50, zoom: 0.7 }}
         className="bg-white"
+        onPaneClick={onPaneClick}
         defaultEdgeOptions={{
           type: 'smoothstep',
           animated: false,
@@ -99,8 +100,8 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange }) => {
           </span>
         </Panel>
 
-        {/* Export button */}
-        <Panel position="top-center" className="pointer-events-auto">
+        {/* Export button and hint */}
+        <Panel position="top-center" className="pointer-events-auto flex flex-col items-center gap-2">
           <button
             onClick={downloadImage}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-md transition-colors flex items-center gap-2"
@@ -110,6 +111,16 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange }) => {
             </svg>
             Export PNG
           </button>
+          {selectedNodeId && (
+            <div className="bg-blue-50 border border-blue-200 text-blue-800 px-3 py-1 rounded text-xs">
+              Showing connections for selected component
+            </div>
+          )}
+          {!selectedNodeId && (
+            <div className="bg-gray-50 border border-gray-200 text-gray-600 px-3 py-1 rounded text-xs">
+              Click a component to highlight its connections
+            </div>
+          )}
         </Panel>
 
         <Controls />

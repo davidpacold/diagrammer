@@ -29,6 +29,7 @@ function App() {
   const [currentPreset, setCurrentPreset] = useState('shared-saas'); // Default preset
   const [components, setComponents] = useState(flattenComponents(presets['shared-saas']));
   const [connections, setConnections] = useState(presets['shared-saas'].connections);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
 
   // Convert components to React Flow nodes
   const nodes = useMemo(() => {
@@ -43,17 +44,30 @@ function App() {
           description: c.description,
           icon: c.icon,
           zone: c.zone,
+          isSelected: selectedNodeId === c.id,
+          onNodeClick: setSelectedNodeId,
         },
       }));
-  }, [components]);
+  }, [components, selectedNodeId]);
 
-  // Filter edges to only show those between visible nodes
+  // Filter edges to only show those between visible nodes and apply highlighting
   const edges = useMemo(() => {
     const visibleIds = new Set(components.filter(c => c.visible).map(c => c.id));
-    return connections.filter(
-      edge => visibleIds.has(edge.source) && visibleIds.has(edge.target)
-    );
-  }, [components, connections]);
+    return connections
+      .filter(edge => visibleIds.has(edge.source) && visibleIds.has(edge.target))
+      .map(edge => {
+        const isHighlighted = selectedNodeId &&
+          (edge.source === selectedNodeId || edge.target === selectedNodeId);
+        return {
+          ...edge,
+          style: {
+            stroke: isHighlighted ? '#3b82f6' : '#94a3b8',
+            strokeWidth: isHighlighted ? 3 : 2,
+          },
+          animated: isHighlighted,
+        };
+      });
+  }, [components, connections, selectedNodeId]);
 
   // Handle node position changes (drag)
   const onNodesChange = useCallback((changes) => {
@@ -109,6 +123,8 @@ function App() {
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
+          selectedNodeId={selectedNodeId}
+          onPaneClick={() => setSelectedNodeId(null)}
         />
       </div>
     </ReactFlowProvider>

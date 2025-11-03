@@ -1,11 +1,24 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
 
-const ComponentNode = ({ data }) => {
+const ComponentNode = ({ data, id }) => {
+  const handleClick = (e) => {
+    e.stopPropagation();
+    if (data.onNodeClick) {
+      // Toggle selection: if already selected, deselect
+      data.onNodeClick(data.isSelected ? null : id);
+    }
+  };
+
   return (
     <div
-      className="px-4 py-3 bg-white border-2 border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow min-w-[140px]"
+      className={`px-4 py-3 bg-white rounded-lg shadow-md hover:shadow-lg transition-all min-w-[140px] cursor-pointer ${
+        data.isSelected
+          ? 'border-4 border-blue-500 ring-2 ring-blue-200'
+          : 'border-2 border-gray-300'
+      }`}
       title={data.description}
+      onClick={handleClick}
     >
       <Handle type="target" position={Position.Left} className="w-3 h-3" />
 
