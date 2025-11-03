@@ -6,6 +6,26 @@ export const presets = {
     description: 'Multi-tenant shared infrastructure - Cost-optimized for multiple customers',
     components: [
       {
+        id: 'user-public',
+        type: 'component',
+        label: 'End Users',
+        description: 'External end users accessing the application',
+        position: { x: 50, y: 175 },
+        visible: true,
+        zone: 'public',
+        icon: '👤'
+      },
+      {
+        id: 'user-private',
+        type: 'component',
+        label: 'Internal Users',
+        description: 'Internal admins and support staff',
+        position: { x: 400, y: 100 },
+        visible: true,
+        zone: 'private',
+        icon: '👨‍💼'
+      },
+      {
         id: 'cdn',
         type: 'component',
         label: 'CDN',
@@ -84,16 +104,40 @@ export const presets = {
         visible: true,
         zone: 'private',
         icon: '📦'
+      },
+      {
+        id: 'llm-public',
+        type: 'component',
+        label: 'External LLM API',
+        description: 'Public LLM API - OpenAI, Anthropic, etc.',
+        position: { x: 100, y: 400 },
+        visible: true,
+        zone: 'public',
+        icon: '🤖'
+      },
+      {
+        id: 'llm-private',
+        type: 'component',
+        label: 'Private LLM',
+        description: 'Self-hosted LLM service for sensitive data',
+        position: { x: 550, y: 350 },
+        visible: true,
+        zone: 'private',
+        icon: '🧠'
       }
     ],
     connections: [
+      { id: 'e0', source: 'user-public', target: 'cdn', animated: false },
       { id: 'e1', source: 'cdn', target: 'loadbalancer', animated: false },
       { id: 'e2', source: 'loadbalancer', target: 'apigateway', animated: false },
+      { id: 'e2b', source: 'user-private', target: 'apigateway', animated: false },
       { id: 'e3', source: 'apigateway', target: 'appserver', animated: false },
       { id: 'e4', source: 'appserver', target: 'cache', animated: false },
       { id: 'e5', source: 'appserver', target: 'database-primary', animated: false },
       { id: 'e6', source: 'appserver', target: 'messagequeue', animated: false },
-      { id: 'e7', source: 'appserver', target: 'storage', animated: false }
+      { id: 'e7', source: 'appserver', target: 'storage', animated: false },
+      { id: 'e8', source: 'appserver', target: 'llm-public', animated: false },
+      { id: 'e9', source: 'appserver', target: 'llm-private', animated: false }
     ]
   },
 
@@ -101,6 +145,26 @@ export const presets = {
     name: 'Dedicated SaaS',
     description: 'Single-tenant dedicated infrastructure - Isolated resources per customer',
     components: [
+      {
+        id: 'user-public',
+        type: 'component',
+        label: 'End Users',
+        description: 'External end users accessing the application',
+        position: { x: 50, y: 175 },
+        visible: true,
+        zone: 'public',
+        icon: '👤'
+      },
+      {
+        id: 'user-private',
+        type: 'component',
+        label: 'Internal Users',
+        description: 'Internal admins and support staff',
+        position: { x: 400, y: 80 },
+        visible: true,
+        zone: 'private',
+        icon: '👨‍💼'
+      },
       {
         id: 'cdn',
         type: 'component',
@@ -210,11 +274,33 @@ export const presets = {
         visible: true,
         zone: 'private',
         icon: '📊'
+      },
+      {
+        id: 'llm-public',
+        type: 'component',
+        label: 'External LLM API',
+        description: 'Public LLM API - OpenAI, Anthropic, etc.',
+        position: { x: 100, y: 400 },
+        visible: true,
+        zone: 'public',
+        icon: '🤖'
+      },
+      {
+        id: 'llm-private',
+        type: 'component',
+        label: 'Dedicated Private LLM',
+        description: 'Customer-specific self-hosted LLM instance',
+        position: { x: 475, y: 375 },
+        visible: true,
+        zone: 'private',
+        icon: '🧠'
       }
     ],
     connections: [
+      { id: 'e0', source: 'user-public', target: 'cdn', animated: false },
       { id: 'e1', source: 'cdn', target: 'loadbalancer', animated: false },
       { id: 'e2', source: 'loadbalancer', target: 'apigateway', animated: false },
+      { id: 'e2b', source: 'user-private', target: 'apigateway', animated: false },
       { id: 'e3', source: 'apigateway', target: 'appserver1', animated: false },
       { id: 'e4', source: 'apigateway', target: 'appserver2', animated: false },
       { id: 'e5', source: 'appserver1', target: 'cache', animated: false },
@@ -225,7 +311,11 @@ export const presets = {
       { id: 'e10', source: 'appserver1', target: 'messagequeue', animated: false },
       { id: 'e11', source: 'appserver2', target: 'messagequeue', animated: false },
       { id: 'e12', source: 'appserver1', target: 'storage', animated: false },
-      { id: 'e13', source: 'appserver2', target: 'storage', animated: false }
+      { id: 'e13', source: 'appserver2', target: 'storage', animated: false },
+      { id: 'e14', source: 'appserver1', target: 'llm-public', animated: false },
+      { id: 'e15', source: 'appserver2', target: 'llm-public', animated: false },
+      { id: 'e16', source: 'appserver1', target: 'llm-private', animated: false },
+      { id: 'e17', source: 'appserver2', target: 'llm-private', animated: false }
     ]
   },
 
@@ -233,6 +323,26 @@ export const presets = {
     name: 'Customer Hosted',
     description: 'On-premises or customer VPC deployment - Full customer control',
     components: [
+      {
+        id: 'user-public',
+        type: 'component',
+        label: 'Remote Users',
+        description: 'Remote users connecting via VPN',
+        position: { x: 50, y: 100 },
+        visible: true,
+        zone: 'public',
+        icon: '👤'
+      },
+      {
+        id: 'user-private',
+        type: 'component',
+        label: 'On-Site Users',
+        description: 'On-premises internal users and administrators',
+        position: { x: 400, y: 80 },
+        visible: true,
+        zone: 'private',
+        icon: '👨‍💼'
+      },
       {
         id: 'vpn',
         type: 'component',
@@ -382,11 +492,33 @@ export const presets = {
         visible: true,
         zone: 'private',
         icon: '💾'
+      },
+      {
+        id: 'llm-public',
+        type: 'component',
+        label: 'External LLM API',
+        description: 'Public LLM API - OpenAI, Anthropic (optional for air-gapped)',
+        position: { x: 250, y: 350 },
+        visible: true,
+        zone: 'public',
+        icon: '🤖'
+      },
+      {
+        id: 'llm-private',
+        type: 'component',
+        label: 'On-Premises LLM',
+        description: 'Fully on-premises LLM deployment - Llama, Mistral, etc.',
+        position: { x: 650, y: 200 },
+        visible: true,
+        zone: 'private',
+        icon: '🧠'
       }
     ],
     connections: [
+      { id: 'e0', source: 'user-public', target: 'vpn', animated: false },
       { id: 'e1', source: 'vpn', target: 'firewall', animated: false },
       { id: 'e2', source: 'firewall', target: 'loadbalancer', animated: false },
+      { id: 'e2b', source: 'user-private', target: 'apigateway', animated: false },
       { id: 'e3', source: 'loadbalancer', target: 'apigateway', animated: false },
       { id: 'e4', source: 'apigateway', target: 'appserver1', animated: false },
       { id: 'e5', source: 'apigateway', target: 'appserver2', animated: false },
@@ -406,7 +538,13 @@ export const presets = {
       { id: 'e19', source: 'appserver2', target: 'storage', animated: false },
       { id: 'e20', source: 'appserver3', target: 'storage', animated: false },
       { id: 'e21', source: 'database-primary', target: 'backup-system', animated: false },
-      { id: 'e22', source: 'storage', target: 'backup-system', animated: false }
+      { id: 'e22', source: 'storage', target: 'backup-system', animated: false },
+      { id: 'e23', source: 'appserver1', target: 'llm-public', animated: false },
+      { id: 'e24', source: 'appserver2', target: 'llm-public', animated: false },
+      { id: 'e25', source: 'appserver3', target: 'llm-public', animated: false },
+      { id: 'e26', source: 'appserver1', target: 'llm-private', animated: false },
+      { id: 'e27', source: 'appserver2', target: 'llm-private', animated: false },
+      { id: 'e28', source: 'appserver3', target: 'llm-private', animated: false }
     ]
   }
 };
