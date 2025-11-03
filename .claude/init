@@ -1,0 +1,33 @@
+# CloudFlare Architecture Diagram Tool
+
+This project is an interactive system architecture diagram tool built with React and hosted on Cloudflare Pages.
+
+## Tech Stack
+- **Frontend**: React + Vite
+- **Diagram Library**: React Flow
+- **Styling**: Tailwind CSS
+- **Hosting**: Cloudflare Pages
+
+## Project Structure
+- `/src` - React application source code
+- `/src/components` - React components (DiagramCanvas, ToggleSidebar, etc.)
+- `/src/data` - Component definitions and initial diagram data
+- `/public` - Static assets
+
+## Key Features
+- Toggle visibility of architecture components
+- Drag and drop diagram elements
+- Hover tooltips with component details
+- Session-based state (no persistence)
+
+## Development
+```bash
+npm install
+npm run dev
+```
+
+## Deployment
+```bash
+npm run build
+npx wrangler pages deploy dist
+```
