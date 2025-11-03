@@ -13,7 +13,7 @@ export const presets = {
             type: 'component',
             label: 'End Users',
             description: 'External end users accessing the application',
-            position: { x: 50, y: 280 },
+            position: { x: 50, y: 200 },
             visible: true,
             icon: '👤'
           },
@@ -22,7 +22,7 @@ export const presets = {
             type: 'component',
             label: 'CDN',
             description: 'Shared CDN - CloudFlare for all tenants',
-            position: { x: 140, y: 280 },
+            position: { x: 50, y: 320 },
             visible: true,
             icon: '🌐'
           },
@@ -31,7 +31,7 @@ export const presets = {
             type: 'component',
             label: 'External LLM',
             description: 'External LLM providers - OpenAI, Anthropic, etc.',
-            position: { x: 320, y: 280 },
+            position: { x: 210, y: 320 },
             visible: true,
             icon: '🤖'
           },
@@ -40,7 +40,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Platform (NA)',
             description: 'North America region - Airia AI platform orchestration layer',
-            position: { x: 230, y: 280 },
+            position: { x: 210, y: 200 },
             visible: true,
             icon: '✨'
           },
