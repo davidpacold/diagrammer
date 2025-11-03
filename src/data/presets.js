@@ -66,6 +66,16 @@ export const presets = {
         icon: '✨'
       },
       {
+        id: 'public-app-integrations',
+        type: 'component',
+        label: 'Public Application Integrations',
+        description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
+        position: { x: 250, y: 350 },
+        visible: true,
+        zone: 'public',
+        icon: '🔗'
+      },
+      {
         id: 'llm-private',
         type: 'component',
         label: 'Private LLM',
@@ -105,6 +115,7 @@ export const presets = {
       { id: 'e0f', source: 'airia-cloud-connector', target: 'customer-database', animated: false },
       { id: 'e0g', source: 'airia-cloud-connector', target: 'private-api', animated: false },
       { id: 'e1', source: 'cdn', target: 'airia-platform', animated: false },
+      { id: 'e0h', source: 'airia-platform', target: 'public-app-integrations', animated: false },
     ]
   },
 
