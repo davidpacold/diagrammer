@@ -147,11 +147,8 @@ export const presets = {
       { id: 'e1-apac', source: 'cdn', target: 'airia-platform-apac', animated: false },
       { id: 'e1-mena', source: 'cdn', target: 'airia-platform-mena', animated: false },
 
-      // Cloud Connector to regional platforms
+      // Cloud Connector to regional platform (NA only)
       { id: 'e1a-na', source: 'airia-cloud-connector', target: 'airia-platform-na', animated: false },
-      { id: 'e1a-eu', source: 'airia-cloud-connector', target: 'airia-platform-eu', animated: false },
-      { id: 'e1a-apac', source: 'airia-cloud-connector', target: 'airia-platform-apac', animated: false },
-      { id: 'e1a-mena', source: 'airia-cloud-connector', target: 'airia-platform-mena', animated: false },
 
       // Regional platforms to LLM
       { id: 'e2-na', source: 'airia-platform-na', target: 'llm-public', animated: false },
