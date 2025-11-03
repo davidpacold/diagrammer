@@ -8,95 +8,166 @@ export const presets = {
       public: {
         xRange: [0, 525],
         components: [
+          // Column 1: Customers (far left)
           {
-            id: 'user-public',
+            id: 'customer-1',
             type: 'component',
-            label: 'End Users',
-            description: 'External end users accessing the application',
-            position: { x: 50, y: 100 },
+            label: 'Customer A',
+            description: 'Customer A end users',
+            position: { x: -50, y: 100 },
             visible: true,
-            icon: '👤'
+            icon: '👥'
           },
+          {
+            id: 'customer-2',
+            type: 'component',
+            label: 'Customer B',
+            description: 'Customer B end users',
+            position: { x: -50, y: 200 },
+            visible: true,
+            icon: '👥'
+          },
+          {
+            id: 'customer-3',
+            type: 'component',
+            label: 'Customer C',
+            description: 'Customer C end users',
+            position: { x: -50, y: 300 },
+            visible: true,
+            icon: '👥'
+          },
+
+          // Column 2: Airia Managed (inside boundary box)
           {
             id: 'cdn',
             type: 'component',
             label: 'CDN',
             description: 'Shared CDN - CloudFlare for all tenants',
-            position: { x: 50, y: 240 },
+            position: { x: 20, y: 20 },
             visible: true,
-            icon: '🌐'
-          },
-          {
-            id: 'llm-public',
-            type: 'component',
-            label: 'External LLM',
-            description: 'External LLM providers - OpenAI, Anthropic, etc.',
-            position: { x: 50, y: 520 },
-            visible: true,
-            icon: '🤖'
+            icon: '🌐',
+            parentBoundary: 'airia-managed'
           },
           {
             id: 'airia-platform-na',
             type: 'component',
             label: 'Airia Platform (NA)',
             description: 'North America region - Airia AI platform orchestration layer',
-            position: { x: 50, y: 380 },
+            position: { x: 20, y: 100 },
             visible: true,
-            icon: '✨'
+            icon: '✨',
+            parentBoundary: 'airia-managed'
           },
           {
             id: 'airia-platform-eu',
             type: 'component',
             label: 'Airia Platform (EU)',
             description: 'Europe region - Airia AI platform orchestration layer',
-            position: { x: 320, y: 380 },
+            position: { x: 200, y: 100 },
             visible: false,
-            icon: '✨'
+            icon: '✨',
+            parentBoundary: 'airia-managed'
           },
           {
             id: 'airia-platform-apac',
             type: 'component',
             label: 'Airia Platform (APAC)',
             description: 'Asia-Pacific region (Singapore, Australia) - Airia AI platform orchestration layer',
-            position: { x: 320, y: 480 },
+            position: { x: 200, y: 180 },
             visible: false,
-            icon: '✨'
+            icon: '✨',
+            parentBoundary: 'airia-managed'
           },
           {
             id: 'airia-platform-mena',
             type: 'component',
             label: 'Airia Platform (MENA)',
             description: 'Middle East & North Africa region - Airia AI platform orchestration layer',
-            position: { x: 320, y: 580 },
+            position: { x: 200, y: 260 },
             visible: false,
-            icon: '✨'
+            icon: '✨',
+            parentBoundary: 'airia-managed'
           },
           {
-            id: 'public-app-integrations',
+            id: 'airia-key-llm',
             type: 'component',
-            label: 'Public Application Integrations',
-            description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
-            position: { x: 50, y: 480 },
+            label: 'Airia Key LLM',
+            description: 'Airia-managed LLM service - Optimized models for key extraction',
+            position: { x: 20, y: 260 },
+            visible: true,
+            icon: '🔑',
+            parentBoundary: 'airia-managed'
+          },
+          {
+            id: 'siem-public',
+            type: 'component',
+            label: 'SIEM (Public)',
+            description: 'Cloud SIEM - Splunk Cloud, Datadog Security, etc.',
+            position: { x: 150, y: 450 },
             visible: false,
-            icon: '🔗'
+            icon: '🛡️'
+          },
+
+          // External Services (positioned relative to boundary box)
+          {
+            id: 'llm-public',
+            type: 'component',
+            label: 'External LLM',
+            description: 'External LLM providers - OpenAI, Anthropic, etc.',
+            position: { x: 30, y: 450 },
+            visible: true,
+            icon: '🤖',
+            positioning: {
+              relativeTo: 'airia-managed',
+              placement: 'below',
+              offsetX: -140,
+              offsetY: 10
+            }
           },
           {
             id: 'pinecone',
             type: 'component',
             label: 'Pinecone',
             description: 'Vector database for AI embeddings and semantic search',
-            position: { x: 200, y: 100 },
+            position: { x: 200, y: 450 },
             visible: false,
-            icon: '🌲'
+            icon: '🌲',
+            positioning: {
+              relativeTo: 'airia-managed',
+              placement: 'below',
+              offsetX: 30,
+              offsetY: 10
+            }
           },
           {
             id: 'weaviate-public',
             type: 'component',
             label: 'Weaviate',
             description: 'Cloud-hosted vector database for AI-native applications',
-            position: { x: 200, y: 480 },
+            position: { x: 350, y: 450 },
             visible: false,
-            icon: '🔷'
+            icon: '🔷',
+            positioning: {
+              relativeTo: 'airia-managed',
+              placement: 'below',
+              offsetX: 180,
+              offsetY: 10
+            }
+          },
+          {
+            id: 'public-app-integrations',
+            type: 'component',
+            label: 'Public Application Integrations',
+            description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
+            position: { x: 500, y: 450 },
+            visible: false,
+            icon: '🔗',
+            positioning: {
+              relativeTo: 'airia-managed',
+              placement: 'below',
+              offsetX: 330,
+              offsetY: 10
+            }
           }
         ]
       },
@@ -156,12 +227,24 @@ export const presets = {
             position: { x: 750, y: 100 },
             visible: false,
             icon: '🔷'
+          },
+          {
+            id: 'siem-private',
+            type: 'component',
+            label: 'SIEM (Private)',
+            description: 'On-premises SIEM - Splunk Enterprise, QRadar, etc.',
+            position: { x: 750, y: 600 },
+            visible: false,
+            icon: '🔒'
           }
         ]
       }
     },
     connections: [
-      { id: 'e0', source: 'user-public', target: 'cdn', animated: false },
+      // Multiple customers to CDN (multi-tenant)
+      { id: 'e0-customer1', source: 'customer-1', target: 'cdn', animated: false },
+      { id: 'e0-customer2', source: 'customer-2', target: 'cdn', animated: false },
+      { id: 'e0-customer3', source: 'customer-3', target: 'cdn', animated: false },
       { id: 'e0c', source: 'user-private', target: 'cdn', animated: false },
       { id: 'e0e', source: 'airia-cloud-connector', target: 'llm-private', animated: false },
       { id: 'e0f', source: 'airia-cloud-connector', target: 'customer-database', animated: false },
@@ -179,11 +262,17 @@ export const presets = {
       { id: 'e1a-apac', source: 'airia-platform-apac', target: 'airia-cloud-connector', animated: false },
       { id: 'e1a-mena', source: 'airia-platform-mena', target: 'airia-cloud-connector', animated: false },
 
-      // Regional platforms to LLM
+      // Regional platforms to External LLM
       { id: 'e2-na', source: 'airia-platform-na', target: 'llm-public', animated: false },
       { id: 'e2-eu', source: 'airia-platform-eu', target: 'llm-public', animated: false },
       { id: 'e2-apac', source: 'airia-platform-apac', target: 'llm-public', animated: false },
       { id: 'e2-mena', source: 'airia-platform-mena', target: 'llm-public', animated: false },
+
+      // Regional platforms to Airia Key LLM (managed)
+      { id: 'e2a-na', source: 'airia-platform-na', target: 'airia-key-llm', animated: false },
+      { id: 'e2a-eu', source: 'airia-platform-eu', target: 'airia-key-llm', animated: false },
+      { id: 'e2a-apac', source: 'airia-platform-apac', target: 'airia-key-llm', animated: false },
+      { id: 'e2a-mena', source: 'airia-platform-mena', target: 'airia-key-llm', animated: false },
 
       // Regional platforms to public integrations
       { id: 'e3-na', source: 'airia-platform-na', target: 'public-app-integrations', animated: false },
@@ -208,7 +297,28 @@ export const presets = {
       { id: 'e6-eu', source: 'airia-platform-eu', target: 'weaviate-private', animated: false },
       { id: 'e6-apac', source: 'airia-platform-apac', target: 'weaviate-private', animated: false },
       { id: 'e6-mena', source: 'airia-platform-mena', target: 'weaviate-private', animated: false },
-    ]
+
+      // Regional platforms to SIEM (Public)
+      { id: 'e7-na', source: 'airia-platform-na', target: 'siem-public', animated: false },
+      { id: 'e7-eu', source: 'airia-platform-eu', target: 'siem-public', animated: false },
+      { id: 'e7-apac', source: 'airia-platform-apac', target: 'siem-public', animated: false },
+      { id: 'e7-mena', source: 'airia-platform-mena', target: 'siem-public', animated: false },
+
+      // Regional platforms to SIEM (Private) via Cloud Connector
+      { id: 'e8-siem', source: 'airia-cloud-connector', target: 'siem-private', animated: false },
+    ],
+    boundaryBoxes: [
+      {
+        id: 'airia-managed',
+        label: 'Airia Managed',
+        x: 170,
+        y: 80,
+        width: 400,
+        height: 360,
+        color: '#3b82f6'
+      }
+    ],
+    columnHeaders: []
   },
 
   'dedicated-saas': {
@@ -615,7 +725,11 @@ export const presets = {
       { id: 'e26', source: 'appserver1', target: 'llm-private', animated: false },
       { id: 'e27', source: 'appserver2', target: 'llm-private', animated: false },
       { id: 'e28', source: 'appserver3', target: 'llm-private', animated: false }
-    ]
+    ],
+    zoneLabels: {
+      left: '🌐 Public Network',
+      right: '🏢 Customer Network'
+    }
   }
 };
 
