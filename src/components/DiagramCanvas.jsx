@@ -37,7 +37,7 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
-        defaultViewport={{ x: 50, y: 50, zoom: 0.52 }}
+        defaultViewport={{ x: 100, y: 50, zoom: 0.65 }}
         className="bg-gradient-to-r from-blue-50 via-blue-50 to-gray-50"
         defaultEdgeOptions={{
           type: 'smoothstep',
