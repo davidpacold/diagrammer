@@ -56,12 +56,42 @@ export const presets = {
         icon: '🤖'
       },
       {
-        id: 'airia-platform',
+        id: 'airia-platform-na',
         type: 'component',
-        label: 'Airia Platform',
-        description: 'Airia AI platform orchestration layer',
+        label: 'Airia Platform (NA)',
+        description: 'North America region - Airia AI platform orchestration layer',
+        position: { x: 250, y: 150 },
+        visible: true,
+        zone: 'public',
+        icon: '✨'
+      },
+      {
+        id: 'airia-platform-eu',
+        type: 'component',
+        label: 'Airia Platform (EU)',
+        description: 'Europe region - Airia AI platform orchestration layer',
         position: { x: 250, y: 200 },
         visible: true,
+        zone: 'public',
+        icon: '✨'
+      },
+      {
+        id: 'airia-platform-apac',
+        type: 'component',
+        label: 'Airia Platform (APAC)',
+        description: 'Asia-Pacific region (Singapore, Australia) - Airia AI platform orchestration layer',
+        position: { x: 250, y: 250 },
+        visible: true,
+        zone: 'public',
+        icon: '✨'
+      },
+      {
+        id: 'airia-platform-mena',
+        type: 'component',
+        label: 'Airia Platform (MENA)',
+        description: 'Middle East & North Africa region - Airia AI platform orchestration layer',
+        position: { x: 250, y: 300 },
+        visible: false,
         zone: 'public',
         icon: '✨'
       },
@@ -108,14 +138,29 @@ export const presets = {
     ],
     connections: [
       { id: 'e0', source: 'user-public', target: 'cdn', animated: false },
-      { id: 'e0b', source: 'airia-platform', target: 'llm-public', animated: false },
       { id: 'e0c', source: 'cdn', target: 'user-private', animated: false },
       { id: 'e0d', source: 'airia-cloud-connector', target: 'cdn', animated: false },
       { id: 'e0e', source: 'airia-cloud-connector', target: 'llm-private', animated: false },
       { id: 'e0f', source: 'airia-cloud-connector', target: 'customer-database', animated: false },
       { id: 'e0g', source: 'airia-cloud-connector', target: 'private-api', animated: false },
-      { id: 'e1', source: 'cdn', target: 'airia-platform', animated: false },
-      { id: 'e0h', source: 'airia-platform', target: 'public-app-integrations', animated: false },
+
+      // CDN to regional platforms
+      { id: 'e1-na', source: 'cdn', target: 'airia-platform-na', animated: false },
+      { id: 'e1-eu', source: 'cdn', target: 'airia-platform-eu', animated: false },
+      { id: 'e1-apac', source: 'cdn', target: 'airia-platform-apac', animated: false },
+      { id: 'e1-mena', source: 'cdn', target: 'airia-platform-mena', animated: false },
+
+      // Regional platforms to LLM
+      { id: 'e2-na', source: 'airia-platform-na', target: 'llm-public', animated: false },
+      { id: 'e2-eu', source: 'airia-platform-eu', target: 'llm-public', animated: false },
+      { id: 'e2-apac', source: 'airia-platform-apac', target: 'llm-public', animated: false },
+      { id: 'e2-mena', source: 'airia-platform-mena', target: 'llm-public', animated: false },
+
+      // Regional platforms to public integrations
+      { id: 'e3-na', source: 'airia-platform-na', target: 'public-app-integrations', animated: false },
+      { id: 'e3-eu', source: 'airia-platform-eu', target: 'public-app-integrations', animated: false },
+      { id: 'e3-apac', source: 'airia-platform-apac', target: 'public-app-integrations', animated: false },
+      { id: 'e3-mena', source: 'airia-platform-mena', target: 'public-app-integrations', animated: false },
     ]
   },
 
