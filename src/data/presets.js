@@ -4,138 +4,135 @@ export const presets = {
   'shared-saas': {
     name: 'Shared SaaS',
     description: 'Multi-tenant shared infrastructure - Cost-optimized for multiple customers',
-    components: [
-      {
-        id: 'user-public',
-        type: 'component',
-        label: 'End Users',
-        description: 'External end users accessing the application',
-        position: { x: 50, y: 200 },
-        visible: true,
-        zone: 'public',
-        icon: '👤'
+    zones: {
+      public: {
+        xRange: [0, 350],
+        components: [
+          {
+            id: 'user-public',
+            type: 'component',
+            label: 'End Users',
+            description: 'External end users accessing the application',
+            position: { x: 50, y: 200 },
+            visible: true,
+            icon: '👤'
+          },
+          {
+            id: 'cdn',
+            type: 'component',
+            label: 'CDN',
+            description: 'Shared CDN - CloudFlare for all tenants',
+            position: { x: 150, y: 200 },
+            visible: true,
+            icon: '🌐'
+          },
+          {
+            id: 'llm-public',
+            type: 'component',
+            label: 'External LLM',
+            description: 'External LLM providers - OpenAI, Anthropic, etc.',
+            position: { x: 250, y: 50 },
+            visible: true,
+            icon: '🤖'
+          },
+          {
+            id: 'airia-platform-na',
+            type: 'component',
+            label: 'Airia Platform (NA)',
+            description: 'North America region - Airia AI platform orchestration layer',
+            position: { x: 300, y: 200 },
+            visible: true,
+            icon: '✨'
+          },
+          {
+            id: 'airia-platform-eu',
+            type: 'component',
+            label: 'Airia Platform (EU)',
+            description: 'Europe region - Airia AI platform orchestration layer',
+            position: { x: 300, y: 300 },
+            visible: false,
+            icon: '✨'
+          },
+          {
+            id: 'airia-platform-apac',
+            type: 'component',
+            label: 'Airia Platform (APAC)',
+            description: 'Asia-Pacific region (Singapore, Australia) - Airia AI platform orchestration layer',
+            position: { x: 300, y: 400 },
+            visible: false,
+            icon: '✨'
+          },
+          {
+            id: 'airia-platform-mena',
+            type: 'component',
+            label: 'Airia Platform (MENA)',
+            description: 'Middle East & North Africa region - Airia AI platform orchestration layer',
+            position: { x: 300, y: 500 },
+            visible: false,
+            icon: '✨'
+          },
+          {
+            id: 'public-app-integrations',
+            type: 'component',
+            label: 'Public Application Integrations',
+            description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
+            position: { x: 250, y: 350 },
+            visible: true,
+            icon: '🔗'
+          }
+        ]
       },
-      {
-        id: 'airia-cloud-connector',
-        type: 'component',
-        label: 'Airia Cloud Connector',
-        description: 'Connector for customer on-premises systems to Airia Cloud',
-        position: { x: 450, y: 150 },
-        visible: true,
-        zone: 'private',
-        icon: '🔌'
-      },
-      {
-        id: 'user-private',
-        type: 'component',
-        label: 'Internal Users',
-        description: 'Internal admins and support staff',
-        position: { x: 450, y: 400 },
-        visible: true,
-        zone: 'private',
-        icon: '👨‍💼'
-      },
-      {
-        id: 'cdn',
-        type: 'component',
-        label: 'CDN',
-        description: 'Shared CDN - CloudFlare for all tenants',
-        position: { x: 150, y: 200 },
-        visible: true,
-        zone: 'public',
-        icon: '🌐'
-      },
-      {
-        id: 'llm-public',
-        type: 'component',
-        label: 'External LLM',
-        description: 'External LLM providers - OpenAI, Anthropic, etc.',
-        position: { x: 450, y: 50 },
-        visible: true,
-        zone: 'public',
-        icon: '🤖'
-      },
-      {
-        id: 'airia-platform-na',
-        type: 'component',
-        label: 'Airia Platform (NA)',
-        description: 'North America region - Airia AI platform orchestration layer',
-        position: { x: 300, y: 200 },
-        visible: true,
-        zone: 'public',
-        icon: '✨'
-      },
-      {
-        id: 'airia-platform-eu',
-        type: 'component',
-        label: 'Airia Platform (EU)',
-        description: 'Europe region - Airia AI platform orchestration layer',
-        position: { x: 300, y: 300 },
-        visible: false,
-        zone: 'public',
-        icon: '✨'
-      },
-      {
-        id: 'airia-platform-apac',
-        type: 'component',
-        label: 'Airia Platform (APAC)',
-        description: 'Asia-Pacific region (Singapore, Australia) - Airia AI platform orchestration layer',
-        position: { x: 300, y: 400 },
-        visible: false,
-        zone: 'public',
-        icon: '✨'
-      },
-      {
-        id: 'airia-platform-mena',
-        type: 'component',
-        label: 'Airia Platform (MENA)',
-        description: 'Middle East & North Africa region - Airia AI platform orchestration layer',
-        position: { x: 300, y: 500 },
-        visible: false,
-        zone: 'public',
-        icon: '✨'
-      },
-      {
-        id: 'public-app-integrations',
-        type: 'component',
-        label: 'Public Application Integrations',
-        description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
-        position: { x: 450, y: 300 },
-        visible: true,
-        zone: 'public',
-        icon: '🔗'
-      },
-      {
-        id: 'llm-private',
-        type: 'component',
-        label: 'Private LLM',
-        description: 'Self-hosted LLM service for sensitive data',
-        position: { x: 600, y: 200 },
-        visible: true,
-        zone: 'private',
-        icon: '🧠'
-      },
-      {
-        id: 'customer-database',
-        type: 'component',
-        label: 'Database',
-        description: 'Customer on-premises database',
-        position: { x: 600, y: 300 },
-        visible: true,
-        zone: 'private',
-        icon: '🗄️'
-      },
-      {
-        id: 'private-api',
-        type: 'component',
-        label: 'Private API',
-        description: 'Customer private API endpoints',
-        position: { x: 600, y: 400 },
-        visible: true,
-        zone: 'private',
-        icon: '🔐'
+      private: {
+        xRange: [400, 750],
+        components: [
+          {
+            id: 'airia-cloud-connector',
+            type: 'component',
+            label: 'Airia Cloud Connector',
+            description: 'Connector for customer on-premises systems to Airia Cloud',
+            position: { x: 450, y: 150 },
+            visible: true,
+            icon: '🔌'
+          },
+          {
+            id: 'user-private',
+            type: 'component',
+            label: 'Internal Users',
+            description: 'Internal admins and support staff',
+            position: { x: 450, y: 400 },
+            visible: true,
+            icon: '👨‍💼'
+          },
+          {
+            id: 'llm-private',
+            type: 'component',
+            label: 'Private LLM',
+            description: 'Self-hosted LLM service for sensitive data',
+            position: { x: 600, y: 200 },
+            visible: true,
+            icon: '🧠'
+          },
+          {
+            id: 'customer-database',
+            type: 'component',
+            label: 'Database',
+            description: 'Customer on-premises database',
+            position: { x: 600, y: 300 },
+            visible: true,
+            icon: '🗄️'
+          },
+          {
+            id: 'private-api',
+            type: 'component',
+            label: 'Private API',
+            description: 'Customer private API endpoints',
+            position: { x: 600, y: 400 },
+            visible: true,
+            icon: '🔐'
+          }
+        ]
       }
-    ],
+    },
     connections: [
       { id: 'e0', source: 'user-public', target: 'cdn', animated: false },
       { id: 'e0c', source: 'cdn', target: 'user-private', animated: false },

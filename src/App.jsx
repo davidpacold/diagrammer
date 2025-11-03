@@ -5,9 +5,29 @@ import ToggleSidebar from './components/ToggleSidebar';
 import { initialComponents, initialConnections } from './data/components';
 import { presets } from './data/presets';
 
+// Helper function to flatten zone-based components into a single array
+const flattenComponents = (preset) => {
+  // Check if preset has zone-based structure
+  if (preset.zones) {
+    const allComponents = [];
+    Object.entries(preset.zones).forEach(([zoneName, zoneData]) => {
+      zoneData.components.forEach(component => {
+        allComponents.push({
+          ...component,
+          zone: zoneName,
+          type: component.type || 'component'
+        });
+      });
+    });
+    return allComponents;
+  }
+  // Fall back to old structure
+  return preset.components || [];
+};
+
 function App() {
   const [currentPreset, setCurrentPreset] = useState('shared-saas'); // Default preset
-  const [components, setComponents] = useState(presets['shared-saas'].components);
+  const [components, setComponents] = useState(flattenComponents(presets['shared-saas']));
   const [connections, setConnections] = useState(presets['shared-saas'].connections);
 
   // Convert components to React Flow nodes
@@ -70,7 +90,7 @@ function App() {
     const preset = presets[presetId];
     if (preset) {
       setCurrentPreset(presetId);
-      setComponents(preset.components);
+      setComponents(flattenComponents(preset));
       setConnections(preset.connections);
     }
   }, []);
