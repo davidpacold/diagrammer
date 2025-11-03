@@ -31,7 +31,7 @@ export const presets = {
             type: 'component',
             label: 'External LLM',
             description: 'External LLM providers - OpenAI, Anthropic, etc.',
-            position: { x: 350, y: 80 },
+            position: { x: 50, y: 80 },
             visible: true,
             icon: '🤖'
           },
@@ -40,7 +40,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Platform (NA)',
             description: 'North America region - Airia AI platform orchestration layer',
-            position: { x: 350, y: 280 },
+            position: { x: 320, y: 280 },
             visible: true,
             icon: '✨'
           },
@@ -49,7 +49,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Platform (EU)',
             description: 'Europe region - Airia AI platform orchestration layer',
-            position: { x: 350, y: 380 },
+            position: { x: 320, y: 380 },
             visible: false,
             icon: '✨'
           },
@@ -58,7 +58,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Platform (APAC)',
             description: 'Asia-Pacific region (Singapore, Australia) - Airia AI platform orchestration layer',
-            position: { x: 350, y: 480 },
+            position: { x: 320, y: 480 },
             visible: false,
             icon: '✨'
           },
@@ -67,7 +67,7 @@ export const presets = {
             type: 'component',
             label: 'Airia Platform (MENA)',
             description: 'Middle East & North Africa region - Airia AI platform orchestration layer',
-            position: { x: 350, y: 580 },
+            position: { x: 320, y: 580 },
             visible: false,
             icon: '✨'
           },
@@ -76,7 +76,7 @@ export const presets = {
             type: 'component',
             label: 'Public Application Integrations',
             description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
-            position: { x: 350, y: 480 },
+            position: { x: 50, y: 480 },
             visible: true,
             icon: '🔗'
           }
