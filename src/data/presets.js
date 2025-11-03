@@ -16,11 +16,21 @@ export const presets = {
         icon: '👤'
       },
       {
+        id: 'airia-cloud-connector',
+        type: 'component',
+        label: 'Airia Cloud Connector',
+        description: 'Connector for customer on-premises systems to Airia Cloud',
+        position: { x: 400, y: 150 },
+        visible: true,
+        zone: 'private',
+        icon: '🔌'
+      },
+      {
         id: 'user-private',
         type: 'component',
         label: 'Internal Users',
         description: 'Internal admins and support staff',
-        position: { x: 400, y: 100 },
+        position: { x: 400, y: 280 },
         visible: true,
         zone: 'private',
         icon: '👨‍💼'
@@ -139,10 +149,11 @@ export const presets = {
     connections: [
       { id: 'e0', source: 'user-public', target: 'cdn', animated: false },
       { id: 'e0b', source: 'llm-public', target: 'airia-platform', animated: false },
+      { id: 'e0c', source: 'user-private', target: 'cdn', animated: false },
+      { id: 'e0d', source: 'airia-cloud-connector', target: 'cdn', animated: false },
       { id: 'e1', source: 'cdn', target: 'airia-platform', animated: false },
       { id: 'e1b', source: 'cdn', target: 'loadbalancer', animated: false },
       { id: 'e2', source: 'loadbalancer', target: 'apigateway', animated: false },
-      { id: 'e2b', source: 'user-private', target: 'apigateway', animated: false },
       { id: 'e3', source: 'apigateway', target: 'appserver', animated: false },
       { id: 'e4', source: 'appserver', target: 'cache', animated: false },
       { id: 'e5', source: 'appserver', target: 'database-primary', animated: false },
