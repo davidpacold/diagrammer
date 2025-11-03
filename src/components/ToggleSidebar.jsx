@@ -1,6 +1,7 @@
 import React from 'react';
+import PresetSelector from './PresetSelector';
 
-const ToggleSidebar = ({ components, onToggle }) => {
+const ToggleSidebar = ({ components, onToggle, currentPreset, onPresetChange }) => {
   // Group components by zone
   const publicComponents = components.filter(c => c.zone === 'public');
   const privateComponents = components.filter(c => c.zone === 'private');
@@ -30,7 +31,11 @@ const ToggleSidebar = ({ components, onToggle }) => {
 
   return (
     <div className="w-64 h-full bg-white border-r border-gray-200 p-4 overflow-y-auto">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">Components</h2>
+      <h2 className="text-xl font-bold text-gray-800 mb-6">Architecture Diagram</h2>
+
+      <PresetSelector currentPreset={currentPreset} onPresetChange={onPresetChange} />
+
+      <h3 className="text-lg font-semibold text-gray-700 mb-4">Components</h3>
 
       {renderComponentList(publicComponents, 'Public / Internet')}
       {renderComponentList(privateComponents, 'Private Network')}

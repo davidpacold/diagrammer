@@ -4,6 +4,7 @@ An interactive system architecture diagram tool built with React and Cloudflare 
 
 ## Features
 
+- 🎯 **Deployment Presets**: Choose from 3 pre-configured architectures (Shared SaaS, Dedicated SaaS, Customer Hosted)
 - 🎛️ **Toggle Visibility**: Show/hide architectural components via sidebar checkboxes
 - 🖱️ **Drag & Drop**: Reposition components on the canvas
 - 📊 **Split View**: Visual separation between public (Internet) and private network zones
@@ -11,20 +12,43 @@ An interactive system architecture diagram tool built with React and Cloudflare 
 - ⚡ **Fast & Responsive**: Built with Vite and React Flow
 - 🌐 **Cloudflare Hosted**: Deployed on Cloudflare Pages for global performance
 
+## Deployment Presets
+
+Choose from three pre-configured best-practice architectures:
+
+### 1. Shared SaaS
+Multi-tenant shared infrastructure optimized for cost-efficiency. All customers share:
+- Single load balancer and API gateway
+- Shared application server pool
+- Multi-tenant database with row-level security
+- Shared cache and storage with namespace isolation
+
+**Best for**: Early-stage SaaS, cost-sensitive deployments
+
+### 2. Dedicated SaaS (Default)
+Single-tenant dedicated infrastructure with isolated resources per customer:
+- Dedicated load balancer and API gateway
+- Multiple dedicated application servers
+- Dedicated database with read replica
+- Dedicated cache, queue, and storage
+- Customer-specific monitoring
+
+**Best for**: Enterprise SaaS, compliance requirements, performance-sensitive workloads
+
+### 3. Customer Hosted
+On-premises or customer VPC deployment with full customer control:
+- VPN gateway and firewall
+- Customer-managed load balancer
+- 3+ application servers
+- Customer-managed database cluster with backup
+- Self-hosted monitoring and backup systems
+- Local storage infrastructure
+
+**Best for**: Banking/healthcare, air-gapped environments, data sovereignty requirements
+
 ## Components Included
 
-### Public / Internet Zone
-- CDN (Content Delivery Network)
-- Load Balancer
-
-### Private Network Zone
-- API Gateway
-- Application Servers
-- Redis Cache
-- Database (Primary & Replica)
-- Message Queue
-- Object Storage (S3/R2)
-- Monitoring & Logging
+Components vary by deployment preset. See the preset selector in the app for specific details.
 
 ## Getting Started
 
