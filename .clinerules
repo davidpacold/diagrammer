@@ -1,0 +1,245 @@
+# Diagrammer Project - Claude/Cline Configuration
+# Architecture diagram tool for visualizing Airia deployment models
+
+## Project Overview
+This is a React-based interactive diagram application that visualizes three deployment architectures:
+1. **Shared SaaS** - Multi-tenant shared infrastructure
+2. **Dedicated SaaS** - Dedicated instances per company
+3. **Customer Hosted** - On-premises deployment
+
+Built with React 18, ReactFlow, Vite, and Tailwind CSS.
+
+## Architecture & Key Concepts
+
+### Component Positioning System
+- **Fixed component dimensions**: 180px width × 110px height (NEVER change these)
+- **Minimum spacing**: 40px between all components
+- **Zone boundary**: x=550px separates public (left) from private (right) zones
+- **Absolute vs Relative positions**:
+  - Components with `parentBoundary`: positions are RELATIVE to parent boundary box
+  - Components without `parentBoundary`: positions are ABSOLUTE on canvas
+
+### Boundary Boxes (Dynamic Sizing)
+- Boundary boxes automatically grow based on visible children
+- Formula: `width = Math.max(rightEdge + PADDING, box.width)`
+- Default padding: 30-40px
+- Implementation in: `src/App.jsx` lines 173-224
+
+### Zone-Based Architecture
+- **Public Zone**: x < 550px (light blue background #dbeafe)
+- **Private Zone**: x >= 550px (gray background #f3f4f6)
+- Zone definitions in: `src/data/presets.js` under `zoneDefinitions`
+
+## File Structure & Important Files
+
+### Core Application Files
+- `src/App.jsx` - Main application logic, state management, dynamic boundary sizing
+- `src/components/DiagramCanvas.jsx` - ReactFlow canvas wrapper
+- `src/components/ComponentNode.jsx` - Individual component card (180px width - DO NOT CHANGE)
+- `src/components/ToggleSidebar.jsx` - Sidebar with component toggles and preset selector
+- `src/components/BoundaryBox.jsx` - Boundary box rendering
+- `src/data/presets.js` - All preset configurations (positions, connections, boundaries)
+
+### Utility Files
+- `src/utils/layoutUtils.js` - Grid layout and positioning helpers
+- `src/utils/boundaryValidation.js` - Validation for boundary containment
+- `src/utils/positionDebugger.js` - Browser console debugging for positions
+
+### Test Files
+- `test-all-visible.js` - Tests all components visible simultaneously
+- `test-dedicated-saas-components.js` - Individual component validation for dedicated-saas
+- `test-all-presets-comprehensive.js` - Comprehensive validation for all presets
+
+## Critical Best Practices
+
+### 1. Component Width - FIXED at 180px
+**NEVER** change component width from 180px. This is set in `ComponentNode.jsx`:
+```jsx
+className="... w-[180px] ..."  // FIXED WIDTH - DO NOT USE min-w
+```
+Previously was `min-w-[140px]` which caused overlaps. Must always be `w-[180px]`.
+
+### 2. Spacing Calculations
+- Horizontal spacing: `nextX = currentX + 180 (width) + 40 (spacing) = currentX + 220`
+- Vertical spacing: `nextY = currentY + 110 (height) + 40 (spacing) = currentY + 150`
+- Example: Components at x=40 and x=260 have 40px spacing (260 - 40 - 180 = 40)
+
+### 3. Position Validation
+Always validate positions after changes:
+```bash
+node test-all-presets-comprehensive.js  # Validates all presets
+node test-dedicated-saas-components.js  # Validates dedicated-saas only
+```
+
+### 4. Boundary Box Rules
+- Boundary box x/y positions are ABSOLUTE
+- Child component positions are RELATIVE to parent boundary
+- Always use padding: 40 for consistency
+- Update boundary height when repositioning children:
+  ```javascript
+  height = maxChildY + COMPONENT_HEIGHT + PADDING
+  ```
+
+### 5. Dedicated-SaaS Specific Rules
+- **Company grouping**: Each company has 3 components (Users, CDN, Platform)
+- **Grouped toggles**: One checkbox per company controls all 3 components
+- **Consistent spacing**: Customer/Company cards use 150px vertical spacing
+- **Layout**: 2-column grid inside boundary (CDNs at x=40, Platforms at x=260)
+
+## Common Tasks & Workflows
+
+### Adding a New Component
+1. Add to appropriate preset in `src/data/presets.js`
+2. Set correct zone ('public' or 'private')
+3. Calculate position ensuring 40px spacing from neighbors
+4. If inside boundary, set `parentBoundary: 'boundary-id'` and use RELATIVE position
+5. Add connections in `connections` array
+6. Run validation: `node test-all-presets-comprehensive.js`
+
+### Fixing Overlaps
+1. Run `node test-all-presets-comprehensive.js` to identify overlaps
+2. Check actual positions using browser console (positionDebugger runs in dev mode)
+3. Calculate new positions with 40px spacing
+4. Update positions in `src/data/presets.js`
+5. Re-run validation to confirm fix
+
+### Adjusting Boundary Sizes
+1. Calculate required size based on children:
+   ```javascript
+   width = rightmostChild.x + 180 + 40 (padding)
+   height = bottommostChild.y + 110 + 40 (padding)
+   ```
+2. Update `boundaryBoxes` in preset
+3. Verify children are within bounds using validation tests
+
+### Adding New Preset
+1. Create new entry in `src/data/presets.js`
+2. Define `zoneDefinitions` for background zones
+3. Add components with proper positions and zones
+4. Define connections between components
+5. Add boundary boxes if needed
+6. Test with `node test-all-presets-comprehensive.js`
+
+## Preset-Specific Information
+
+### Shared-SaaS
+- **Customers**: 3 customer cards at x=20, y=40/190/340 (150px spacing)
+- **Airia Managed Boundary**: (260, 20) with single-column layout
+- **External services**: Below boundary starting at y=450
+- **Test status**: ✅ 21/21 components validated
+
+### Dedicated-SaaS
+- **Company Users**: 3 company cards at x=-250, y=40/190/340 (150px spacing)
+- **Airia Managed Boundary**: (0, 0) with 2-column layout
+  - CDNs: x=40 (column 1)
+  - Platforms: x=260 (column 2)
+  - Airia Key LLM: x=150, y=490 (centered below grid)
+- **Grouped toggles**: Companies section with one checkbox per company
+- **Test status**: ✅ 22/22 components validated
+
+### Customer-Hosted
+- **Status**: ⚠️ Many overlaps (76 errors) - needs layout refactoring
+- **Architecture**: On-premises deployment with no boundary boxes
+
+## Testing & Validation
+
+### Running Tests
+```bash
+# Test all presets with all components visible
+node test-all-presets-comprehensive.js
+
+# Test dedicated-saas individual components
+node test-dedicated-saas-components.js
+
+# Test all components visible in shared-saas
+node test-all-visible.js
+```
+
+### Validation Checks
+- ✅ No overlaps (40px minimum spacing)
+- ✅ Components within parent boundaries
+- ✅ Public zone components stay left of x=550
+- ✅ Consistent customer/company card spacing
+
+### Browser Console Debugging
+In development mode, the app automatically logs:
+- Component positions (relative and absolute)
+- Boundary box sizes
+- Overlap detection with gap measurements
+- Check browser console for `🔍 Component Positions Debug`
+
+## Development Commands
+```bash
+npm install          # Install dependencies
+npm run dev          # Start dev server (port 5173)
+npm run build        # Production build
+npm run preview      # Preview production build
+```
+
+## Common Issues & Solutions
+
+### Issue: Components overlap visually
+**Cause**: Component width not fixed at 180px
+**Solution**: Ensure ComponentNode.jsx uses `w-[180px]` not `min-w-[140px]`
+
+### Issue: Component outside boundary
+**Cause**: Position calculated incorrectly or boundary too small
+**Solution**:
+1. Check if position is relative (has parentBoundary) or absolute
+2. Recalculate boundary size based on children
+3. Verify padding is included
+
+### Issue: Zone boundary violation
+**Cause**: Component in public zone exceeds x=550
+**Solution**: Move component left or change zone to 'private'
+
+### Issue: Inconsistent spacing
+**Cause**: Manual position adjustments without calculation
+**Solution**: Always calculate positions using formula: `currentX + 180 + 40`
+
+## Code Style & Patterns
+
+### React Patterns
+- Use functional components with hooks
+- `useMemo` for expensive calculations (nodes, edges)
+- `useCallback` for event handlers
+- State management via `useState` in App.jsx
+
+### Position Calculations
+```javascript
+// Absolute to Relative (for components inside boundaries)
+relativePos = { x: absoluteX - boundary.x, y: absoluteY - boundary.y }
+
+// Relative to Absolute (for rendering)
+absolutePos = { x: boundary.x + component.position.x, y: boundary.y + component.position.y }
+```
+
+### Component Visibility
+```javascript
+// Toggle single component
+component.visible = !component.visible
+
+// Toggle group (dedicated-saas companies)
+companyComponents.forEach(c => { c.visible = newState })
+```
+
+## Git Workflow
+- Recent commits focus on layout fixes and validation
+- Always run validation tests before committing position changes
+- Commit message format: "Fix [component] overlap/containment in [preset]"
+
+## Future Enhancements
+- [ ] Fix customer-hosted preset layout (76 overlaps)
+- [ ] Add auto-arrange feature for all presets
+- [ ] Export diagram as PNG/SVG
+- [ ] Add more deployment presets
+- [ ] Implement drag-to-reposition with validation
+
+## Contact & Resources
+- ReactFlow docs: https://reactflow.dev/
+- Tailwind CSS: https://tailwindcss.com/
+- Vite: https://vitejs.dev/
+
+---
+Last Updated: 2025-01-03
+Current Status: Shared-SaaS ✅ | Dedicated-SaaS ✅ | Customer-Hosted ⚠️

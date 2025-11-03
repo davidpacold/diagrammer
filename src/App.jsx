@@ -4,7 +4,7 @@ import DiagramCanvas from './components/DiagramCanvas';
 import ToggleSidebar from './components/ToggleSidebar';
 import { initialComponents, initialConnections } from './data/components';
 import { presets } from './data/presets';
-import { resolveOverlaps, snapPositionToGrid, arrangeInGrid, autoArrangeInBoundary, autoFixOverlaps } from './utils/layoutUtils';
+import { snapPositionToGrid } from './utils/layoutUtils';
 import { validateBoundaryContainment, logValidationErrors } from './utils/boundaryValidation';
 import { logComponentPositions } from './utils/positionDebugger';
 
@@ -331,33 +331,6 @@ function App() {
     }
   }, []);
 
-  // Grid-based auto-arrange (Visio-style)
-  const handleAutoArrange = useCallback(() => {
-    setComponents(prev => {
-      // Group components by parent boundary
-      const boundaryGroups = {};
-      const ungroupedComponents = [];
-
-      prev.forEach(c => {
-        if (c.parentBoundary) {
-          if (!boundaryGroups[c.parentBoundary]) {
-            boundaryGroups[c.parentBoundary] = [];
-          }
-          boundaryGroups[c.parentBoundary].push(c);
-        } else {
-          ungroupedComponents.push(c);
-        }
-      });
-
-      // Arrange each boundary group in a grid
-      let result = [...prev];
-      Object.keys(boundaryGroups).forEach(boundaryId => {
-        result = autoArrangeInBoundary(result, boundaryId, 40, 40, 2);
-      });
-
-      return result;
-    });
-  }, []);
 
   // Validate boundary containment rules whenever preset changes
   useEffect(() => {
@@ -389,7 +362,6 @@ function App() {
           selectedNodeId={selectedNodeId}
           onPaneClick={() => setSelectedNodeId(null)}
           zoneLabels={zoneLabels}
-          onAutoArrange={handleAutoArrange}
         />
       </div>
     </ReactFlowProvider>

@@ -1,0 +1,42 @@
+# Diagrammer - Cursor AI Rules
+# Interactive architecture diagram tool for Airia deployment models
+
+## Project Context
+React 18 + ReactFlow + Vite + Tailwind CSS application for visualizing deployment architectures.
+
+## Critical Constants (DO NOT MODIFY)
+- Component width: **180px** (fixed, never use min-w)
+- Component height: **110px**
+- Minimum spacing: **40px**
+- Zone boundary: **x = 550px** (public/private separator)
+
+## Position System
+- **Absolute positions**: Components without `parentBoundary`
+- **Relative positions**: Components with `parentBoundary` (relative to parent's x,y)
+- **Spacing formula**: nextX = currentX + 180 + 40 = currentX + 220
+
+## Key Files
+- `src/data/presets.js` - All component positions and connections
+- `src/components/ComponentNode.jsx` - Component card (MUST be w-[180px])
+- `src/App.jsx` - Dynamic boundary sizing logic
+- `test-all-presets-comprehensive.js` - Validation script
+
+## Before Making Changes
+1. Run: `node test-all-presets-comprehensive.js`
+2. Check browser console for position debug info
+3. Calculate new positions with 40px spacing
+4. Update positions in presets.js
+5. Re-run validation tests
+
+## Preset Status
+- ✅ Shared-SaaS: 21/21 validated
+- ✅ Dedicated-SaaS: 22/22 validated (grouped company toggles)
+- ⚠️ Customer-Hosted: 76 overlaps (needs refactor)
+
+## Common Mistakes to Avoid
+- ❌ Using min-w instead of w-[180px]
+- ❌ Forgetting 40px spacing in calculations
+- ❌ Mixing absolute/relative positions
+- ❌ Not running validation after position changes
+
+See .clinerules for detailed documentation.

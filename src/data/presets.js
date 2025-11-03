@@ -767,8 +767,9 @@ export const presets = {
         backgroundColor: '#dbeafe',
         opacity: 0.3,
         regions: {
-          remote: { x: 50, y: 100, width: 200 }, // Remote users and VPN
-          perimeter: { x: 100, y: 100, width: 200 } // Firewall and load balancer
+          customers: { x: -50, y: 50, width: 100 }, // Far left for customer nodes
+          managed: { x: 170, y: 80, width: 360, height: 360 }, // Airia Managed boundary
+          external: { x: 30, y: 450, width: 500 } // Below managed for external services
         }
       },
       private: {
@@ -781,241 +782,334 @@ export const presets = {
         showBorder: true,
         borderColor: '#9ca3af',
         regions: {
-          gateway: { x: 400, y: 80, width: 150 },
-          compute: { x: 450, y: 300, width: 200 },
-          storage: { x: 700, y: 150, width: 300 }
+          connector: { x: 600, y: 200, width: 150 },
+          services: { x: 750, y: 100, width: 200 }
         }
       }
     },
-    components: [
+    zones: {
+      public: {
+        xRange: [0, 525],
+        components: [
+          // PUBLIC ZONE - External Components (no parentBoundary)
+          // Column 1: Customers at x=20
+          {
+            id: 'customer-1',
+            type: 'component',
+            label: 'Customer A',
+            description: 'Customer A end users',
+            position: { x: 20, y: 40 },
+            visible: true,
+            icon: '👥',
+            zone: 'public'
+          },
+          {
+            id: 'customer-2',
+            type: 'component',
+            label: 'Customer B',
+            description: 'Customer B end users',
+            position: { x: 20, y: 190 },
+            visible: true,
+            icon: '👥',
+            zone: 'public'
+          },
+          {
+            id: 'customer-3',
+            type: 'component',
+            label: 'Customer C',
+            description: 'Customer C end users',
+            position: { x: 20, y: 340 },
+            visible: true,
+            icon: '👥',
+            zone: 'public'
+          },
+
+          // Airia Managed Components (parentBoundary='airia-managed')
+          // Positions RELATIVE to boundary at (260, 20)
+          {
+            id: 'cdn',
+            type: 'component',
+            label: 'CDN',
+            description: 'Shared CDN - CloudFlare for all tenants',
+            position: { x: 30, y: 30 },
+            visible: true,
+            icon: '🌐',
+            zone: 'public',
+            parentBoundary: 'airia-managed'
+          },
+          {
+            id: 'airia-key-llm',
+            type: 'component',
+            label: 'Airia Key LLM',
+            description: 'Airia-managed LLM service - Optimized models for key extraction',
+            position: { x: 30, y: 330 },
+            visible: true,
+            icon: '🔑',
+            zone: 'public',
+            parentBoundary: 'airia-managed'
+          },
+
+          // External Services
+          {
+            id: 'llm-public',
+            type: 'component',
+            label: 'External LLM',
+            description: 'External LLM providers - OpenAI, Anthropic, etc.',
+            position: { x: 20, y: 700 },
+            visible: true,
+            icon: '🤖',
+            zone: 'public'
+          },
+          {
+            id: 'public-app-integrations',
+            type: 'component',
+            label: 'Public Application Integrations',
+            description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
+            position: { x: 240, y: 700 },
+            visible: false,
+            icon: '🔗',
+            zone: 'public'
+          },
+          {
+            id: 'siem-public',
+            type: 'component',
+            label: 'SIEM (Public)',
+            description: 'Cloud SIEM - Splunk Cloud, Datadog Security, etc.',
+            position: { x: 20, y: 850 },
+            visible: false,
+            icon: '🛡️',
+            zone: 'public'
+          },
+          {
+            id: 'weaviate-public',
+            type: 'component',
+            label: 'Weaviate',
+            description: 'Cloud-hosted vector database for AI-native applications',
+            position: { x: 240, y: 850 },
+            visible: false,
+            icon: '🔷',
+            zone: 'public'
+          },
+          {
+            id: 'pinecone',
+            type: 'component',
+            label: 'Pinecone',
+            description: 'Vector database for AI embeddings and semantic search',
+            position: { x: 20, y: 1000 },
+            visible: false,
+            icon: '🌲',
+            zone: 'public'
+          }
+        ]
+      },
+      private: {
+        xRange: [575, 900],
+        components: [
+          // Private zone components
+          {
+            id: 'user-private',
+            type: 'component',
+            label: 'Internal Users',
+            description: 'Internal admins and support staff',
+            position: { x: 600, y: 40 },
+            visible: true,
+            icon: '👨‍💼',
+            zone: 'private'
+          },
+
+          // Kubernetes Cluster Components (parentBoundary='kubernetes-cluster')
+          // Positions RELATIVE to boundary
+          {
+            id: 'airia-platform-customer',
+            type: 'component',
+            label: 'Airia Platform',
+            description: 'Customer-hosted Airia Platform running in Kubernetes',
+            position: { x: 40, y: 40 },  // Relative to Kubernetes boundary
+            visible: true,
+            icon: '✨',
+            zone: 'private',
+            parentBoundary: 'kubernetes-cluster'
+          },
+
+          // Blob Storage - Outside Kubernetes (absolute position in private zone)
+          {
+            id: 'blob-storage',
+            type: 'component',
+            label: 'Blob Storage',
+            description: 'Object storage for documents and files (S3-compatible)',
+            position: { x: 600, y: 250 },  // Column 1 below Internal Users and Weaviate
+            visible: true,
+            icon: '🗂️',
+            zone: 'private'
+          },
+          {
+            id: 'airia-cloud-connector',
+            type: 'component',
+            label: 'Airia Cloud Connector',
+            description: 'Connector for customer on-premises systems to Airia Cloud',
+            position: { x: 820, y: 40 },
+            visible: false,
+            icon: '🔌',
+            zone: 'private'
+          },
+          {
+            id: 'weaviate-private',
+            type: 'component',
+            label: 'Weaviate (Private)',
+            description: 'Self-hosted vector database for on-premises AI applications',
+            position: { x: 600, y: 190 },
+            visible: false,
+            icon: '🔷',
+            zone: 'private'
+          },
+          {
+            id: 'llm-private',
+            type: 'component',
+            label: 'Private LLM',
+            description: 'Self-hosted LLM service for sensitive data',
+            position: { x: 820, y: 190 },
+            visible: false,
+            icon: '🧠',
+            zone: 'private'
+          },
+          // Database Container Components (parentBoundary='database-container')
+          // Positions RELATIVE to boundary
+          {
+            id: 'postgres-db',
+            type: 'component',
+            label: 'PostgreSQL',
+            description: 'PostgreSQL relational database',
+            position: { x: 40, y: 40 },  // Relative to database container boundary
+            visible: true,
+            icon: '🐘',
+            zone: 'private',
+            parentBoundary: 'database-container'
+          },
+          {
+            id: 'cassandra-db',
+            type: 'component',
+            label: 'Cassandra',
+            description: 'Cassandra distributed NoSQL database',
+            position: { x: 40, y: 190 },  // Below PostgreSQL: 40 + 110 + 40 = 190
+            visible: true,
+            icon: '💍',
+            zone: 'private',
+            parentBoundary: 'database-container'
+          },
+          {
+            id: 'private-api',
+            type: 'component',
+            label: 'Private API',
+            description: 'Customer private API endpoints',
+            position: { x: 820, y: 340 },
+            visible: false,
+            icon: '🔐',
+            zone: 'private'
+          },
+          {
+            id: 'siem-private',
+            type: 'component',
+            label: 'SIEM (Private)',
+            description: 'On-premises SIEM - Splunk Enterprise, QRadar, etc.',
+            position: { x: 600, y: 490 },
+            visible: false,
+            icon: '🔒',
+            zone: 'private'
+          }
+        ]
+      }
+    },
+    connections: [
+      // Customers to CDN
+      { id: 'e0-customer1', source: 'customer-1', target: 'cdn', animated: false },
+      { id: 'e0-customer2', source: 'customer-2', target: 'cdn', animated: false },
+      { id: 'e0-customer3', source: 'customer-3', target: 'cdn', animated: false },
+      { id: 'e0c', source: 'user-private', target: 'cdn', animated: false },
+
+      // CDN to Airia Platform (in Kubernetes)
+      { id: 'e1-platform', source: 'cdn', target: 'airia-platform-customer', animated: false },
+
+      // Airia Platform to services
+      { id: 'e1a-platform', source: 'airia-platform-customer', target: 'airia-cloud-connector', animated: false },
+      { id: 'e2-platform', source: 'airia-platform-customer', target: 'llm-public', animated: false },
+      { id: 'e2a-platform', source: 'airia-platform-customer', target: 'airia-key-llm', animated: false },
+      { id: 'e3-platform', source: 'airia-platform-customer', target: 'public-app-integrations', animated: false },
+      { id: 'e4-platform', source: 'airia-platform-customer', target: 'pinecone', animated: false },
+      { id: 'e5-platform', source: 'airia-platform-customer', target: 'weaviate-public', animated: false },
+      { id: 'e6-platform', source: 'airia-platform-customer', target: 'weaviate-private', animated: false },
+      { id: 'e7-platform', source: 'airia-platform-customer', target: 'siem-public', animated: false },
+
+      // Airia Platform to Blob Storage (within Kubernetes)
+      { id: 'e-blob', source: 'airia-platform-customer', target: 'blob-storage', animated: false },
+
+      // Cloud connector to private services
+      { id: 'e0e', source: 'airia-cloud-connector', target: 'llm-private', animated: false },
+      { id: 'e0f', source: 'airia-cloud-connector', target: 'customer-database', animated: false },
+      { id: 'e0g', source: 'airia-cloud-connector', target: 'private-api', animated: false },
+      { id: 'e8-siem', source: 'airia-cloud-connector', target: 'siem-private', animated: false },
+    ],
+    boundaryBoxes: [
       {
-        id: 'user-public',
-        type: 'component',
-        label: 'Remote Users',
-        description: 'Remote users connecting via VPN',
-        position: { x: 50, y: 100 },
-        visible: true,
+        id: 'airia-managed',
+        label: 'Airia Managed',
+        x: 260,
+        y: 20,
+        width: 270,
+        height: 320,  // Reduced height since platform moved to private zone
+        padding: 30,
+        color: '#3b82f6',
         zone: 'public',
-        icon: '👤'
+        containmentRules: {
+          description: 'Airia-managed infrastructure components in the public cloud',
+          mustContain: [
+            'cdn',
+            'airia-key-llm'
+          ],
+          mustExclude: [
+            'customer-1',
+            'customer-2',
+            'customer-3',
+            'llm-public',
+            'pinecone',
+            'weaviate-public',
+            'public-app-integrations',
+            'siem-public'
+          ],
+          rule: 'Components with parentBoundary="airia-managed" must be Airia-owned infrastructure. Customer-facing and external services stay outside.'
+        }
       },
       {
-        id: 'user-private',
-        type: 'component',
-        label: 'On-Site Users',
-        description: 'On-premises internal users and administrators',
-        position: { x: 600, y: 80 },
-        visible: true,
+        id: 'kubernetes-cluster',
+        label: 'Kubernetes Cluster',
+        x: 820,  // In private zone: 820px ensures 40px spacing from Internal Users at 600
+        y: 20,
+        width: 260,  // Width: 40 (padding) + 180 (component) + 40 (padding) = 260
+        height: 190,  // Height: 40 (padding) + 110 (Platform) + 40 (padding) = 190
+        padding: 40,
+        color: '#326ce5',  // Kubernetes blue
         zone: 'private',
-        icon: '👨‍💼'
-      },
-      {
-        id: 'vpn',
-        type: 'component',
-        label: 'VPN Gateway',
-        description: 'Secure VPN connection to customer network',
-        position: { x: 100, y: 100 },
-        visible: true,
-        zone: 'public',
-        icon: '🔐'
-      },
-      {
-        id: 'firewall',
-        type: 'component',
-        label: 'Firewall',
-        description: 'Customer-managed firewall',
-        position: { x: 100, y: 250 },
-        visible: true,
-        zone: 'public',
-        icon: '🛡️'
-      },
-      {
-        id: 'loadbalancer',
-        type: 'component',
-        label: 'Load Balancer',
-        description: 'Customer-managed load balancer (HAProxy/NGINX)',
-        position: { x: 250, y: 175 },
-        visible: true,
-        zone: 'public',
-        icon: '⚖️'
-      },
-      {
-        id: 'apigateway',
-        type: 'component',
-        label: 'API Gateway',
-        description: 'On-premises API Gateway',
-        position: { x: 600, y: 150 },
-        visible: true,
-        zone: 'private',
-        icon: '🚪'
-      },
-      {
-        id: 'appserver1',
-        type: 'component',
-        label: 'App Server 1',
-        description: 'Customer-hosted application server',
-        position: { x: 600, y: 300 },
-        visible: true,
-        zone: 'private',
-        icon: '🖥️'
-      },
-      {
-        id: 'appserver2',
-        type: 'component',
-        label: 'App Server 2',
-        description: 'Customer-hosted application server',
-        position: { x: 600, y: 300 },
-        visible: true,
-        zone: 'private',
-        icon: '🖥️'
-      },
-      {
-        id: 'appserver3',
-        type: 'component',
-        label: 'App Server 3',
-        description: 'Customer-hosted application server',
-        position: { x: 600, y: 400 },
-        visible: true,
-        zone: 'private',
-        icon: '🖥️'
-      },
-      {
-        id: 'cache',
-        type: 'component',
-        label: 'Redis Cluster',
-        description: 'Self-managed Redis cluster',
-        position: { x: 750, y: 150 },
-        visible: true,
-        zone: 'private',
-        icon: '💾'
-      },
-      {
-        id: 'database-primary',
-        type: 'component',
-        label: 'Database (Primary)',
-        description: 'Customer-managed database server',
-        position: { x: 750, y: 300 },
-        visible: true,
-        zone: 'private',
-        icon: '🗄️'
-      },
-      {
-        id: 'database-replica',
-        type: 'component',
-        label: 'Database (Replica)',
-        description: 'Customer-managed read replica',
-        position: { x: 850, y: 300 },
-        visible: true,
-        zone: 'private',
-        icon: '🗄️'
-      },
-      {
-        id: 'database-backup',
-        type: 'component',
-        label: 'Backup DB',
-        description: 'Customer-managed backup database',
-        position: { x: 800, y: 400 },
-        visible: true,
-        zone: 'private',
-        icon: '💿'
-      },
-      {
-        id: 'messagequeue',
-        type: 'component',
-        label: 'Message Queue',
-        description: 'Self-hosted message broker',
-        position: { x: 600, y: 500 },
-        visible: true,
-        zone: 'private',
-        icon: '📬'
-      },
-      {
-        id: 'storage',
-        type: 'component',
-        label: 'Local Storage',
-        description: 'On-premises file storage (NAS/SAN)',
-        position: { x: 650, y: 500 },
-        visible: true,
-        zone: 'private',
-        icon: '📦'
-      },
-      {
-        id: 'monitoring',
-        type: 'component',
-        label: 'Monitoring Stack',
-        description: 'Customer-managed monitoring (Prometheus/Grafana)',
-        position: { x: 750, y: 500 },
-        visible: true,
-        zone: 'private',
-        icon: '📊'
-      },
-      {
-        id: 'backup-system',
-        type: 'component',
-        label: 'Backup System',
-        description: 'Customer backup infrastructure',
-        position: { x: 900, y: 500 },
-        visible: true,
-        zone: 'private',
-        icon: '💾'
-      },
-      {
-        id: 'llm-public',
-        type: 'component',
-        label: 'External LLM API',
-        description: 'Public LLM API - OpenAI, Anthropic (optional for air-gapped)',
-        position: { x: 250, y: 350 },
-        visible: true,
-        zone: 'public',
-        icon: '🤖'
-      },
-      {
-        id: 'llm-private',
-        type: 'component',
-        label: 'On-Premises LLM',
-        description: 'Fully on-premises LLM deployment - Llama, Mistral, etc.',
-        position: { x: 650, y: 200 },
-        visible: false,
-        zone: 'private',
-        icon: '🧠'
+        containmentRules: {
+          description: 'Customer-hosted Kubernetes cluster running Airia Platform',
+          mustContain: [
+            'airia-platform-customer'
+          ],
+          mustExclude: [
+            'user-private',
+            'blob-storage',
+            'airia-cloud-connector',
+            'weaviate-private',
+            'llm-private',
+            'customer-database',
+            'private-api',
+            'siem-private'
+          ],
+          rule: 'Components with parentBoundary="kubernetes-cluster" must be containerized services running in K8s.'
+        }
       }
     ],
-    connections: [
-      { id: 'e0', source: 'user-public', target: 'vpn', animated: false },
-      { id: 'e1', source: 'vpn', target: 'firewall', animated: false },
-      { id: 'e2', source: 'firewall', target: 'loadbalancer', animated: false },
-      { id: 'e2b', source: 'user-private', target: 'apigateway', animated: false },
-      { id: 'e3', source: 'loadbalancer', target: 'apigateway', animated: false },
-      { id: 'e4', source: 'apigateway', target: 'appserver1', animated: false },
-      { id: 'e5', source: 'apigateway', target: 'appserver2', animated: false },
-      { id: 'e6', source: 'apigateway', target: 'appserver3', animated: false },
-      { id: 'e7', source: 'appserver1', target: 'cache', animated: false },
-      { id: 'e8', source: 'appserver2', target: 'cache', animated: false },
-      { id: 'e9', source: 'appserver3', target: 'cache', animated: false },
-      { id: 'e10', source: 'appserver1', target: 'database-primary', animated: false },
-      { id: 'e11', source: 'appserver2', target: 'database-primary', animated: false },
-      { id: 'e12', source: 'appserver3', target: 'database-primary', animated: false },
-      { id: 'e13', source: 'database-primary', target: 'database-replica', animated: false, label: 'replication' },
-      { id: 'e14', source: 'database-primary', target: 'database-backup', animated: false, label: 'backup' },
-      { id: 'e15', source: 'appserver1', target: 'messagequeue', animated: false },
-      { id: 'e16', source: 'appserver2', target: 'messagequeue', animated: false },
-      { id: 'e17', source: 'appserver3', target: 'messagequeue', animated: false },
-      { id: 'e18', source: 'appserver1', target: 'storage', animated: false },
-      { id: 'e19', source: 'appserver2', target: 'storage', animated: false },
-      { id: 'e20', source: 'appserver3', target: 'storage', animated: false },
-      { id: 'e21', source: 'database-primary', target: 'backup-system', animated: false },
-      { id: 'e22', source: 'storage', target: 'backup-system', animated: false },
-      { id: 'e23', source: 'appserver1', target: 'llm-public', animated: false },
-      { id: 'e24', source: 'appserver2', target: 'llm-public', animated: false },
-      { id: 'e25', source: 'appserver3', target: 'llm-public', animated: false },
-      { id: 'e26', source: 'appserver1', target: 'llm-private', animated: false },
-      { id: 'e27', source: 'appserver2', target: 'llm-private', animated: false },
-      { id: 'e28', source: 'appserver3', target: 'llm-private', animated: false }
-    ],
-    zoneLabels: {
-      left: '🌐 Public Network',
-      right: '🏢 Customer Network'
-    }
+    columnHeaders: []
   }
+
 };
 
 export const presetList = [
