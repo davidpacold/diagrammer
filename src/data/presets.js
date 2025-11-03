@@ -79,6 +79,15 @@ export const presets = {
             position: { x: 50, y: 480 },
             visible: false,
             icon: '🔗'
+          },
+          {
+            id: 'pinecone',
+            type: 'component',
+            label: 'Pinecone',
+            description: 'Vector database for AI embeddings and semantic search',
+            position: { x: 200, y: 100 },
+            visible: false,
+            icon: '🌲'
           }
         ]
       },
@@ -163,6 +172,12 @@ export const presets = {
       { id: 'e3-eu', source: 'airia-platform-eu', target: 'public-app-integrations', animated: false },
       { id: 'e3-apac', source: 'airia-platform-apac', target: 'public-app-integrations', animated: false },
       { id: 'e3-mena', source: 'airia-platform-mena', target: 'public-app-integrations', animated: false },
+
+      // Regional platforms to Pinecone
+      { id: 'e4-na', source: 'airia-platform-na', target: 'pinecone', animated: false },
+      { id: 'e4-eu', source: 'airia-platform-eu', target: 'pinecone', animated: false },
+      { id: 'e4-apac', source: 'airia-platform-apac', target: 'pinecone', animated: false },
+      { id: 'e4-mena', source: 'airia-platform-mena', target: 'pinecone', animated: false },
     ]
   },
 
