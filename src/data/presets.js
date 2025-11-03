@@ -36,12 +36,32 @@ export const presets = {
         icon: '🌐'
       },
       {
+        id: 'llm-public',
+        type: 'component',
+        label: 'External LLM',
+        description: 'External LLM providers - OpenAI, Anthropic, etc.',
+        position: { x: 100, y: 350 },
+        visible: true,
+        zone: 'public',
+        icon: '🤖'
+      },
+      {
+        id: 'airia-platform',
+        type: 'component',
+        label: 'Airia Platform',
+        description: 'Airia AI platform orchestration layer',
+        position: { x: 250, y: 200 },
+        visible: true,
+        zone: 'public',
+        icon: '✨'
+      },
+      {
         id: 'loadbalancer',
         type: 'component',
         label: 'Shared Load Balancer',
         description: 'Single load balancer serving all tenants',
         position: { x: 100, y: 250 },
-        visible: true,
+        visible: false,
         zone: 'public',
         icon: '⚖️'
       },
@@ -51,7 +71,7 @@ export const presets = {
         label: 'API Gateway',
         description: 'Shared API Gateway with tenant routing',
         position: { x: 400, y: 175 },
-        visible: true,
+        visible: false,
         zone: 'private',
         icon: '🚪'
       },
@@ -61,7 +81,7 @@ export const presets = {
         label: 'App Server Pool',
         description: 'Shared application servers handling all tenant requests',
         position: { x: 550, y: 250 },
-        visible: true,
+        visible: false,
         zone: 'private',
         icon: '🖥️'
       },
@@ -71,7 +91,7 @@ export const presets = {
         label: 'Shared Redis',
         description: 'Multi-tenant cache with namespace isolation',
         position: { x: 700, y: 150 },
-        visible: true,
+        visible: false,
         zone: 'private',
         icon: '💾'
       },
@@ -81,7 +101,7 @@ export const presets = {
         label: 'Shared Database',
         description: 'Multi-tenant database with row-level security',
         position: { x: 700, y: 300 },
-        visible: true,
+        visible: false,
         zone: 'private',
         icon: '🗄️'
       },
@@ -91,7 +111,7 @@ export const presets = {
         label: 'Shared Queue',
         description: 'Multi-tenant message queue',
         position: { x: 700, y: 450 },
-        visible: true,
+        visible: false,
         zone: 'private',
         icon: '📬'
       },
@@ -101,19 +121,9 @@ export const presets = {
         label: 'Shared Storage',
         description: 'S3/R2 with bucket-level tenant isolation',
         position: { x: 550, y: 450 },
-        visible: true,
+        visible: false,
         zone: 'private',
         icon: '📦'
-      },
-      {
-        id: 'llm-public',
-        type: 'component',
-        label: 'External LLM API',
-        description: 'Public LLM API - OpenAI, Anthropic, etc.',
-        position: { x: 100, y: 400 },
-        visible: true,
-        zone: 'public',
-        icon: '🤖'
       },
       {
         id: 'llm-private',
@@ -121,14 +131,16 @@ export const presets = {
         label: 'Private LLM',
         description: 'Self-hosted LLM service for sensitive data',
         position: { x: 550, y: 350 },
-        visible: true,
+        visible: false,
         zone: 'private',
         icon: '🧠'
       }
     ],
     connections: [
       { id: 'e0', source: 'user-public', target: 'cdn', animated: false },
-      { id: 'e1', source: 'cdn', target: 'loadbalancer', animated: false },
+      { id: 'e0b', source: 'llm-public', target: 'airia-platform', animated: false },
+      { id: 'e1', source: 'cdn', target: 'airia-platform', animated: false },
+      { id: 'e1b', source: 'cdn', target: 'loadbalancer', animated: false },
       { id: 'e2', source: 'loadbalancer', target: 'apigateway', animated: false },
       { id: 'e2b', source: 'user-private', target: 'apigateway', animated: false },
       { id: 'e3', source: 'apigateway', target: 'appserver', animated: false },
