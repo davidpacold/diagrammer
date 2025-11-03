@@ -31,3 +31,21 @@ npm run dev
 npm run build
 npx wrangler pages deploy dist
 ```
+
+## 📚 Maintenance Documentation for Claude Code
+
+**For modifying diagram components (adding/removing/editing services):**
+
+1. **Quick Reference**: See `.claude/QUICK_EDIT.md` - Fast templates and commands
+2. **Full Guide**: See `.claude/MAINTENANCE.md` - Comprehensive instructions
+3. **Examples**: See `.claude/EXAMPLES.md` - 10+ complete walkthroughs
+
+**TL;DR**: Edit `src/data/components.js` only. That file contains all component definitions and connections.
+
+**Common Tasks**:
+- Add component → Copy template from QUICK_EDIT.md
+- Remove component → Delete component + all its connections
+- Change position → Update `position: { x, y }`
+- Change zone → Update `zone: 'public'` or `'private'`
+
+Always test with `npm run dev` before committing!
