@@ -15,7 +15,8 @@ const nodeTypes = {
 };
 
 // Canvas coordinate where the zone boundary is (between public and private)
-const ZONE_BOUNDARY_X = 425;
+// Shifted right to give more space to public zone (more components there)
+const ZONE_BOUNDARY_X = 550;
 
 const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange }) => {
   return (
@@ -27,8 +28,7 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{ padding: 0.2, maxZoom: 0.75, minZoom: 0.5 }}
+        defaultViewport={{ x: 150, y: 50, zoom: 0.7 }}
         className="bg-white"
         defaultEdgeOptions={{
           type: 'smoothstep',

@@ -6,7 +6,7 @@ export const presets = {
     description: 'Multi-tenant shared infrastructure - Cost-optimized for multiple customers',
     zones: {
       public: {
-        xRange: [0, 400],
+        xRange: [0, 525],
         components: [
           {
             id: 'user-public',
@@ -101,14 +101,14 @@ export const presets = {
         ]
       },
       private: {
-        xRange: [500, 800],
+        xRange: [575, 900],
         components: [
           {
             id: 'airia-cloud-connector',
             type: 'component',
             label: 'Airia Cloud Connector',
             description: 'Connector for customer on-premises systems to Airia Cloud',
-            position: { x: 520, y: 200 },
+            position: { x: 600, y: 200 },
             visible: false,
             icon: '🔌'
           },
@@ -117,7 +117,7 @@ export const presets = {
             type: 'component',
             label: 'Internal Users',
             description: 'Internal admins and support staff',
-            position: { x: 520, y: 500 },
+            position: { x: 600, y: 500 },
             visible: true,
             icon: '👨‍💼'
           },
@@ -126,7 +126,7 @@ export const presets = {
             type: 'component',
             label: 'Private LLM',
             description: 'Self-hosted LLM service for sensitive data',
-            position: { x: 680, y: 240 },
+            position: { x: 750, y: 240 },
             visible: false,
             icon: '🧠'
           },
@@ -135,7 +135,7 @@ export const presets = {
             type: 'component',
             label: 'Database',
             description: 'Customer on-premises database',
-            position: { x: 680, y: 360 },
+            position: { x: 750, y: 360 },
             visible: false,
             icon: '🗄️'
           },
@@ -144,7 +144,7 @@ export const presets = {
             type: 'component',
             label: 'Private API',
             description: 'Customer private API endpoints',
-            position: { x: 680, y: 480 },
+            position: { x: 750, y: 480 },
             visible: false,
             icon: '🔐'
           },
@@ -153,7 +153,7 @@ export const presets = {
             type: 'component',
             label: 'Weaviate (Private)',
             description: 'Self-hosted vector database for on-premises AI applications',
-            position: { x: 680, y: 100 },
+            position: { x: 750, y: 100 },
             visible: false,
             icon: '🔷'
           }
