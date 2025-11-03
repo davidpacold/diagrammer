@@ -135,7 +135,7 @@ export const presets = {
     },
     connections: [
       { id: 'e0', source: 'user-public', target: 'cdn', animated: false },
-      { id: 'e0c', source: 'cdn', target: 'user-private', animated: false },
+      { id: 'e0c', source: 'user-private', target: 'cdn', animated: false },
       { id: 'e0d', source: 'cdn', target: 'airia-cloud-connector', animated: false },
       { id: 'e0e', source: 'airia-cloud-connector', target: 'llm-private', animated: false },
       { id: 'e0f', source: 'airia-cloud-connector', target: 'customer-database', animated: false },
