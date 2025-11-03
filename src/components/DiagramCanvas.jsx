@@ -6,7 +6,11 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   Panel,
+  useReactFlow,
+  getRectOfNodes,
+  getTransformForBounds,
 } from 'reactflow';
+import { toPng } from 'html-to-image';
 import 'reactflow/dist/style.css';
 import ComponentNode from './ComponentNode';
 
@@ -19,6 +23,36 @@ const nodeTypes = {
 const ZONE_BOUNDARY_X = 550;
 
 const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange }) => {
+  const { getNodes } = useReactFlow();
+
+  const downloadImage = useCallback(() => {
+    const nodesBounds = getRectOfNodes(getNodes());
+    const imageWidth = nodesBounds.width * 2;
+    const imageHeight = nodesBounds.height * 2;
+
+    const viewport = document.querySelector('.react-flow__viewport');
+
+    if (viewport) {
+      toPng(viewport, {
+        backgroundColor: '#ffffff',
+        width: imageWidth,
+        height: imageHeight,
+        style: {
+          width: `${imageWidth}px`,
+          height: `${imageHeight}px`,
+          transform: `translate(${-nodesBounds.x * 2}px, ${-nodesBounds.y * 2}px) scale(2)`,
+        },
+      }).then((dataUrl) => {
+        const link = document.createElement('a');
+        link.download = `architecture-diagram-${new Date().toISOString().split('T')[0]}.png`;
+        link.href = dataUrl;
+        link.click();
+      }).catch((error) => {
+        console.error('Error exporting image:', error);
+      });
+    }
+  }, [getNodes]);
+
   return (
     <div className="flex-1 h-full relative">
       {/* React Flow Canvas */}
@@ -63,6 +97,19 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange }) => {
           <span className="text-sm font-semibold text-gray-700 uppercase">
             🔒 Private Network
           </span>
+        </Panel>
+
+        {/* Export button */}
+        <Panel position="top-center" className="pointer-events-auto">
+          <button
+            onClick={downloadImage}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-md transition-colors flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Export PNG
+          </button>
         </Panel>
 
         <Controls />
