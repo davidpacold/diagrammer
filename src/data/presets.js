@@ -88,6 +88,15 @@ export const presets = {
             position: { x: 200, y: 100 },
             visible: false,
             icon: '🌲'
+          },
+          {
+            id: 'weaviate-public',
+            type: 'component',
+            label: 'Weaviate',
+            description: 'Cloud-hosted vector database for AI-native applications',
+            position: { x: 200, y: 480 },
+            visible: false,
+            icon: '🔷'
           }
         ]
       },
@@ -138,6 +147,15 @@ export const presets = {
             position: { x: 680, y: 480 },
             visible: false,
             icon: '🔐'
+          },
+          {
+            id: 'weaviate-private',
+            type: 'component',
+            label: 'Weaviate (Private)',
+            description: 'Self-hosted vector database for on-premises AI applications',
+            position: { x: 680, y: 100 },
+            visible: false,
+            icon: '🔷'
           }
         ]
       }
@@ -178,6 +196,18 @@ export const presets = {
       { id: 'e4-eu', source: 'airia-platform-eu', target: 'pinecone', animated: false },
       { id: 'e4-apac', source: 'airia-platform-apac', target: 'pinecone', animated: false },
       { id: 'e4-mena', source: 'airia-platform-mena', target: 'pinecone', animated: false },
+
+      // Regional platforms to Weaviate (Public)
+      { id: 'e5-na', source: 'airia-platform-na', target: 'weaviate-public', animated: false },
+      { id: 'e5-eu', source: 'airia-platform-eu', target: 'weaviate-public', animated: false },
+      { id: 'e5-apac', source: 'airia-platform-apac', target: 'weaviate-public', animated: false },
+      { id: 'e5-mena', source: 'airia-platform-mena', target: 'weaviate-public', animated: false },
+
+      // Regional platforms to Weaviate (Private)
+      { id: 'e6-na', source: 'airia-platform-na', target: 'weaviate-private', animated: false },
+      { id: 'e6-eu', source: 'airia-platform-eu', target: 'weaviate-private', animated: false },
+      { id: 'e6-apac', source: 'airia-platform-apac', target: 'weaviate-private', animated: false },
+      { id: 'e6-mena', source: 'airia-platform-mena', target: 'weaviate-private', animated: false },
     ]
   },
 
