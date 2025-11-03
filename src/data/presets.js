@@ -66,76 +66,6 @@ export const presets = {
         icon: '✨'
       },
       {
-        id: 'loadbalancer',
-        type: 'component',
-        label: 'Shared Load Balancer',
-        description: 'Single load balancer serving all tenants',
-        position: { x: 100, y: 250 },
-        visible: false,
-        zone: 'public',
-        icon: '⚖️'
-      },
-      {
-        id: 'apigateway',
-        type: 'component',
-        label: 'API Gateway',
-        description: 'Shared API Gateway with tenant routing',
-        position: { x: 400, y: 175 },
-        visible: false,
-        zone: 'private',
-        icon: '🚪'
-      },
-      {
-        id: 'appserver',
-        type: 'component',
-        label: 'App Server Pool',
-        description: 'Shared application servers handling all tenant requests',
-        position: { x: 550, y: 250 },
-        visible: false,
-        zone: 'private',
-        icon: '🖥️'
-      },
-      {
-        id: 'cache',
-        type: 'component',
-        label: 'Shared Redis',
-        description: 'Multi-tenant cache with namespace isolation',
-        position: { x: 700, y: 150 },
-        visible: false,
-        zone: 'private',
-        icon: '💾'
-      },
-      {
-        id: 'database-primary',
-        type: 'component',
-        label: 'Shared Database',
-        description: 'Multi-tenant database with row-level security',
-        position: { x: 700, y: 300 },
-        visible: false,
-        zone: 'private',
-        icon: '🗄️'
-      },
-      {
-        id: 'messagequeue',
-        type: 'component',
-        label: 'Shared Queue',
-        description: 'Multi-tenant message queue',
-        position: { x: 700, y: 450 },
-        visible: false,
-        zone: 'private',
-        icon: '📬'
-      },
-      {
-        id: 'storage',
-        type: 'component',
-        label: 'Shared Storage',
-        description: 'S3/R2 with bucket-level tenant isolation',
-        position: { x: 550, y: 450 },
-        visible: false,
-        zone: 'private',
-        icon: '📦'
-      },
-      {
         id: 'llm-private',
         type: 'component',
         label: 'Private LLM',
@@ -175,15 +105,6 @@ export const presets = {
       { id: 'e0f', source: 'airia-cloud-connector', target: 'customer-database', animated: false },
       { id: 'e0g', source: 'airia-cloud-connector', target: 'private-api', animated: false },
       { id: 'e1', source: 'cdn', target: 'airia-platform', animated: false },
-      { id: 'e1b', source: 'cdn', target: 'loadbalancer', animated: false },
-      { id: 'e2', source: 'loadbalancer', target: 'apigateway', animated: false },
-      { id: 'e3', source: 'apigateway', target: 'appserver', animated: false },
-      { id: 'e4', source: 'appserver', target: 'cache', animated: false },
-      { id: 'e5', source: 'appserver', target: 'database-primary', animated: false },
-      { id: 'e6', source: 'appserver', target: 'messagequeue', animated: false },
-      { id: 'e7', source: 'appserver', target: 'storage', animated: false },
-      { id: 'e8', source: 'appserver', target: 'llm-public', animated: false },
-      { id: 'e9', source: 'appserver', target: 'llm-private', animated: false }
     ]
   },
 
