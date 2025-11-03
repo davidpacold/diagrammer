@@ -1,9 +1,12 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { ReactFlowProvider } from 'reactflow';
 import DiagramCanvas from './components/DiagramCanvas';
 import ToggleSidebar from './components/ToggleSidebar';
 import { initialComponents, initialConnections } from './data/components';
 import { presets } from './data/presets';
+import { resolveOverlaps, snapPositionToGrid, arrangeInGrid, autoArrangeInBoundary, autoFixOverlaps } from './utils/layoutUtils';
+import { validateBoundaryContainment, logValidationErrors } from './utils/boundaryValidation';
+import { logComponentPositions } from './utils/positionDebugger';
 
 // Helper function to flatten zone-based components into a single array
 const flattenComponents = (preset) => {
@@ -33,6 +36,7 @@ function App() {
   const [boundaryBoxes, setBoundaryBoxes] = useState(presets['shared-saas'].boundaryBoxes || []);
   const [columnHeaders, setColumnHeaders] = useState(presets['shared-saas'].columnHeaders || []);
   const [zoneLabels, setZoneLabels] = useState(presets['shared-saas'].zoneLabels || { left: '🌐 Internet / Public', right: '🔒 Private Network' });
+  const [zoneDefinitions, setZoneDefinitions] = useState(presets['shared-saas'].zoneDefinitions || null);
 
   // Convert components to React Flow nodes
   const nodes = useMemo(() => {
@@ -104,66 +108,120 @@ function App() {
           description: c.description,
           icon: c.icon,
           zone: c.zone,
+          parentBoundary: c.parentBoundary,
+          position: c.position,
           isSelected: selectedNodeId === c.id,
           isConnected: connectedNodes.has(c.id),
           onNodeClick: setSelectedNodeId,
         },
       }));
 
-    // Add zone background nodes (public and private zones)
+    // Add zone background nodes from zoneDefinitions or use defaults
     const ZONE_BOUNDARY_X = 550;
-    const zoneBackgroundNodes = [
-      {
-        id: 'zone-public',
-        type: 'zoneBackground',
-        position: { x: -5000, y: -5000 },
-        data: {
-          width: 5000 + ZONE_BOUNDARY_X, // From -5000 to exactly 550
-          height: 10000,
-          color: '#dbeafe',
-          opacity: 0.3,
+    const zoneBackgroundNodes = zoneDefinitions
+      ? Object.entries(zoneDefinitions).map(([zoneName, zoneDef]) => ({
+          id: `zone-${zoneName}`,
+          type: 'zoneBackground',
+          position: { x: zoneDef.x, y: zoneDef.y },
+          data: {
+            width: zoneDef.width,
+            height: zoneDef.height,
+            color: zoneDef.backgroundColor,
+            opacity: zoneDef.opacity,
+            showBorder: zoneDef.showBorder,
+            borderColor: zoneDef.borderColor,
+          },
+          draggable: false,
+          selectable: false,
+          zIndex: -10,
+        }))
+      : [
+        // Fallback to hardcoded zones if no zoneDefinitions
+        {
+          id: 'zone-public',
+          type: 'zoneBackground',
+          position: { x: -5000, y: -5000 },
+          data: {
+            width: 5000 + ZONE_BOUNDARY_X,
+            height: 10000,
+            color: '#dbeafe',
+            opacity: 0.3,
+          },
+          draggable: false,
+          selectable: false,
+          zIndex: -10,
         },
-        draggable: false,
-        selectable: false,
-        zIndex: -10,
-      },
-      {
-        id: 'zone-private',
-        type: 'zoneBackground',
-        position: { x: ZONE_BOUNDARY_X, y: -5000 },
-        data: {
-          width: 5000,
-          height: 10000,
-          color: '#f3f4f6',
-          opacity: 0.3,
-          showBorder: true,
-          borderColor: '#9ca3af',
+        {
+          id: 'zone-private',
+          type: 'zoneBackground',
+          position: { x: ZONE_BOUNDARY_X, y: -5000 },
+          data: {
+            width: 5000,
+            height: 10000,
+            color: '#f3f4f6',
+            opacity: 0.3,
+            showBorder: true,
+            borderColor: '#9ca3af',
+          },
+          draggable: false,
+          selectable: false,
+          zIndex: -10,
         },
-        draggable: false,
-        selectable: false,
-        zIndex: -10,
-      },
-    ];
+      ];
 
-    // Add boundary box nodes
-    const boundaryBoxNodes = boundaryBoxes.map((box) => ({
-      id: box.id || `boundary-${box.label}`,
-      type: 'boundaryBox',
-      position: { x: box.x, y: box.y },
-      data: {
-        label: box.label,
-        width: box.width,
-        height: box.height,
-        color: box.color,
-      },
-      draggable: true,
-      selectable: true,
-      zIndex: -1,
-      style: {
-        width: box.width,
-        height: box.height,
-      },
-    }));
+    // Add boundary box nodes with dynamic sizing based on visible children
+    const boundaryBoxNodes = boundaryBoxes.map((box) => {
+      // Find all visible children of this boundary
+      const childComponents = components.filter(c =>
+        c.visible && c.parentBoundary === box.id
+      );
+
+      let width = box.width;
+      let height = box.height;
+      const x = box.x; // Keep x position fixed
+      const y = box.y; // Keep y position fixed
+
+      // If there are visible children, calculate dynamic size
+      if (childComponents.length > 0) {
+        const COMPONENT_WIDTH = 180;
+        const COMPONENT_HEIGHT = 110;
+        const PADDING = box.padding || 30; // Use box padding or default to 30
+
+        // Calculate bounds from RELATIVE positions of children
+        const childPositions = childComponents.map(c => c.position);
+        const minX = Math.min(...childPositions.map(p => p.x));
+        const maxX = Math.max(...childPositions.map(p => p.x));
+        const minY = Math.min(...childPositions.map(p => p.y));
+        const maxY = Math.max(...childPositions.map(p => p.y));
+
+        // Calculate required width and height to fit all children with padding
+        // Assumes children should start at relative position (PADDING, PADDING)
+        const rightEdge = maxX + COMPONENT_WIDTH;
+        const bottomEdge = maxY + COMPONENT_HEIGHT;
+
+        width = Math.max(rightEdge + PADDING, width);
+        height = Math.max(bottomEdge + PADDING, height);
+      }
+
+      return {
+        id: box.id || `boundary-${box.label}`,
+        type: 'boundaryBox',
+        position: { x, y },
+        data: {
+          label: box.label,
+          width,
+          height,
+          color: box.color,
+        },
+        draggable: true,
+        selectable: true,
+        zIndex: -1,
+        style: {
+          width,
+          height,
+        },
+      };
+    });
 
     // Update component nodes to set parent relationships
     const componentNodesWithParents = componentNodes.map(node => {
@@ -179,7 +237,7 @@ function App() {
     });
 
     return [...zoneBackgroundNodes, ...boundaryBoxNodes, ...componentNodesWithParents];
-  }, [components, selectedNodeId, boundaryBoxes]);
+  }, [components, selectedNodeId, boundaryBoxes, zoneDefinitions]);
 
   // Filter edges to only show those between visible nodes and apply highlighting
   const edges = useMemo(() => {
@@ -224,14 +282,19 @@ function App() {
       });
   }, [components, connections, selectedNodeId]);
 
-  // Handle node position changes (drag)
+  // Handle node position changes (drag) with snap-to-grid
   const onNodesChange = useCallback((changes) => {
     changes.forEach(change => {
       if (change.type === 'position' && change.position) {
+        // Snap to grid when drag is complete (dragging === false)
+        const position = change.dragging === false
+          ? snapPositionToGrid(change.position)
+          : change.position;
+
         setComponents(prev =>
           prev.map(c =>
             c.id === change.id
-              ? { ...c, position: change.position }
+              ? { ...c, position }
               : c
           )
         );
@@ -264,8 +327,50 @@ function App() {
       setBoundaryBoxes(preset.boundaryBoxes || []);
       setColumnHeaders(preset.columnHeaders || []);
       setZoneLabels(preset.zoneLabels || { left: '🌐 Internet / Public', right: '🔒 Private Network' });
+      setZoneDefinitions(preset.zoneDefinitions || null);
     }
   }, []);
+
+  // Grid-based auto-arrange (Visio-style)
+  const handleAutoArrange = useCallback(() => {
+    setComponents(prev => {
+      // Group components by parent boundary
+      const boundaryGroups = {};
+      const ungroupedComponents = [];
+
+      prev.forEach(c => {
+        if (c.parentBoundary) {
+          if (!boundaryGroups[c.parentBoundary]) {
+            boundaryGroups[c.parentBoundary] = [];
+          }
+          boundaryGroups[c.parentBoundary].push(c);
+        } else {
+          ungroupedComponents.push(c);
+        }
+      });
+
+      // Arrange each boundary group in a grid
+      let result = [...prev];
+      Object.keys(boundaryGroups).forEach(boundaryId => {
+        result = autoArrangeInBoundary(result, boundaryId, 40, 40, 2);
+      });
+
+      return result;
+    });
+  }, []);
+
+  // Validate boundary containment rules whenever preset changes
+  useEffect(() => {
+    const validationResult = validateBoundaryContainment(components, boundaryBoxes);
+    if (process.env.NODE_ENV === 'development') {
+      console.group(`🔍 Boundary Validation - ${currentPreset}`);
+      logValidationErrors(validationResult);
+      console.groupEnd();
+
+      // Debug position overlaps in browser
+      logComponentPositions(components, boundaryBoxes);
+    }
+  }, [currentPreset, components, boundaryBoxes]);
 
   return (
     <ReactFlowProvider>
@@ -284,6 +389,7 @@ function App() {
           selectedNodeId={selectedNodeId}
           onPaneClick={() => setSelectedNodeId(null)}
           zoneLabels={zoneLabels}
+          onAutoArrange={handleAutoArrange}
         />
       </div>
     </ReactFlowProvider>

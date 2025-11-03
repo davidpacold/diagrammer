@@ -26,7 +26,7 @@ const nodeTypes = {
 // Shifted right to give more space to public zone (more components there)
 const ZONE_BOUNDARY_X = 550;
 
-const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNodeId, onPaneClick, zoneLabels = { left: '🌐 Internet / Public', right: '🔒 Private Network' } }) => {
+const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNodeId, onPaneClick, zoneLabels = { left: '🌐 Internet / Public', right: '🔒 Private Network' }, onAutoArrange }) => {
   const { getNodes } = useReactFlow();
 
   const downloadImage = useCallback(() => {
@@ -75,7 +75,7 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNod
           style: { stroke: '#94a3b8', strokeWidth: 2 },
         }}
       >
-        <Background color="#cbd5e1" gap={16} />
+        <Background color="#cbd5e1" gap={20} size={1} /> {/* 20px grid to match snap-to-grid */}
 
         {/* Zone labels as panels */}
         <Panel position="top-left" className="bg-blue-50 bg-opacity-70 px-4 py-2 rounded-md pointer-events-none">
@@ -91,15 +91,29 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNod
 
         {/* Export button and hint */}
         <Panel position="top-center" className="pointer-events-auto flex flex-col items-center gap-2">
-          <button
-            onClick={downloadImage}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-md transition-colors flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Export PNG
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={downloadImage}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-md transition-colors flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Export PNG
+            </button>
+            {onAutoArrange && (
+              <button
+                onClick={onAutoArrange}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-md transition-colors flex items-center gap-2"
+                title="Arrange components in a clean grid layout (Visio-style) - positions snap to 20px grid"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                </svg>
+                Grid Layout
+              </button>
+            )}
+          </div>
           {selectedNodeId && (
             <div className="bg-blue-50 border border-blue-200 text-blue-800 px-3 py-1 rounded text-xs">
               Showing connections for selected component
