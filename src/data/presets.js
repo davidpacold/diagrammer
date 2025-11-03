@@ -77,7 +77,7 @@ export const presets = {
             label: 'Public Application Integrations',
             description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
             position: { x: 50, y: 480 },
-            visible: true,
+            visible: false,
             icon: '🔗'
           }
         ]
@@ -91,7 +91,7 @@ export const presets = {
             label: 'Airia Cloud Connector',
             description: 'Connector for customer on-premises systems to Airia Cloud',
             position: { x: 520, y: 200 },
-            visible: true,
+            visible: false,
             icon: '🔌'
           },
           {
@@ -109,7 +109,7 @@ export const presets = {
             label: 'Private LLM',
             description: 'Self-hosted LLM service for sensitive data',
             position: { x: 680, y: 240 },
-            visible: true,
+            visible: false,
             icon: '🧠'
           },
           {
@@ -118,7 +118,7 @@ export const presets = {
             label: 'Database',
             description: 'Customer on-premises database',
             position: { x: 680, y: 360 },
-            visible: true,
+            visible: false,
             icon: '🗄️'
           },
           {
@@ -127,7 +127,7 @@ export const presets = {
             label: 'Private API',
             description: 'Customer private API endpoints',
             position: { x: 680, y: 480 },
-            visible: true,
+            visible: false,
             icon: '🔐'
           }
         ]
@@ -317,7 +317,7 @@ export const presets = {
         label: 'Dedicated Private LLM',
         description: 'Customer-specific self-hosted LLM instance',
         position: { x: 475, y: 375 },
-        visible: true,
+        visible: false,
         zone: 'private',
         icon: '🧠'
       }
@@ -535,7 +535,7 @@ export const presets = {
         label: 'On-Premises LLM',
         description: 'Fully on-premises LLM deployment - Llama, Mistral, etc.',
         position: { x: 650, y: 200 },
-        visible: true,
+        visible: false,
         zone: 'private',
         icon: '🧠'
       }
