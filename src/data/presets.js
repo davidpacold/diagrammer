@@ -31,7 +31,7 @@ export const presets = {
             type: 'component',
             label: 'External LLM',
             description: 'External LLM providers - OpenAI, Anthropic, etc.',
-            position: { x: 50, y: 80 },
+            position: { x: 320, y: 80 },
             visible: true,
             icon: '🤖'
           },
