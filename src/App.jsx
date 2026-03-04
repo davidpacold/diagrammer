@@ -1,18 +1,17 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ReactFlowProvider } from 'reactflow';
 import DiagramCanvas from './components/DiagramCanvas';
 import ToggleSidebar from './components/ToggleSidebar';
-import { initialComponents, initialConnections } from './data/components';
 import { presets } from './data/presets';
 import { snapPositionToGrid } from './utils/layoutUtils';
-import { getConnectedNodes } from './utils/graphUtils';
 import { validateBoundaryContainment, logValidationErrors } from './utils/boundaryValidation';
 import { logComponentPositions } from './utils/positionDebugger';
-import { ZONE_BOUNDARY_X, DEFAULT_BOUNDARY_PADDING, ZONE_COLORS, EDGE_STYLES, DEFAULT_ZONE_LABELS, COMPONENT_WIDTH, COMPONENT_HEIGHT } from './constants';
+import { useNodes } from './hooks/useNodes';
+import { useEdges } from './hooks/useEdges';
+import { DEFAULT_ZONE_LABELS } from './constants';
 
 // Helper function to flatten zone-based components into a single array
 const flattenComponents = (preset) => {
-  // Check if preset has zone-based structure
   if (preset.zones) {
     const allComponents = [];
     Object.entries(preset.zones).forEach(([zoneName, zoneData]) => {
@@ -26,12 +25,11 @@ const flattenComponents = (preset) => {
     });
     return allComponents;
   }
-  // Fall back to old structure
   return preset.components || [];
 };
 
 function App() {
-  const [currentPreset, setCurrentPreset] = useState('shared-saas'); // Default preset
+  const [currentPreset, setCurrentPreset] = useState('shared-saas');
   const [components, setComponents] = useState(flattenComponents(presets['shared-saas']));
   const [connections, setConnections] = useState(presets['shared-saas'].connections);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
@@ -40,237 +38,28 @@ function App() {
   const [zoneLabels, setZoneLabels] = useState(presets['shared-saas'].zoneLabels || DEFAULT_ZONE_LABELS);
   const [zoneDefinitions, setZoneDefinitions] = useState(presets['shared-saas'].zoneDefinitions || null);
 
-  // Convert components to React Flow nodes
-  const nodes = useMemo(() => {
-    // Helper to calculate position based on positioning metadata
-    const calculatePosition = (component) => {
-      if (!component.positioning?.relativeTo) {
-        return component.position;
-      }
-
-      // Find the boundary box it's relative to
-      const boundaryBox = boundaryBoxes.find(box => box.id === component.positioning.relativeTo);
-      if (!boundaryBox) {
-        return component.position;
-      }
-
-      const { placement, offsetX = 0, offsetY = 0 } = component.positioning;
-
-      switch (placement) {
-        case 'below':
-          return {
-            x: boundaryBox.x + offsetX,
-            y: boundaryBox.y + boundaryBox.height + offsetY
-          };
-        case 'right':
-          return {
-            x: boundaryBox.x + boundaryBox.width + offsetX,
-            y: boundaryBox.y + offsetY
-          };
-        case 'above':
-          return {
-            x: boundaryBox.x + offsetX,
-            y: boundaryBox.y - offsetY
-          };
-        case 'left':
-          return {
-            x: boundaryBox.x - offsetX,
-            y: boundaryBox.y + offsetY
-          };
-        default:
-          return component.position;
-      }
-    };
-
-    const visibleIds = new Set(components.filter(c => c.visible).map(c => c.id));
-    const connectedNodes = selectedNodeId ? getConnectedNodes(selectedNodeId, connections, visibleIds) : new Set();
-
-    const componentNodes = components
-      .filter(c => c.visible)
-      .map(c => ({
-        id: c.id,
-        type: 'component',
-        position: calculatePosition(c),
-        data: {
-          label: c.label,
-          description: c.description,
-          icon: c.icon,
-          zone: c.zone,
-          parentBoundary: c.parentBoundary,
-          position: c.position,
-          isSelected: selectedNodeId === c.id,
-          isConnected: connectedNodes.has(c.id),
-          onNodeClick: setSelectedNodeId,
-        },
-      }));
-
-    // Add zone background nodes from zoneDefinitions or use defaults
-    const zoneBackgroundNodes = zoneDefinitions
-      ? Object.entries(zoneDefinitions).map(([zoneName, zoneDef]) => ({
-          id: `zone-${zoneName}`,
-          type: 'zoneBackground',
-          position: { x: zoneDef.x, y: zoneDef.y },
-          data: {
-            width: zoneDef.width,
-            height: zoneDef.height,
-            color: zoneDef.backgroundColor,
-            opacity: zoneDef.opacity,
-            showBorder: zoneDef.showBorder,
-            borderColor: zoneDef.borderColor,
-          },
-          draggable: false,
-          selectable: false,
-          zIndex: -10,
-        }))
-      : [
-        // Fallback to hardcoded zones if no zoneDefinitions
-        {
-          id: 'zone-public',
-          type: 'zoneBackground',
-          position: { x: -5000, y: -5000 },
-          data: {
-            width: 5000 + ZONE_BOUNDARY_X,
-            height: 10000,
-            color: ZONE_COLORS.public,
-            opacity: 0.3,
-          },
-          draggable: false,
-          selectable: false,
-          zIndex: -10,
-        },
-        {
-          id: 'zone-private',
-          type: 'zoneBackground',
-          position: { x: ZONE_BOUNDARY_X, y: -5000 },
-          data: {
-            width: 5000,
-            height: 10000,
-            color: ZONE_COLORS.private,
-            opacity: 0.3,
-            showBorder: true,
-            borderColor: ZONE_COLORS.privateBorder,
-          },
-          draggable: false,
-          selectable: false,
-          zIndex: -10,
-        },
-      ];
-
-    // Add boundary box nodes with dynamic sizing based on visible children
-    const boundaryBoxNodes = boundaryBoxes.map((box) => {
-      // Find all visible children of this boundary
-      const childComponents = components.filter(c =>
-        c.visible && c.parentBoundary === box.id
-      );
-
-      let width = box.width;
-      let height = box.height;
-      const x = box.x; // Keep x position fixed
-      const y = box.y; // Keep y position fixed
-
-      // If there are visible children, calculate dynamic size
-      if (childComponents.length > 0) {
-        const PADDING = box.padding || DEFAULT_BOUNDARY_PADDING;
-
-        // Calculate bounds from RELATIVE positions of children
-        const childPositions = childComponents.map(c => c.position);
-        const minX = Math.min(...childPositions.map(p => p.x));
-        const maxX = Math.max(...childPositions.map(p => p.x));
-        const minY = Math.min(...childPositions.map(p => p.y));
-        const maxY = Math.max(...childPositions.map(p => p.y));
-
-        // Calculate required width and height to fit all children with padding
-        // Assumes children should start at relative position (PADDING, PADDING)
-        const rightEdge = maxX + COMPONENT_WIDTH;
-        const bottomEdge = maxY + COMPONENT_HEIGHT;
-
-        width = Math.max(rightEdge + PADDING, width);
-        height = Math.max(bottomEdge + PADDING, height);
-      }
-
-      return {
-        id: box.id || `boundary-${box.label}`,
-        type: 'boundaryBox',
-        position: { x, y },
-        data: {
-          label: box.label,
-          width,
-          height,
-          color: box.color,
-        },
-        draggable: true,
-        selectable: true,
-        zIndex: -1,
-        style: {
-          width,
-          height,
-        },
-      };
-    });
-
-    // Update component nodes to set parent relationships
-    const componentNodesWithParents = componentNodes.map(node => {
-      const component = components.find(c => c.id === node.id);
-      if (component?.parentBoundary) {
-        return {
-          ...node,
-          parentNode: component.parentBoundary,
-          extent: 'parent', // Constrain child to parent bounds
-        };
-      }
-      return node;
-    });
-
-    return [...zoneBackgroundNodes, ...boundaryBoxNodes, ...componentNodesWithParents];
-  }, [components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions]);
-
-  // Filter edges to only show those between visible nodes and apply highlighting
-  const edges = useMemo(() => {
-    const visibleIds = new Set(components.filter(c => c.visible).map(c => c.id));
-
-    const connectedNodes = selectedNodeId ? getConnectedNodes(selectedNodeId, connections, visibleIds) : new Set();
-
-    return connections
-      .filter(edge => visibleIds.has(edge.source) && visibleIds.has(edge.target))
-      .map(edge => {
-        // Highlight edge if both source and target are in the connected set
-        const isHighlighted = selectedNodeId &&
-          connectedNodes.has(edge.source) &&
-          connectedNodes.has(edge.target);
-
-        return {
-          ...edge,
-          style: isHighlighted ? { ...EDGE_STYLES.highlighted } : { ...EDGE_STYLES.default },
-          animated: isHighlighted,
-        };
-      });
-  }, [components, connections, selectedNodeId]);
+  const nodes = useNodes({ components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions, setSelectedNodeId });
+  const edges = useEdges({ components, connections, selectedNodeId });
 
   // Handle node position changes (drag) with snap-to-grid
   const onNodesChange = useCallback((changes) => {
     changes.forEach(change => {
       if (change.type === 'position' && change.position) {
-        // Snap to grid when drag is complete (dragging === false)
         const position = change.dragging === false
           ? snapPositionToGrid(change.position)
           : change.position;
 
         setComponents(prev =>
           prev.map(c =>
-            c.id === change.id
-              ? { ...c, position }
-              : c
+            c.id === change.id ? { ...c, position } : c
           )
         );
       }
     });
   }, []);
 
-  // Handle edge changes (if needed)
-  const onEdgesChange = useCallback((changes) => {
-    // For now, we're not handling edge changes
-    // This could be extended to support custom connections
-  }, []);
+  // Handle edge changes
+  const onEdgesChange = useCallback(() => {}, []);
 
   // Toggle component visibility
   const handleToggle = useCallback((id) => {
@@ -295,16 +84,13 @@ function App() {
     }
   }, []);
 
-
-  // Validate boundary containment rules whenever preset changes
+  // Validate boundary containment rules in development
   useEffect(() => {
     const validationResult = validateBoundaryContainment(components, boundaryBoxes);
     if (process.env.NODE_ENV === 'development') {
       console.group(`🔍 Boundary Validation - ${currentPreset}`);
       logValidationErrors(validationResult);
       console.groupEnd();
-
-      // Debug position overlaps in browser
       logComponentPositions(components, boundaryBoxes);
     }
   }, [currentPreset, components, boundaryBoxes]);
