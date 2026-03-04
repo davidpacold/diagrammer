@@ -38,3 +38,4 @@ wrangler.toml.local
 # Cache
 .cache/
 .parcel-cache/
+.worktrees/

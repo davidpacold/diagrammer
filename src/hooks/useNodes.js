@@ -142,7 +142,9 @@ export const useNodes = ({ components, connectedNodes, selectedNodeId, boundaryB
           type: 'component',
           position: calculatePosition(c, boundaryBoxes),
           data: {
-            label: c.label,
+            label: c.customLabel || c.label,
+            originalLabel: c.label,
+            componentId: c.id,
             description: c.description,
             icon: c.icon,
             zone: c.zone,

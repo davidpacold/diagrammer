@@ -34,6 +34,36 @@ export const DEFAULT_VIEWPORT = { x: 150, y: 50, zoom: 0.7 };
 export const EDGE_STYLES = {
   default: { stroke: '#94a3b8', strokeWidth: 2 },
   highlighted: { stroke: '#3b82f6', strokeWidth: 3 },
+  dashed: { stroke: '#94a3b8', strokeWidth: 2, strokeDasharray: '6 3' },
+  dotted: { stroke: '#94a3b8', strokeWidth: 2, strokeDasharray: '2 4' },
+};
+
+export const EDGE_COLORS = {
+  managed: '#4f46e5',   // Indigo for Airia-managed connections
+  external: '#94a3b8',  // Gray for external services
+  customer: '#10b981',  // Green for customer connections
+  byok: '#f59e0b',      // Amber for BYOK connections
+};
+
+// Icon background colors for card redesign
+export const ICON_BG_COLORS = {
+  users: 'bg-gray-100',
+  globe: 'bg-blue-100',
+  layers: 'bg-indigo-100',
+  key: 'bg-amber-100',
+  cpu: 'bg-pink-100',
+  database: 'bg-emerald-100',
+  shield: 'bg-amber-100',
+  link: 'bg-violet-100',
+  server: 'bg-blue-100',
+  monitor: 'bg-amber-100',
+  message: 'bg-violet-100',
+  box: 'bg-emerald-100',
+  scale: 'bg-blue-100',
+  door: 'bg-blue-100',
+  memory: 'bg-emerald-100',
+  eye: 'bg-pink-100',
+  network: 'bg-blue-100',
 };
 
 // Icon-based accent colors (left border on component cards)

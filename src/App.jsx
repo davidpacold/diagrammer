@@ -3,7 +3,7 @@ import { ReactFlowProvider } from 'reactflow';
 import DiagramCanvas from './components/DiagramCanvas';
 import ToggleSidebar from './components/ToggleSidebar';
 import { presets } from './data/presets';
-import { snapPositionToGrid, resolveOverlaps } from './utils/layoutUtils';
+import { snapPositionToGrid, resolveOverlapsColumnAware } from './utils/layoutUtils';
 import { validateBoundaryContainment, logValidationErrors } from './utils/boundaryValidation';
 import { logComponentPositions } from './utils/positionDebugger';
 import { useConnectedNodes } from './hooks/useConnectedNodes';
@@ -40,6 +40,8 @@ const buildPresetState = (presetId, preset, components) => ({
   zoneLabels: preset.zoneLabels || DEFAULT_ZONE_LABELS,
   zoneDefinitions: preset.zoneDefinitions || null,
   componentGroups: preset.componentGroups || [],
+  presentationMode: false,
+  sceneIndex: 0,
 });
 
 // Initialize state from URL or defaults
@@ -58,6 +60,13 @@ const getInitialState = () => {
     }));
   }
 
+  if (urlState?.labels && Object.keys(urlState.labels).length > 0) {
+    components = components.map(c => ({
+      ...c,
+      customLabel: urlState.labels[c.id] || undefined,
+    }));
+  }
+
   return {
     ...buildPresetState(presetId, preset, components),
     selectedNodeId: urlState?.selected || null,
@@ -67,7 +76,7 @@ const getInitialState = () => {
 // Resolve overlaps among visible components after visibility changes
 const fixOverlaps = (components) => {
   const visible = components.filter(c => c.visible);
-  const fixed = resolveOverlaps(visible, 50, true);
+  const fixed = resolveOverlapsColumnAware(visible);
   const fixedMap = new Map(fixed.map(c => [c.id, c.position]));
   return components.map(c => {
     const pos = fixedMap.get(c.id);
@@ -110,6 +119,58 @@ const reducer = (state, action) => {
           c.id === action.id ? { ...c, position: action.position } : c
         ),
       };
+    case 'RENAME_COMPONENT':
+      return {
+        ...state,
+        components: state.components.map(c =>
+          c.id === action.id ? { ...c, customLabel: action.label } : c
+        ),
+      };
+    case 'START_PRESENTATION': {
+      const preset = presets[state.currentPreset];
+      const scenes = preset.scenes;
+      if (!scenes || scenes.length === 0) return state;
+      const scene = scenes[0];
+      const visibleSet = new Set(scene.visible);
+      return {
+        ...state,
+        presentationMode: true,
+        sceneIndex: 0,
+        components: state.components.map(c => ({ ...c, visible: visibleSet.has(c.id) })),
+        selectedNodeId: scene.select || null,
+        fitViewTrigger: (state.fitViewTrigger || 0) + 1,
+      };
+    }
+    case 'NEXT_SCENE':
+    case 'PREV_SCENE': {
+      const preset = presets[state.currentPreset];
+      const scenes = preset.scenes;
+      if (!scenes) return state;
+      const newIndex = action.type === 'NEXT_SCENE'
+        ? Math.min(state.sceneIndex + 1, scenes.length - 1)
+        : Math.max(state.sceneIndex - 1, 0);
+      if (newIndex === state.sceneIndex) return state;
+      const scene = scenes[newIndex];
+      const visibleSet = new Set(scene.visible);
+      return {
+        ...state,
+        sceneIndex: newIndex,
+        components: state.components.map(c => ({ ...c, visible: visibleSet.has(c.id) })),
+        selectedNodeId: scene.select || null,
+        fitViewTrigger: (state.fitViewTrigger || 0) + 1,
+      };
+    }
+    case 'EXIT_PRESENTATION': {
+      const preset = presets[state.currentPreset];
+      return {
+        ...state,
+        presentationMode: false,
+        sceneIndex: 0,
+        components: flattenComponents(preset),
+        selectedNodeId: null,
+        fitViewTrigger: (state.fitViewTrigger || 0) + 1,
+      };
+    }
     default:
       return state;
   }
@@ -167,6 +228,26 @@ function App() {
     dispatch({ type: 'CHANGE_PRESET', presetId });
   }, []);
 
+  const handleRename = useCallback((id, label) => {
+    dispatch({ type: 'RENAME_COMPONENT', id, label });
+  }, []);
+
+  const handleStartPresentation = useCallback(() => dispatch({ type: 'START_PRESENTATION' }), []);
+  const handleNextScene = useCallback(() => dispatch({ type: 'NEXT_SCENE' }), []);
+  const handlePrevScene = useCallback(() => dispatch({ type: 'PREV_SCENE' }), []);
+  const handleExitPresentation = useCallback(() => dispatch({ type: 'EXIT_PRESENTATION' }), []);
+
+  useEffect(() => {
+    if (!state.presentationMode) return;
+    const handleKey = (e) => {
+      if (e.key === 'ArrowRight') dispatch({ type: 'NEXT_SCENE' });
+      else if (e.key === 'ArrowLeft') dispatch({ type: 'PREV_SCENE' });
+      else if (e.key === 'Escape') dispatch({ type: 'EXIT_PRESENTATION' });
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [state.presentationMode]);
+
   useEffect(() => {
     if (import.meta.env.DEV) {
       const validationResult = validateBoundaryContainment(components, boundaryBoxes);
@@ -191,6 +272,9 @@ function App() {
           onCopyLink={copyLink}
           linkCopied={copied}
           componentGroups={componentGroups}
+          onStartPresentation={handleStartPresentation}
+          presentationMode={state.presentationMode}
+          scenes={presets[currentPreset]?.scenes}
         />
         <DiagramCanvas
           nodes={nodes}
@@ -202,6 +286,13 @@ function App() {
           onPaneClick={handlePaneClick}
           zoneLabels={zoneLabels}
           fitViewTrigger={fitViewTrigger}
+          onNodeRename={handleRename}
+          presentationMode={state.presentationMode}
+          sceneIndex={state.sceneIndex}
+          scenes={presets[currentPreset]?.scenes}
+          onNextScene={handleNextScene}
+          onPrevScene={handlePrevScene}
+          onExitPresentation={handleExitPresentation}
         />
       </div>
     </ReactFlowProvider>

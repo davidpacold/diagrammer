@@ -343,18 +343,18 @@ export const dedicatedSaas = {
   },
   connections: [
     // Company Users to their dedicated CDNs
-    { id: 'e0-company-a', source: 'company-a-users', target: 'cdn-company-a', animated: false },
-    { id: 'e0-company-b', source: 'company-b-users', target: 'cdn-company-b', animated: false },
-    { id: 'e0-company-c', source: 'company-c-users', target: 'cdn-company-c', animated: false },
+    { id: 'e0-company-a', source: 'company-a-users', target: 'cdn-company-a', label: 'HTTPS', edgeColor: 'customer', animated: false },
+    { id: 'e0-company-b', source: 'company-b-users', target: 'cdn-company-b', label: 'HTTPS', edgeColor: 'customer', animated: false },
+    { id: 'e0-company-c', source: 'company-c-users', target: 'cdn-company-c', label: 'HTTPS', edgeColor: 'customer', animated: false },
     { id: 'e0c', source: 'user-private', target: 'cdn-company-a', animated: false },
     { id: 'e0e', source: 'airia-cloud-connector', target: 'llm-private', animated: false },
     { id: 'e0f', source: 'airia-cloud-connector', target: 'customer-database', animated: false },
     { id: 'e0g', source: 'airia-cloud-connector', target: 'private-api', animated: false },
 
     // CDNs to their dedicated platform instances
-    { id: 'e1-ca', source: 'cdn-company-a', target: 'airia-platform-company-a', animated: false },
-    { id: 'e1-cb', source: 'cdn-company-b', target: 'airia-platform-company-b', animated: false },
-    { id: 'e1-cc', source: 'cdn-company-c', target: 'airia-platform-company-c', animated: false },
+    { id: 'e1-ca', source: 'cdn-company-a', target: 'airia-platform-company-a', label: 'API', edgeColor: 'managed', animated: false },
+    { id: 'e1-cb', source: 'cdn-company-b', target: 'airia-platform-company-b', edgeColor: 'managed', animated: false },
+    { id: 'e1-cc', source: 'cdn-company-c', target: 'airia-platform-company-c', edgeColor: 'managed', animated: false },
 
     // Company platforms to Cloud Connector
     { id: 'e1a-ca', source: 'airia-platform-company-a', target: 'airia-cloud-connector', animated: false },
@@ -362,25 +362,25 @@ export const dedicatedSaas = {
     { id: 'e1a-cc', source: 'airia-platform-company-c', target: 'airia-cloud-connector', animated: false },
 
     // Airia Key LLM to managed LLM providers (inside boundary)
-    { id: 'e-llm-openai-managed', source: 'airia-key-llm', target: 'llm-openai-managed', animated: false },
-    { id: 'e-llm-anthropic-managed', source: 'airia-key-llm', target: 'llm-anthropic-managed', animated: false },
-    { id: 'e-llm-google-managed', source: 'airia-key-llm', target: 'llm-google-managed', animated: false },
+    { id: 'e-llm-openai-managed', source: 'airia-key-llm', target: 'llm-openai-managed', edgeColor: 'managed', animated: false },
+    { id: 'e-llm-anthropic-managed', source: 'airia-key-llm', target: 'llm-anthropic-managed', edgeColor: 'managed', animated: false },
+    { id: 'e-llm-google-managed', source: 'airia-key-llm', target: 'llm-google-managed', edgeColor: 'managed', animated: false },
 
     // Company platforms to Airia Key LLM (managed)
-    { id: 'e2a-ca', source: 'airia-platform-company-a', target: 'airia-key-llm', animated: false },
-    { id: 'e2a-cb', source: 'airia-platform-company-b', target: 'airia-key-llm', animated: false },
-    { id: 'e2a-cc', source: 'airia-platform-company-c', target: 'airia-key-llm', animated: false },
+    { id: 'e2a-ca', source: 'airia-platform-company-a', target: 'airia-key-llm', edgeColor: 'managed', animated: false },
+    { id: 'e2a-cb', source: 'airia-platform-company-b', target: 'airia-key-llm', edgeColor: 'managed', animated: false },
+    { id: 'e2a-cc', source: 'airia-platform-company-c', target: 'airia-key-llm', edgeColor: 'managed', animated: false },
 
     // Company platforms to BYOK LLM providers (outside boundary)
-    { id: 'e-byok-openai-ca', source: 'airia-platform-company-a', target: 'llm-openai-byok', animated: false },
-    { id: 'e-byok-anthropic-ca', source: 'airia-platform-company-a', target: 'llm-anthropic-byok', animated: false },
-    { id: 'e-byok-google-ca', source: 'airia-platform-company-a', target: 'llm-google-byok', animated: false },
-    { id: 'e-byok-openai-cb', source: 'airia-platform-company-b', target: 'llm-openai-byok', animated: false },
-    { id: 'e-byok-anthropic-cb', source: 'airia-platform-company-b', target: 'llm-anthropic-byok', animated: false },
-    { id: 'e-byok-google-cb', source: 'airia-platform-company-b', target: 'llm-google-byok', animated: false },
-    { id: 'e-byok-openai-cc', source: 'airia-platform-company-c', target: 'llm-openai-byok', animated: false },
-    { id: 'e-byok-anthropic-cc', source: 'airia-platform-company-c', target: 'llm-anthropic-byok', animated: false },
-    { id: 'e-byok-google-cc', source: 'airia-platform-company-c', target: 'llm-google-byok', animated: false },
+    { id: 'e-byok-openai-ca', source: 'airia-platform-company-a', target: 'llm-openai-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-anthropic-ca', source: 'airia-platform-company-a', target: 'llm-anthropic-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-google-ca', source: 'airia-platform-company-a', target: 'llm-google-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-openai-cb', source: 'airia-platform-company-b', target: 'llm-openai-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-anthropic-cb', source: 'airia-platform-company-b', target: 'llm-anthropic-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-google-cb', source: 'airia-platform-company-b', target: 'llm-google-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-openai-cc', source: 'airia-platform-company-c', target: 'llm-openai-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-anthropic-cc', source: 'airia-platform-company-c', target: 'llm-anthropic-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-google-cc', source: 'airia-platform-company-c', target: 'llm-google-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
 
     // Company platforms to public integrations
     { id: 'e3-ca', source: 'airia-platform-company-a', target: 'public-app-integrations', animated: false },
@@ -460,6 +460,26 @@ export const dedicatedSaas = {
     }
   ],
   columnHeaders: [],
+  scenes: [
+    {
+      title: 'Dedicated Resources',
+      description: 'Each company gets their own dedicated CDN and platform instance for full isolation.',
+      visible: ['company-a-users', 'cdn-company-a', 'airia-platform-company-a'],
+      select: 'airia-platform-company-a',
+    },
+    {
+      title: 'Managed LLM Layer',
+      description: 'Shared Airia Key LLM provides managed access to LLM providers across all tenants.',
+      visible: ['company-a-users', 'cdn-company-a', 'airia-platform-company-a', 'airia-key-llm', 'llm-openai-managed', 'llm-anthropic-managed', 'llm-google-managed'],
+      select: 'airia-key-llm',
+    },
+    {
+      title: 'Multi-Company View',
+      description: 'Multiple companies each get isolated infrastructure within the Airia Managed boundary.',
+      visible: ['company-a-users', 'cdn-company-a', 'airia-platform-company-a', 'company-b-users', 'cdn-company-b', 'airia-platform-company-b', 'airia-key-llm', 'llm-openai-managed', 'llm-anthropic-managed', 'llm-google-managed'],
+      select: null,
+    },
+  ],
   componentGroups: [
     {
       id: 'company-a',

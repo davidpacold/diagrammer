@@ -17,6 +17,12 @@ export const encodeState = (preset, components, selectedNodeId) => {
     params.set('selected', selectedNodeId);
   }
 
+  const renamedComponents = components.filter(c => c.customLabel);
+  if (renamedComponents.length > 0) {
+    const labels = renamedComponents.map(c => `${c.id}:${encodeURIComponent(c.customLabel)}`).join(',');
+    params.set('labels', labels);
+  }
+
   return '#' + params.toString();
 };
 
@@ -36,6 +42,11 @@ export const parseUrlState = () => {
     preset,
     hidden: params.get('hidden')?.split(',').filter(Boolean) || [],
     selected: params.get('selected') || null,
+    labels: params.get('labels')?.split(',').reduce((acc, pair) => {
+      const [id, label] = pair.split(':');
+      if (id && label) acc[id] = decodeURIComponent(label);
+      return acc;
+    }, {}) || {},
   };
 };
 

@@ -334,19 +334,19 @@ export const sharedSaas = {
   },
   connections: [
     // Multiple customers to CDN (multi-tenant)
-    { id: 'e0-customer1', source: 'customer-1', target: 'cdn', animated: false },
-    { id: 'e0-customer2', source: 'customer-2', target: 'cdn', animated: false },
-    { id: 'e0-customer3', source: 'customer-3', target: 'cdn', animated: false },
+    { id: 'e0-customer1', source: 'customer-1', target: 'cdn', label: 'HTTPS', edgeColor: 'customer', animated: false },
+    { id: 'e0-customer2', source: 'customer-2', target: 'cdn', label: 'HTTPS', edgeColor: 'customer', animated: false },
+    { id: 'e0-customer3', source: 'customer-3', target: 'cdn', label: 'HTTPS', edgeColor: 'customer', animated: false },
     { id: 'e0c', source: 'user-private', target: 'cdn', animated: false },
     { id: 'e0e', source: 'airia-cloud-connector', target: 'llm-private', animated: false },
     { id: 'e0f', source: 'airia-cloud-connector', target: 'customer-database', animated: false },
     { id: 'e0g', source: 'airia-cloud-connector', target: 'private-api', animated: false },
 
     // CDN to regional platforms
-    { id: 'e1-na', source: 'cdn', target: 'airia-platform-na', animated: false },
-    { id: 'e1-eu', source: 'cdn', target: 'airia-platform-eu', animated: false },
-    { id: 'e1-apac', source: 'cdn', target: 'airia-platform-apac', animated: false },
-    { id: 'e1-mena', source: 'cdn', target: 'airia-platform-mena', animated: false },
+    { id: 'e1-na', source: 'cdn', target: 'airia-platform-na', label: 'API', edgeColor: 'managed', animated: false },
+    { id: 'e1-eu', source: 'cdn', target: 'airia-platform-eu', edgeColor: 'managed', animated: false },
+    { id: 'e1-apac', source: 'cdn', target: 'airia-platform-apac', edgeColor: 'managed', animated: false },
+    { id: 'e1-mena', source: 'cdn', target: 'airia-platform-mena', edgeColor: 'managed', animated: false },
 
     // Regional platforms to Cloud Connector (connects to left handle)
     { id: 'e1a-na', source: 'airia-platform-na', target: 'airia-cloud-connector', animated: false },
@@ -355,29 +355,29 @@ export const sharedSaas = {
     { id: 'e1a-mena', source: 'airia-platform-mena', target: 'airia-cloud-connector', animated: false },
 
     // Airia Key LLM to managed LLM providers (inside boundary)
-    { id: 'e-llm-openai-managed', source: 'airia-key-llm', target: 'llm-openai-managed', animated: false },
-    { id: 'e-llm-anthropic-managed', source: 'airia-key-llm', target: 'llm-anthropic-managed', animated: false },
-    { id: 'e-llm-google-managed', source: 'airia-key-llm', target: 'llm-google-managed', animated: false },
+    { id: 'e-llm-openai-managed', source: 'airia-key-llm', target: 'llm-openai-managed', edgeColor: 'managed', animated: false },
+    { id: 'e-llm-anthropic-managed', source: 'airia-key-llm', target: 'llm-anthropic-managed', edgeColor: 'managed', animated: false },
+    { id: 'e-llm-google-managed', source: 'airia-key-llm', target: 'llm-google-managed', edgeColor: 'managed', animated: false },
 
     // Regional platforms to Airia Key LLM (managed)
-    { id: 'e2a-na', source: 'airia-platform-na', target: 'airia-key-llm', animated: false },
-    { id: 'e2a-eu', source: 'airia-platform-eu', target: 'airia-key-llm', animated: false },
-    { id: 'e2a-apac', source: 'airia-platform-apac', target: 'airia-key-llm', animated: false },
-    { id: 'e2a-mena', source: 'airia-platform-mena', target: 'airia-key-llm', animated: false },
+    { id: 'e2a-na', source: 'airia-platform-na', target: 'airia-key-llm', edgeColor: 'managed', animated: false },
+    { id: 'e2a-eu', source: 'airia-platform-eu', target: 'airia-key-llm', edgeColor: 'managed', animated: false },
+    { id: 'e2a-apac', source: 'airia-platform-apac', target: 'airia-key-llm', edgeColor: 'managed', animated: false },
+    { id: 'e2a-mena', source: 'airia-platform-mena', target: 'airia-key-llm', edgeColor: 'managed', animated: false },
 
     // Regional platforms to BYOK LLM providers (outside boundary)
-    { id: 'e-byok-openai-na', source: 'airia-platform-na', target: 'llm-openai-byok', animated: false },
-    { id: 'e-byok-anthropic-na', source: 'airia-platform-na', target: 'llm-anthropic-byok', animated: false },
-    { id: 'e-byok-google-na', source: 'airia-platform-na', target: 'llm-google-byok', animated: false },
-    { id: 'e-byok-openai-eu', source: 'airia-platform-eu', target: 'llm-openai-byok', animated: false },
-    { id: 'e-byok-anthropic-eu', source: 'airia-platform-eu', target: 'llm-anthropic-byok', animated: false },
-    { id: 'e-byok-google-eu', source: 'airia-platform-eu', target: 'llm-google-byok', animated: false },
-    { id: 'e-byok-openai-apac', source: 'airia-platform-apac', target: 'llm-openai-byok', animated: false },
-    { id: 'e-byok-anthropic-apac', source: 'airia-platform-apac', target: 'llm-anthropic-byok', animated: false },
-    { id: 'e-byok-google-apac', source: 'airia-platform-apac', target: 'llm-google-byok', animated: false },
-    { id: 'e-byok-openai-mena', source: 'airia-platform-mena', target: 'llm-openai-byok', animated: false },
-    { id: 'e-byok-anthropic-mena', source: 'airia-platform-mena', target: 'llm-anthropic-byok', animated: false },
-    { id: 'e-byok-google-mena', source: 'airia-platform-mena', target: 'llm-google-byok', animated: false },
+    { id: 'e-byok-openai-na', source: 'airia-platform-na', target: 'llm-openai-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-anthropic-na', source: 'airia-platform-na', target: 'llm-anthropic-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-google-na', source: 'airia-platform-na', target: 'llm-google-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-openai-eu', source: 'airia-platform-eu', target: 'llm-openai-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-anthropic-eu', source: 'airia-platform-eu', target: 'llm-anthropic-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-google-eu', source: 'airia-platform-eu', target: 'llm-google-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-openai-apac', source: 'airia-platform-apac', target: 'llm-openai-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-anthropic-apac', source: 'airia-platform-apac', target: 'llm-anthropic-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-google-apac', source: 'airia-platform-apac', target: 'llm-google-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-openai-mena', source: 'airia-platform-mena', target: 'llm-openai-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-anthropic-mena', source: 'airia-platform-mena', target: 'llm-anthropic-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
+    { id: 'e-byok-google-mena', source: 'airia-platform-mena', target: 'llm-google-byok', lineStyle: 'dashed', edgeColor: 'byok', animated: false },
 
     // Regional platforms to public integrations
     { id: 'e3-na', source: 'airia-platform-na', target: 'public-app-integrations', animated: false },
@@ -461,6 +461,32 @@ export const sharedSaas = {
       }
     }
   ],
-  columnHeaders: []
+  columnHeaders: [],
+  scenes: [
+    {
+      title: 'Customer Entry',
+      description: 'End users connect through CloudFlare WAF and CDN for security and performance.',
+      visible: ['customer-1', 'cdn'],
+      select: 'cdn',
+    },
+    {
+      title: 'Platform Orchestration',
+      description: 'The Airia Platform orchestrates AI workflows, routing requests to the right services.',
+      visible: ['customer-1', 'cdn', 'airia-platform-na'],
+      select: 'airia-platform-na',
+    },
+    {
+      title: 'Managed LLM Access',
+      description: 'Airia Key LLM provides managed access to multiple LLM providers with a single API key.',
+      visible: ['customer-1', 'cdn', 'airia-platform-na', 'airia-key-llm', 'llm-openai-managed', 'llm-anthropic-managed', 'llm-google-managed'],
+      select: 'airia-key-llm',
+    },
+    {
+      title: 'Multi-Tenant Architecture',
+      description: 'Multiple customers share the same infrastructure, with isolated data and configurations.',
+      visible: ['customer-1', 'customer-2', 'customer-3', 'cdn', 'airia-platform-na', 'airia-key-llm', 'llm-openai-managed', 'llm-anthropic-managed', 'llm-google-managed'],
+      select: null,
+    },
+  ],
 };
 
