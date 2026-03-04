@@ -148,10 +148,10 @@ export const useNodes = ({ components, connectedNodes, selectedNodeId, boundaryB
             isConnected: connectedNodes.has(c.id),
             badgeLabel: c.parentBoundary
               ? (boundaryBoxes.find(b => b.id === c.parentBoundary)?.badgeLabel || 'External')
-              : 'External',
+              : (c.zone === 'private' ? 'Internal' : 'External'),
             badgeColor: c.parentBoundary
               ? (boundaryBoxes.find(b => b.id === c.parentBoundary)?.badgeColor || 'green')
-              : 'green',
+              : (c.zone === 'private' ? 'blue' : 'green'),
           },
         };
 

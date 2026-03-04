@@ -75,8 +75,8 @@ export const sharedSaas = {
         {
           id: 'cdn',
           type: 'component',
-          label: 'CDN',
-          description: 'Shared CDN - CloudFlare for all tenants',
+          label: 'WAF and CDN',
+          description: 'Shared WAF and CDN - CloudFlare for all tenants',
           position: { x: 30, y: 30 },  // Relative to boundary (260, 20), absolute: (290, 50)
           visible: true,
           icon: 'globe',
@@ -86,7 +86,7 @@ export const sharedSaas = {
         {
           id: 'airia-platform-na',
           type: 'component',
-          label: 'Airia Platform',
+          label: 'Airia Platform (NA)',
           description: 'North America region - Airia AI platform orchestration layer',
           position: { x: 30, y: 180 },  // Relative to boundary, absolute: (290, 200)
           visible: true,
@@ -143,11 +143,31 @@ export const sharedSaas = {
         // Row 2 (y=850): SIEM, Weaviate
         // Row 3 (y=1000): Pinecone
         {
-          id: 'llm-public',
+          id: 'llm-openai',
           type: 'component',
-          label: 'External LLM',
-          description: 'External LLM providers - OpenAI, Anthropic, etc.',
+          label: 'OpenAI',
+          description: 'OpenAI API - GPT-4, GPT-4o, embeddings',
           position: { x: 20, y: 700 },
+          visible: true,
+          icon: 'cpu',
+          zone: 'public'
+        },
+        {
+          id: 'llm-anthropic',
+          type: 'component',
+          label: 'Anthropic',
+          description: 'Anthropic API - Claude models',
+          position: { x: 20, y: 850 },
+          visible: true,
+          icon: 'cpu',
+          zone: 'public'
+        },
+        {
+          id: 'llm-google',
+          type: 'component',
+          label: 'Google AI',
+          description: 'Google AI - Gemini models',
+          position: { x: 20, y: 1000 },
           visible: true,
           icon: 'cpu',
           zone: 'public'
@@ -163,11 +183,21 @@ export const sharedSaas = {
           zone: 'public'
         },
         {
+          id: 'office365',
+          type: 'component',
+          label: 'Office 365',
+          description: 'Microsoft Office 365 - Email, SharePoint, Teams integration',
+          position: { x: 20, y: 850 },
+          visible: false,
+          icon: 'monitor',
+          zone: 'public'
+        },
+        {
           id: 'siem-public',
           type: 'component',
           label: 'SIEM (Public)',
           description: 'Cloud SIEM - Splunk Cloud, Datadog Security, etc.',
-          position: { x: 20, y: 850 }, // Row 2, col 1
+          position: { x: 240, y: 850 },
           visible: false,
           icon: 'shield',
           zone: 'public'
@@ -204,7 +234,7 @@ export const sharedSaas = {
           label: 'Internal Users',
           description: 'Internal admins and support staff',
           position: { x: 600, y: 40 },  // Row 1, Col 1 - Changed from y: 500
-          visible: true,
+          visible: false,
           icon: 'users',
           zone: 'private'
         },
@@ -293,11 +323,10 @@ export const sharedSaas = {
     { id: 'e1a-apac', source: 'airia-platform-apac', target: 'airia-cloud-connector', animated: false },
     { id: 'e1a-mena', source: 'airia-platform-mena', target: 'airia-cloud-connector', animated: false },
 
-    // Regional platforms to External LLM
-    { id: 'e2-na', source: 'airia-platform-na', target: 'llm-public', animated: false },
-    { id: 'e2-eu', source: 'airia-platform-eu', target: 'llm-public', animated: false },
-    { id: 'e2-apac', source: 'airia-platform-apac', target: 'llm-public', animated: false },
-    { id: 'e2-mena', source: 'airia-platform-mena', target: 'llm-public', animated: false },
+    // Airia Key LLM to LLM providers
+    { id: 'e-llm-openai', source: 'airia-key-llm', target: 'llm-openai', animated: false },
+    { id: 'e-llm-anthropic', source: 'airia-key-llm', target: 'llm-anthropic', animated: false },
+    { id: 'e-llm-google', source: 'airia-key-llm', target: 'llm-google', animated: false },
 
     // Regional platforms to Airia Key LLM (managed)
     { id: 'e2a-na', source: 'airia-platform-na', target: 'airia-key-llm', animated: false },
@@ -305,11 +334,31 @@ export const sharedSaas = {
     { id: 'e2a-apac', source: 'airia-platform-apac', target: 'airia-key-llm', animated: false },
     { id: 'e2a-mena', source: 'airia-platform-mena', target: 'airia-key-llm', animated: false },
 
+    // Regional platforms to LLM providers (bring your own API key)
+    { id: 'e-byok-openai-na', source: 'airia-platform-na', target: 'llm-openai', animated: false },
+    { id: 'e-byok-anthropic-na', source: 'airia-platform-na', target: 'llm-anthropic', animated: false },
+    { id: 'e-byok-google-na', source: 'airia-platform-na', target: 'llm-google', animated: false },
+    { id: 'e-byok-openai-eu', source: 'airia-platform-eu', target: 'llm-openai', animated: false },
+    { id: 'e-byok-anthropic-eu', source: 'airia-platform-eu', target: 'llm-anthropic', animated: false },
+    { id: 'e-byok-google-eu', source: 'airia-platform-eu', target: 'llm-google', animated: false },
+    { id: 'e-byok-openai-apac', source: 'airia-platform-apac', target: 'llm-openai', animated: false },
+    { id: 'e-byok-anthropic-apac', source: 'airia-platform-apac', target: 'llm-anthropic', animated: false },
+    { id: 'e-byok-google-apac', source: 'airia-platform-apac', target: 'llm-google', animated: false },
+    { id: 'e-byok-openai-mena', source: 'airia-platform-mena', target: 'llm-openai', animated: false },
+    { id: 'e-byok-anthropic-mena', source: 'airia-platform-mena', target: 'llm-anthropic', animated: false },
+    { id: 'e-byok-google-mena', source: 'airia-platform-mena', target: 'llm-google', animated: false },
+
     // Regional platforms to public integrations
     { id: 'e3-na', source: 'airia-platform-na', target: 'public-app-integrations', animated: false },
     { id: 'e3-eu', source: 'airia-platform-eu', target: 'public-app-integrations', animated: false },
     { id: 'e3-apac', source: 'airia-platform-apac', target: 'public-app-integrations', animated: false },
     { id: 'e3-mena', source: 'airia-platform-mena', target: 'public-app-integrations', animated: false },
+
+    // Regional platforms to Office 365
+    { id: 'e-o365-na', source: 'airia-platform-na', target: 'office365', animated: false },
+    { id: 'e-o365-eu', source: 'airia-platform-eu', target: 'office365', animated: false },
+    { id: 'e-o365-apac', source: 'airia-platform-apac', target: 'office365', animated: false },
+    { id: 'e-o365-mena', source: 'airia-platform-mena', target: 'office365', animated: false },
 
     // Regional platforms to Pinecone
     { id: 'e4-na', source: 'airia-platform-na', target: 'pinecone', animated: false },
@@ -366,7 +415,9 @@ export const sharedSaas = {
           'customer-1',             // Customer A users (external)
           'customer-2',             // Customer B users (external)
           'customer-3',             // Customer C users (external)
-          'llm-public',             // External LLM providers
+          'llm-openai',             // OpenAI
+          'llm-anthropic',          // Anthropic
+          'llm-google',             // Google AI
           'pinecone',               // External vector DB
           'weaviate-public',        // External vector DB
           'public-app-integrations',// External SaaS integrations

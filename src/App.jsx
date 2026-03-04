@@ -3,7 +3,7 @@ import { ReactFlowProvider } from 'reactflow';
 import DiagramCanvas from './components/DiagramCanvas';
 import ToggleSidebar from './components/ToggleSidebar';
 import { presets } from './data/presets';
-import { snapPositionToGrid } from './utils/layoutUtils';
+import { snapPositionToGrid, resolveOverlaps } from './utils/layoutUtils';
 import { validateBoundaryContainment, logValidationErrors } from './utils/boundaryValidation';
 import { logComponentPositions } from './utils/positionDebugger';
 import { useConnectedNodes } from './hooks/useConnectedNodes';
@@ -64,6 +64,17 @@ const getInitialState = () => {
   };
 };
 
+// Resolve overlaps among visible components after visibility changes
+const fixOverlaps = (components) => {
+  const visible = components.filter(c => c.visible);
+  const fixed = resolveOverlaps(visible, 50, true);
+  const fixedMap = new Map(fixed.map(c => [c.id, c.position]));
+  return components.map(c => {
+    const pos = fixedMap.get(c.id);
+    return pos ? { ...c, position: { x: Math.round(pos.x), y: Math.round(pos.y) } } : c;
+  });
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'CHANGE_PRESET': {
@@ -71,15 +82,14 @@ const reducer = (state, action) => {
       if (!preset) return state;
       return buildPresetState(action.presetId, preset, flattenComponents(preset));
     }
-    case 'TOGGLE_COMPONENT':
-      return {
-        ...state,
-        components: state.components.map(c =>
-          c.id === action.id ? { ...c, visible: !c.visible } : c
-        ),
-      };
+    case 'TOGGLE_COMPONENT': {
+      const toggled = state.components.map(c =>
+        c.id === action.id ? { ...c, visible: !c.visible } : c
+      );
+      return { ...state, components: fixOverlaps(toggled) };
+    }
     case 'SHOW_ALL':
-      return { ...state, components: state.components.map(c => ({ ...c, visible: true })) };
+      return { ...state, components: fixOverlaps(state.components.map(c => ({ ...c, visible: true }))) };
     case 'HIDE_ALL':
       return { ...state, components: state.components.map(c => ({ ...c, visible: false })) };
     case 'SELECT_NODE':

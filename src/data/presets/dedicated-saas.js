@@ -53,7 +53,7 @@ export const dedicatedSaas = {
           label: 'Company B Users',
           description: 'Company B end users',
           position: { x: -250, y: 190 },  // Consistent 150px spacing, moved left to prevent overlap
-          visible: true,
+          visible: false,
           icon: 'users',
           zone: 'public'
         },
@@ -63,7 +63,7 @@ export const dedicatedSaas = {
           label: 'Company C Users',
           description: 'Company C end users',
           position: { x: -250, y: 340 },  // Consistent 150px spacing, moved left to prevent overlap
-          visible: true,
+          visible: false,
           icon: 'users',
           zone: 'public'
         },
@@ -86,7 +86,7 @@ export const dedicatedSaas = {
           label: 'CDN (Company B)',
           description: 'Dedicated CDN for Company B',
           position: { x: 40, y: 190 },  // Aligned with Company B Users at y=190
-          visible: true,
+          visible: false,
           icon: 'globe',
           zone: 'public',
           parentBoundary: 'airia-managed'
@@ -97,7 +97,7 @@ export const dedicatedSaas = {
           label: 'CDN (Company C)',
           description: 'Dedicated CDN for Company C',
           position: { x: 40, y: 340 },  // Aligned with Company C Users at y=340
-          visible: true,
+          visible: false,
           icon: 'globe',
           zone: 'public',
           parentBoundary: 'airia-managed'
@@ -119,7 +119,7 @@ export const dedicatedSaas = {
           label: 'Airia Platform (Company B)',
           description: 'Dedicated platform instance for Company B',
           position: { x: 260, y: 190 },  // Aligned with Company B Users at y=190 (40px spacing from CDN)
-          visible: true,
+          visible: false,
           icon: 'layers',
           zone: 'public',
           parentBoundary: 'airia-managed'
@@ -130,7 +130,7 @@ export const dedicatedSaas = {
           label: 'Airia Platform (Company C)',
           description: 'Dedicated platform instance for Company C',
           position: { x: 260, y: 340 },  // Aligned with Company C Users at y=340 (40px spacing from CDN)
-          visible: true,
+          visible: false,
           icon: 'layers',
           zone: 'public',
           parentBoundary: 'airia-managed'
@@ -147,11 +147,21 @@ export const dedicatedSaas = {
           parentBoundary: 'airia-managed'
         },
         {
+          id: 'office365',
+          type: 'component',
+          label: 'Office 365',
+          description: 'Microsoft Office 365 - Email, SharePoint, Teams integration',
+          position: { x: 20, y: 900 },
+          visible: false,
+          icon: 'monitor',
+          zone: 'public'
+        },
+        {
           id: 'siem-public',
           type: 'component',
           label: 'SIEM (Public)',
           description: 'Cloud SIEM - Splunk Cloud, Datadog Security, etc.',
-          position: { x: 20, y: 900 },  // Row 2, col 1
+          position: { x: 240, y: 900 },
           visible: false,
           icon: 'shield',
           zone: 'public'
@@ -161,11 +171,31 @@ export const dedicatedSaas = {
         // Row 1 (y=750): External LLM, Public App Integrations
         // Row 2 (y=900): SIEM, Weaviate, Pinecone
         {
-          id: 'llm-public',
+          id: 'llm-openai',
           type: 'component',
-          label: 'External LLM',
-          description: 'External LLM providers - OpenAI, Anthropic, etc.',
-          position: { x: 20, y: 750 },  // Moved down to avoid Company C overlap
+          label: 'OpenAI',
+          description: 'OpenAI API - GPT-4, GPT-4o, embeddings',
+          position: { x: 20, y: 750 },
+          visible: true,
+          icon: 'cpu',
+          zone: 'public'
+        },
+        {
+          id: 'llm-anthropic',
+          type: 'component',
+          label: 'Anthropic',
+          description: 'Anthropic API - Claude models',
+          position: { x: 240, y: 750 },
+          visible: true,
+          icon: 'cpu',
+          zone: 'public'
+        },
+        {
+          id: 'llm-google',
+          type: 'component',
+          label: 'Google AI',
+          description: 'Google AI - Gemini models',
+          position: { x: 20, y: 900 },
           visible: true,
           icon: 'cpu',
           zone: 'public'
@@ -212,7 +242,7 @@ export const dedicatedSaas = {
           label: 'Internal Users',
           description: 'Customer internal admins and support staff',
           position: { x: 600, y: 40 },  // Row 1, Col 1 - Changed from y: 500
-          visible: true,
+          visible: false,
           icon: 'users',
           zone: 'private'
         },
@@ -299,20 +329,36 @@ export const dedicatedSaas = {
     { id: 'e1a-cb', source: 'airia-platform-company-b', target: 'airia-cloud-connector', animated: false },
     { id: 'e1a-cc', source: 'airia-platform-company-c', target: 'airia-cloud-connector', animated: false },
 
-    // Company platforms to External LLM
-    { id: 'e2-ca', source: 'airia-platform-company-a', target: 'llm-public', animated: false },
-    { id: 'e2-cb', source: 'airia-platform-company-b', target: 'llm-public', animated: false },
-    { id: 'e2-cc', source: 'airia-platform-company-c', target: 'llm-public', animated: false },
+    // Airia Key LLM to LLM providers
+    { id: 'e-llm-openai', source: 'airia-key-llm', target: 'llm-openai', animated: false },
+    { id: 'e-llm-anthropic', source: 'airia-key-llm', target: 'llm-anthropic', animated: false },
+    { id: 'e-llm-google', source: 'airia-key-llm', target: 'llm-google', animated: false },
 
     // Company platforms to Airia Key LLM (managed)
     { id: 'e2a-ca', source: 'airia-platform-company-a', target: 'airia-key-llm', animated: false },
     { id: 'e2a-cb', source: 'airia-platform-company-b', target: 'airia-key-llm', animated: false },
     { id: 'e2a-cc', source: 'airia-platform-company-c', target: 'airia-key-llm', animated: false },
 
+    // Company platforms to LLM providers (bring your own API key)
+    { id: 'e-byok-openai-ca', source: 'airia-platform-company-a', target: 'llm-openai', animated: false },
+    { id: 'e-byok-anthropic-ca', source: 'airia-platform-company-a', target: 'llm-anthropic', animated: false },
+    { id: 'e-byok-google-ca', source: 'airia-platform-company-a', target: 'llm-google', animated: false },
+    { id: 'e-byok-openai-cb', source: 'airia-platform-company-b', target: 'llm-openai', animated: false },
+    { id: 'e-byok-anthropic-cb', source: 'airia-platform-company-b', target: 'llm-anthropic', animated: false },
+    { id: 'e-byok-google-cb', source: 'airia-platform-company-b', target: 'llm-google', animated: false },
+    { id: 'e-byok-openai-cc', source: 'airia-platform-company-c', target: 'llm-openai', animated: false },
+    { id: 'e-byok-anthropic-cc', source: 'airia-platform-company-c', target: 'llm-anthropic', animated: false },
+    { id: 'e-byok-google-cc', source: 'airia-platform-company-c', target: 'llm-google', animated: false },
+
     // Company platforms to public integrations
     { id: 'e3-ca', source: 'airia-platform-company-a', target: 'public-app-integrations', animated: false },
     { id: 'e3-cb', source: 'airia-platform-company-b', target: 'public-app-integrations', animated: false },
     { id: 'e3-cc', source: 'airia-platform-company-c', target: 'public-app-integrations', animated: false },
+
+    // Company platforms to Office 365
+    { id: 'e-o365-ca', source: 'airia-platform-company-a', target: 'office365', animated: false },
+    { id: 'e-o365-cb', source: 'airia-platform-company-b', target: 'office365', animated: false },
+    { id: 'e-o365-cc', source: 'airia-platform-company-c', target: 'office365', animated: false },
 
     // Company platforms to Pinecone
     { id: 'e4-ca', source: 'airia-platform-company-a', target: 'pinecone', animated: false },
@@ -366,7 +412,9 @@ export const dedicatedSaas = {
           'company-a-users',            // Company A end users (external)
           'company-b-users',            // Company B end users (external)
           'company-c-users',            // Company C end users (external)
-          'llm-public',                 // External LLM providers
+          'llm-openai',                 // OpenAI
+          'llm-anthropic',              // Anthropic
+          'llm-google',                 // Google AI
           'pinecone',                   // External vector DB
           'weaviate-public',            // External vector DB
           'public-app-integrations',    // External SaaS integrations

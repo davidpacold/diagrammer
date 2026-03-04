@@ -124,7 +124,7 @@ const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPres
   const visibleCount = components.filter(c => c.visible).length;
 
   return (
-    <div className="w-64 h-full bg-white border-r border-gray-200 p-4 overflow-y-auto flex flex-col">
+    <div className="w-64 h-full bg-white border-r border-gray-200 p-4 flex flex-col">
       <div className="mb-5">
         <h2 className="text-lg font-bold text-gray-800">Airia</h2>
         <p className="text-xs text-gray-500 mt-0.5">Architecture Diagram</p>
@@ -157,7 +157,7 @@ const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPres
         </div>
       </div>
 
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 overflow-y-auto">
         {componentGroups.length > 0 && renderComponentGroups()}
         <CollapsibleSection title="Public / Internet">
           {renderComponentList(publicComponents)}
