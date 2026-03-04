@@ -3,7 +3,7 @@ import { ReactFlowProvider } from 'reactflow';
 import DiagramCanvas from './components/DiagramCanvas';
 import ToggleSidebar from './components/ToggleSidebar';
 import { presets } from './data/presets';
-import { snapPositionToGrid, resolveOverlaps } from './utils/layoutUtils';
+import { snapPositionToGrid, resolveOverlapsColumnAware } from './utils/layoutUtils';
 import { validateBoundaryContainment, logValidationErrors } from './utils/boundaryValidation';
 import { logComponentPositions } from './utils/positionDebugger';
 import { useConnectedNodes } from './hooks/useConnectedNodes';
@@ -76,7 +76,7 @@ const getInitialState = () => {
 // Resolve overlaps among visible components after visibility changes
 const fixOverlaps = (components) => {
   const visible = components.filter(c => c.visible);
-  const fixed = resolveOverlaps(visible, 50, true);
+  const fixed = resolveOverlapsColumnAware(visible);
   const fixedMap = new Map(fixed.map(c => [c.id, c.position]));
   return components.map(c => {
     const pos = fixedMap.get(c.id);

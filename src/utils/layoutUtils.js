@@ -105,6 +105,52 @@ export const resolveOverlaps = (components, iterations = 50, respectBoundaries =
 };
 
 /**
+ * Resolve overlaps using column-aware positioning.
+ * Groups components by their approximate X position into columns,
+ * then ensures uniform vertical spacing within each column.
+ */
+export const resolveOverlapsColumnAware = (components, spacing = MIN_SPACING) => {
+  if (components.length <= 1) return components;
+
+  const COLUMN_TOLERANCE = 100;
+  const sorted = [...components].sort((a, b) => a.position.x - b.position.x);
+  const columns = [];
+
+  sorted.forEach(comp => {
+    const existingCol = columns.find(col =>
+      Math.abs(col.x - comp.position.x) < COLUMN_TOLERANCE
+    );
+    if (existingCol) {
+      existingCol.components.push(comp);
+    } else {
+      columns.push({ x: comp.position.x, components: [comp] });
+    }
+  });
+
+  const result = [];
+  columns.forEach(col => {
+    const colComponents = col.components.sort((a, b) => a.position.y - b.position.y);
+    let currentY = colComponents[0].position.y;
+
+    colComponents.forEach((comp, i) => {
+      if (i === 0) {
+        result.push(comp);
+        return;
+      }
+      const minY = currentY + COMPONENT_HEIGHT + spacing;
+      const newY = Math.max(comp.position.y, minY);
+      result.push({
+        ...comp,
+        position: { x: comp.position.x, y: newY },
+      });
+      currentY = newY;
+    });
+  });
+
+  return result;
+};
+
+/**
  * Snap a position to the nearest grid point (Visio-style)
  * @param {number} value - The value to snap
  * @param {number} gridSize - Grid size (default: GRID_SIZE)
