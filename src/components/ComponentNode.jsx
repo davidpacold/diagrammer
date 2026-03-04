@@ -1,6 +1,7 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
 import { iconMap } from './icons';
+import Tooltip from './Tooltip';
 
 const CATEGORY_COLORS = {
   users: '#6b7280',
@@ -55,13 +56,8 @@ const ComponentNode = ({ data, id }) => {
   const boundaryBadgeColor = BADGE_COLOR_MAP[badgeColor] || BADGE_COLOR_MAP.green;
   const showDot = badgeLabel !== 'External' && BADGE_DOT_MAP[badgeColor];
 
-  const tooltip = [
-    data.description,
-    `\nZone: ${data.zone || 'not set'}`,
-    data.parentBoundary ? `Location: ${badgeLabel}` : 'Location: Outside boundaries',
-  ].filter(Boolean).join('\n');
-
   return (
+    <Tooltip content={data.description}>
     <div
       className={`px-4 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all w-[180px] cursor-pointer relative ${
         data.isSelected
@@ -71,7 +67,6 @@ const ComponentNode = ({ data, id }) => {
           : 'border-2 border-gray-300'
       }`}
       style={{ borderLeftColor: CATEGORY_COLORS[data.icon] || '#94a3b8', borderLeftWidth: '4px' }}
-      title={tooltip}
       onClick={handleClick}
     >
       <Handle type="target" position={Position.Left} className="w-3 h-3" />
@@ -101,12 +96,12 @@ const ComponentNode = ({ data, id }) => {
 
       {/* Visual indicator for managed boundary membership */}
       {showDot && (
-        <div className={`absolute top-0 right-0 w-3 h-3 ${showDot} rounded-bl-lg`}
-             title={badgeLabel} />
+        <div className={`absolute top-0 right-0 w-3 h-3 ${showDot} rounded-bl-lg`} />
       )}
 
       <Handle type="source" position={Position.Right} className="w-3 h-3" />
     </div>
+    </Tooltip>
   );
 };
 
