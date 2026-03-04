@@ -1,6 +1,8 @@
 import React from 'react';
 
 const BoundaryBoxNode = ({ data }) => {
+  const { offsetX = 0, offsetY = 0 } = data;
+
   return (
     <div
       style={{
@@ -9,8 +11,9 @@ const BoundaryBoxNode = ({ data }) => {
         border: `2px dashed ${data.color || '#3b82f6'}`,
         borderRadius: '8px',
         position: 'relative',
-        pointerEvents: 'all', // Changed to 'all' to allow parent node interaction
+        pointerEvents: 'all',
         background: 'rgba(255, 255, 255, 0.02)',
+        transform: `translate(${offsetX}px, ${offsetY}px)`,
       }}
     >
       {data.label && (

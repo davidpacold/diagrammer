@@ -89,12 +89,11 @@ const buildZoneBackgroundNodes = (zoneDefinitions) => {
 
 /**
  * Build boundary box nodes with dynamic sizing based on visible children.
- * Auto-scales to tightly surround active components.
+ * Auto-scales in all directions to surround active components.
  */
 const buildBoundaryBoxNodes = (boundaryBoxes, components) => {
   return boundaryBoxes
     .filter((box) => {
-      // Hide boundary box if no children are visible
       const hasVisibleChildren = components.some(c => c.visible && c.parentBoundary === box.id);
       return hasVisibleChildren;
     })
@@ -103,18 +102,24 @@ const buildBoundaryBoxNodes = (boundaryBoxes, components) => {
       const PADDING = box.padding || DEFAULT_BOUNDARY_PADDING;
 
       const childPositions = childComponents.map(c => c.position);
+      const minX = Math.min(...childPositions.map(p => p.x));
+      const minY = Math.min(...childPositions.map(p => p.y));
       const maxX = Math.max(...childPositions.map(p => p.x));
       const maxY = Math.max(...childPositions.map(p => p.y));
 
-      // Tight fit: size to exactly contain visible children + padding
-      const width = maxX + COMPONENT_WIDTH + PADDING;
-      const height = maxY + COMPONENT_HEIGHT + PADDING;
+      // Calculate offsets when children extend beyond the padding area
+      const offsetX = Math.min(minX - PADDING, 0);
+      const offsetY = Math.min(minY - PADDING, 0);
+
+      // Size to contain all children in every direction
+      const width = (maxX + COMPONENT_WIDTH + PADDING) - offsetX;
+      const height = (maxY + COMPONENT_HEIGHT + PADDING) - offsetY;
 
       return {
         id: box.id || `boundary-${box.label}`,
         type: 'boundaryBox',
         position: { x: box.x, y: box.y },
-        data: { label: box.label, width, height, color: box.color },
+        data: { label: box.label, width, height, color: box.color, offsetX, offsetY },
         draggable: false,
         selectable: false,
         zIndex: -1,
@@ -155,7 +160,6 @@ export const useNodes = ({ components, connectedNodes, selectedNodeId, boundaryB
 
         if (c.parentBoundary) {
           node.parentNode = c.parentBoundary;
-          node.extent = 'parent';
         }
 
         return node;
