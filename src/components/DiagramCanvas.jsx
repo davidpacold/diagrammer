@@ -9,6 +9,7 @@ import 'reactflow/dist/style.css';
 import ComponentNode from './ComponentNode';
 import BoundaryBoxNode from './BoundaryBoxNode';
 import ZoneBackgroundNode from './ZoneBackgroundNode';
+import { EDGE_STYLES, DEFAULT_ZONE_LABELS, GRID_SIZE } from '../constants';
 
 const nodeTypes = {
   component: ComponentNode,
@@ -16,11 +17,7 @@ const nodeTypes = {
   zoneBackground: ZoneBackgroundNode,
 };
 
-// Canvas coordinate where the zone boundary is (between public and private)
-// Shifted right to give more space to public zone (more components there)
-const ZONE_BOUNDARY_X = 550;
-
-const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNodeId, onPaneClick, zoneLabels = { left: '🌐 Internet / Public', right: '🔒 Private Network' } }) => {
+const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS }) => {
 
   return (
     <div className="flex-1 h-full relative">
@@ -37,10 +34,10 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNod
         defaultEdgeOptions={{
           type: 'smoothstep',
           animated: false,
-          style: { stroke: '#94a3b8', strokeWidth: 2 },
+          style: { ...EDGE_STYLES.default },
         }}
       >
-        <Background color="#cbd5e1" gap={20} size={1} /> {/* 20px grid to match snap-to-grid */}
+        <Background color="#cbd5e1" gap={GRID_SIZE} size={1} />
 
         {/* Zone labels as panels */}
         <Panel position="top-left" className="bg-blue-50 bg-opacity-70 px-4 py-2 rounded-md pointer-events-none">

@@ -1,11 +1,8 @@
 // Utility functions for automatic layout and collision detection
 
-const COMPONENT_WIDTH = 180; // Card width with safety margin
-const COMPONENT_HEIGHT = 110; // Card height with safety margin
-const MIN_SPACING = 40; // Generous spacing between cards for clarity
+import { COMPONENT_WIDTH, COMPONENT_HEIGHT, MIN_SPACING, GRID_SIZE } from '../constants';
 
 // Grid system for Visio-style alignment
-const GRID_SIZE = 20; // 20px grid for snapping
 const GRID_COLUMNS = 2; // Default columns for grid layout
 const GRID_ROW_SPACING = 150; // Vertical spacing between rows
 const GRID_COL_SPACING = 200; // Horizontal spacing between columns

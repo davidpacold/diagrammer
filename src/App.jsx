@@ -7,6 +7,7 @@ import { presets } from './data/presets';
 import { snapPositionToGrid } from './utils/layoutUtils';
 import { validateBoundaryContainment, logValidationErrors } from './utils/boundaryValidation';
 import { logComponentPositions } from './utils/positionDebugger';
+import { ZONE_BOUNDARY_X, DEFAULT_BOUNDARY_PADDING, ZONE_COLORS, EDGE_STYLES, DEFAULT_ZONE_LABELS, COMPONENT_WIDTH, COMPONENT_HEIGHT } from './constants';
 
 // Helper function to flatten zone-based components into a single array
 const flattenComponents = (preset) => {
@@ -35,7 +36,7 @@ function App() {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [boundaryBoxes, setBoundaryBoxes] = useState(presets['shared-saas'].boundaryBoxes || []);
   const [columnHeaders, setColumnHeaders] = useState(presets['shared-saas'].columnHeaders || []);
-  const [zoneLabels, setZoneLabels] = useState(presets['shared-saas'].zoneLabels || { left: '🌐 Internet / Public', right: '🔒 Private Network' });
+  const [zoneLabels, setZoneLabels] = useState(presets['shared-saas'].zoneLabels || DEFAULT_ZONE_LABELS);
   const [zoneDefinitions, setZoneDefinitions] = useState(presets['shared-saas'].zoneDefinitions || null);
 
   // Convert components to React Flow nodes
@@ -117,7 +118,6 @@ function App() {
       }));
 
     // Add zone background nodes from zoneDefinitions or use defaults
-    const ZONE_BOUNDARY_X = 550;
     const zoneBackgroundNodes = zoneDefinitions
       ? Object.entries(zoneDefinitions).map(([zoneName, zoneDef]) => ({
           id: `zone-${zoneName}`,
@@ -144,7 +144,7 @@ function App() {
           data: {
             width: 5000 + ZONE_BOUNDARY_X,
             height: 10000,
-            color: '#dbeafe',
+            color: ZONE_COLORS.public,
             opacity: 0.3,
           },
           draggable: false,
@@ -158,10 +158,10 @@ function App() {
           data: {
             width: 5000,
             height: 10000,
-            color: '#f3f4f6',
+            color: ZONE_COLORS.private,
             opacity: 0.3,
             showBorder: true,
-            borderColor: '#9ca3af',
+            borderColor: ZONE_COLORS.privateBorder,
           },
           draggable: false,
           selectable: false,
@@ -183,9 +183,7 @@ function App() {
 
       // If there are visible children, calculate dynamic size
       if (childComponents.length > 0) {
-        const COMPONENT_WIDTH = 180;
-        const COMPONENT_HEIGHT = 110;
-        const PADDING = box.padding || 30; // Use box padding or default to 30
+        const PADDING = box.padding || DEFAULT_BOUNDARY_PADDING;
 
         // Calculate bounds from RELATIVE positions of children
         const childPositions = childComponents.map(c => c.position);
@@ -273,10 +271,7 @@ function App() {
 
         return {
           ...edge,
-          style: {
-            stroke: isHighlighted ? '#3b82f6' : '#94a3b8',
-            strokeWidth: isHighlighted ? 3 : 2,
-          },
+          style: isHighlighted ? { ...EDGE_STYLES.highlighted } : { ...EDGE_STYLES.default },
           animated: isHighlighted,
         };
       });
@@ -326,7 +321,7 @@ function App() {
       setConnections(preset.connections);
       setBoundaryBoxes(preset.boundaryBoxes || []);
       setColumnHeaders(preset.columnHeaders || []);
-      setZoneLabels(preset.zoneLabels || { left: '🌐 Internet / Public', right: '🔒 Private Network' });
+      setZoneLabels(preset.zoneLabels || DEFAULT_ZONE_LABELS);
       setZoneDefinitions(preset.zoneDefinitions || null);
     }
   }, []);
