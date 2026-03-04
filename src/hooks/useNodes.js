@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { getConnectedNodes } from '../utils/graphUtils';
 import { ZONE_BOUNDARY_X, DEFAULT_BOUNDARY_PADDING, ZONE_COLORS, COMPONENT_WIDTH, COMPONENT_HEIGHT } from '../constants';
 
 /**
@@ -129,10 +128,8 @@ const buildBoundaryBoxNodes = (boundaryBoxes, components) => {
 /**
  * Hook that builds React Flow nodes from component data.
  */
-export const useNodes = ({ components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions }) => {
+export const useNodes = ({ components, connectedNodes, selectedNodeId, boundaryBoxes, zoneDefinitions }) => {
   return useMemo(() => {
-    const visibleIds = new Set(components.filter(c => c.visible).map(c => c.id));
-    const connectedNodes = selectedNodeId ? getConnectedNodes(selectedNodeId, connections, visibleIds) : new Set();
 
     const componentNodes = components
       .filter(c => c.visible)
@@ -147,7 +144,6 @@ export const useNodes = ({ components, connections, selectedNodeId, boundaryBoxe
             icon: c.icon,
             zone: c.zone,
             parentBoundary: c.parentBoundary,
-            position: c.position,
             isSelected: selectedNodeId === c.id,
             isConnected: connectedNodes.has(c.id),
             badgeLabel: c.parentBoundary
@@ -171,5 +167,5 @@ export const useNodes = ({ components, connections, selectedNodeId, boundaryBoxe
     const boundaryBoxNodes = buildBoundaryBoxNodes(boundaryBoxes, components);
 
     return [...zoneBackgroundNodes, ...boundaryBoxNodes, ...componentNodes];
-  }, [components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions]);
+  }, [components, connectedNodes, selectedNodeId, boundaryBoxes, zoneDefinitions]);
 };

@@ -6,6 +6,7 @@ import { presets } from './data/presets';
 import { snapPositionToGrid } from './utils/layoutUtils';
 import { validateBoundaryContainment, logValidationErrors } from './utils/boundaryValidation';
 import { logComponentPositions } from './utils/positionDebugger';
+import { useConnectedNodes } from './hooks/useConnectedNodes';
 import { useNodes } from './hooks/useNodes';
 import { useEdges } from './hooks/useEdges';
 import { useUrlState, parseUrlState } from './hooks/useUrlState';
@@ -105,14 +106,19 @@ function App() {
     boundaryBoxes, zoneLabels, zoneDefinitions, componentGroups,
   } = state;
 
-  const nodes = useNodes({ components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions });
-  const edges = useEdges({ components, connections, selectedNodeId });
+  const { connectedNodes } = useConnectedNodes(components, connections, selectedNodeId);
+  const nodes = useNodes({ components, connectedNodes, selectedNodeId, boundaryBoxes, zoneDefinitions });
+  const edges = useEdges({ components, connections, connectedNodes, selectedNodeId });
   const { copyLink, copied } = useUrlState(currentPreset, components, selectedNodeId);
 
   const handleNodeClick = useCallback((_event, node) => {
     if (node.type === 'component') {
       dispatch({ type: 'SELECT_NODE', id: node.id });
     }
+  }, []);
+
+  const handlePaneClick = useCallback(() => {
+    dispatch({ type: 'CLEAR_SELECTION' });
   }, []);
 
   const onNodesChange = useCallback((changes) => {
@@ -170,7 +176,7 @@ function App() {
           onEdgesChange={onEdgesChange}
           onNodeClick={handleNodeClick}
           selectedNodeId={selectedNodeId}
-          onPaneClick={() => dispatch({ type: 'CLEAR_SELECTION' })}
+          onPaneClick={handlePaneClick}
           zoneLabels={zoneLabels}
         />
       </div>

@@ -4,13 +4,9 @@
 
 :root {
   --airia-primary: #4f46e5;
-  --airia-primary-light: #e0e7ff;
-  --airia-accent: #06b6d4;
-  --airia-surface: #ffffff;
   --airia-surface-alt: #f8fafc;
   --airia-border: #e2e8f0;
   --airia-text: #1e293b;
-  --airia-text-muted: #64748b;
 }
 
 body {

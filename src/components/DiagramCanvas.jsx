@@ -9,7 +9,7 @@ import 'reactflow/dist/style.css';
 import ComponentNode from './ComponentNode';
 import BoundaryBoxNode from './BoundaryBoxNode';
 import ZoneBackgroundNode from './ZoneBackgroundNode';
-import { EDGE_STYLES, DEFAULT_ZONE_LABELS, GRID_SIZE } from '../constants';
+import { EDGE_STYLES, DEFAULT_ZONE_LABELS, GRID_SIZE, DEFAULT_VIEWPORT } from '../constants';
 
 const nodeTypes = {
   component: ComponentNode,
@@ -29,7 +29,7 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
-        defaultViewport={{ x: 150, y: 50, zoom: 0.7 }}
+        defaultViewport={DEFAULT_VIEWPORT}
         className="bg-white"
         onPaneClick={onPaneClick}
         defaultEdgeOptions={{
@@ -38,7 +38,7 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick
           style: { ...EDGE_STYLES.default },
         }}
       >
-        <Background color="#e2e8f0" gap={20} size={1} />
+        <Background color="#e2e8f0" gap={GRID_SIZE} size={1} />
 
         {/* Zone labels as panels */}
         <Panel position="top-left" className="bg-blue-50 px-4 py-1.5 rounded-full pointer-events-none shadow-sm border border-blue-100">

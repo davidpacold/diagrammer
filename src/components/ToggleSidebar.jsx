@@ -1,25 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import PresetSelector from './PresetSelector';
 import { iconMap } from './icons';
 
 const CollapsibleSection = ({ title, children, defaultOpen = true }) => {
   const [open, setOpen] = useState(defaultOpen);
+  const sectionId = useId();
 
   return (
     <div className="mb-4">
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-controls={sectionId}
         className="flex items-center justify-between w-full text-sm font-semibold text-gray-600 uppercase mb-2 hover:text-gray-800 transition-colors"
       >
         {title}
         <svg
+          aria-hidden="true"
           className={`w-4 h-4 transition-transform ${open ? 'rotate-0' : '-rotate-90'}`}
           fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
         >
           <path d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      {open && children}
+      {open && <div id={sectionId}>{children}</div>}
     </div>
   );
 };
@@ -138,12 +142,14 @@ const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPres
         <div className="flex gap-1">
           <button
             onClick={onShowAll}
+            aria-label="Show all components"
             className="text-[10px] px-2 py-0.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
           >
             All
           </button>
           <button
             onClick={onHideAll}
+            aria-label="Hide all components"
             className="text-[10px] px-2 py-0.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
           >
             None

@@ -28,19 +28,19 @@ const ComponentNode = ({ data }) => {
   const badgeLabel = data.badgeLabel || 'External';
   const badgeColor = data.badgeColor || 'green';
   const boundaryBadgeColor = BADGE_COLOR_MAP[badgeColor] || BADGE_COLOR_MAP.green;
-  const showDot = badgeLabel !== 'External' && BADGE_DOT_MAP[badgeColor];
+  const dotClass = badgeLabel !== 'External' ? BADGE_DOT_MAP[badgeColor] : null;
 
   return (
     <Tooltip content={data.description}>
     <div
-      className={`px-4 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all w-[180px] cursor-pointer relative ${
+      className={`px-4 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all w-[180px] cursor-pointer relative border-l-4 ${
         data.isSelected
-          ? 'border-4 border-blue-500 ring-2 ring-blue-200'
+          ? 'border-t-4 border-r-4 border-b-4 border-blue-500 ring-2 ring-blue-200'
           : data.isConnected
-          ? 'border-2 border-blue-300 ring-1 ring-blue-100'
-          : 'border-2 border-gray-300'
+          ? 'border-t-2 border-r-2 border-b-2 border-blue-300 ring-1 ring-blue-100'
+          : 'border-t-2 border-r-2 border-b-2 border-gray-300'
       }`}
-      style={{ borderLeftColor: CATEGORY_COLORS[data.icon] || '#94a3b8', borderLeftWidth: '4px' }}
+      style={{ borderLeftColor: CATEGORY_COLORS[data.icon] || '#94a3b8' }}
     >
       <Handle type="target" position={Position.Left} className="w-3 h-3" />
 
@@ -68,8 +68,8 @@ const ComponentNode = ({ data }) => {
       </div>
 
       {/* Visual indicator for managed boundary membership */}
-      {showDot && (
-        <div className={`absolute top-0 right-0 w-3 h-3 ${showDot} rounded-bl-lg`} />
+      {dotClass && (
+        <div className={`absolute top-0 right-0 w-3 h-3 ${dotClass} rounded-bl-lg`} />
       )}
 
       <Handle type="source" position={Position.Right} className="w-3 h-3" />

@@ -45,10 +45,13 @@ export const parseUrlState = () => {
 export const useUrlState = (preset, components, selectedNodeId) => {
   const [copied, setCopied] = useState(false);
 
-  // Update URL hash when state changes
+  // Update URL hash when state changes (debounced to avoid thrashing during drag)
   useEffect(() => {
-    const hash = encodeState(preset, components, selectedNodeId);
-    window.history.replaceState(null, '', hash);
+    const timeout = setTimeout(() => {
+      const hash = encodeState(preset, components, selectedNodeId);
+      window.history.replaceState(null, '', hash);
+    }, 300);
+    return () => clearTimeout(timeout);
   }, [preset, components, selectedNodeId]);
 
   const copyLink = useCallback(async () => {

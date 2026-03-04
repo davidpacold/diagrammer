@@ -1,10 +1,5 @@
 import React from 'react';
 
-const defaultProps = {
-  size: 24,
-  className: '',
-};
-
 function svgProps(size, className) {
   return {
     xmlns: 'http://www.w3.org/2000/svg',

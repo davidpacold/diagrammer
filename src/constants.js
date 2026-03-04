@@ -27,6 +27,9 @@ export const ZONE_COLORS = {
   privateBorder: '#9ca3af',
 };
 
+// Default viewport position
+export const DEFAULT_VIEWPORT = { x: 150, y: 50, zoom: 0.7 };
+
 // Edge styling
 export const EDGE_STYLES = {
   default: { stroke: '#94a3b8', strokeWidth: 2 },
