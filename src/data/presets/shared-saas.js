@@ -97,7 +97,7 @@ export const sharedSaas = {
         {
           id: 'airia-key-llm',
           type: 'component',
-          label: 'Airia Key LLM',
+          label: 'Airia Key',
           description: 'Airia-managed LLM service - Optimized models for key extraction',
           position: { x: 30, y: 330 },  // Relative to boundary, absolute: (290, 350)
           visible: true,

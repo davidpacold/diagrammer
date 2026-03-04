@@ -138,7 +138,7 @@ export const dedicatedSaas = {
         {
           id: 'airia-key-llm',
           type: 'component',
-          label: 'Airia Key LLM',
+          label: 'Airia Key',
           description: 'Shared Airia-managed LLM service for all companies',
           position: { x: 150, y: 490 },  // Centered below Company C row (340 + 110 + 40 = 490)
           visible: true,
