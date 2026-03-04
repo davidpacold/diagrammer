@@ -70,6 +70,14 @@ function App() {
     );
   }, []);
 
+  const handleShowAll = useCallback(() => {
+    setComponents(prev => prev.map(c => ({ ...c, visible: true })));
+  }, []);
+
+  const handleHideAll = useCallback(() => {
+    setComponents(prev => prev.map(c => ({ ...c, visible: false })));
+  }, []);
+
   // Handle preset change
   const handlePresetChange = useCallback((presetId) => {
     const preset = presets[presetId];
@@ -101,6 +109,8 @@ function App() {
         <ToggleSidebar
           components={components}
           onToggle={handleToggle}
+          onShowAll={handleShowAll}
+          onHideAll={handleHideAll}
           currentPreset={currentPreset}
           onPresetChange={handlePresetChange}
         />
