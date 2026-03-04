@@ -23,17 +23,21 @@ const edgeTypes = {
 };
 
 const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS, fitViewTrigger, onNodeRename, presentationMode, sceneIndex, scenes, onNextScene, onPrevScene, onExitPresentation }) => {
-  const { fitView } = useReactFlow();
+  const { fitView, getNodes } = useReactFlow();
 
   useEffect(() => {
     if (fitViewTrigger) {
       // Short delay to let ReactFlow process the new nodes first
       const timeout = setTimeout(() => {
-        fitView({ padding: 0.15, duration: 300, includeHiddenNodes: false });
-      }, 50);
+        // Only fit component nodes — exclude zone backgrounds and boundary boxes
+        const componentNodes = getNodes()
+          .filter(n => n.type === 'component')
+          .map(n => ({ id: n.id }));
+        fitView({ padding: 0.15, duration: 300, includeHiddenNodes: false, nodes: componentNodes });
+      }, 100);
       return () => clearTimeout(timeout);
     }
-  }, [fitViewTrigger, fitView]);
+  }, [fitViewTrigger, fitView, getNodes]);
 
   return (
     <div className="flex-1 h-full relative">
