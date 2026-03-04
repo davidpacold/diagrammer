@@ -60,6 +60,13 @@ const getInitialState = () => {
     }));
   }
 
+  if (urlState?.labels && Object.keys(urlState.labels).length > 0) {
+    components = components.map(c => ({
+      ...c,
+      customLabel: urlState.labels[c.id] || undefined,
+    }));
+  }
+
   return {
     ...buildPresetState(presetId, preset, components),
     selectedNodeId: urlState?.selected || null,
@@ -110,6 +117,13 @@ const reducer = (state, action) => {
         ...state,
         components: state.components.map(c =>
           c.id === action.id ? { ...c, position: action.position } : c
+        ),
+      };
+    case 'RENAME_COMPONENT':
+      return {
+        ...state,
+        components: state.components.map(c =>
+          c.id === action.id ? { ...c, customLabel: action.label } : c
         ),
       };
     case 'START_PRESENTATION': {
@@ -214,6 +228,10 @@ function App() {
     dispatch({ type: 'CHANGE_PRESET', presetId });
   }, []);
 
+  const handleRename = useCallback((id, label) => {
+    dispatch({ type: 'RENAME_COMPONENT', id, label });
+  }, []);
+
   const handleStartPresentation = useCallback(() => dispatch({ type: 'START_PRESENTATION' }), []);
   const handleNextScene = useCallback(() => dispatch({ type: 'NEXT_SCENE' }), []);
   const handlePrevScene = useCallback(() => dispatch({ type: 'PREV_SCENE' }), []);
@@ -268,6 +286,7 @@ function App() {
           onPaneClick={handlePaneClick}
           zoneLabels={zoneLabels}
           fitViewTrigger={fitViewTrigger}
+          onNodeRename={handleRename}
           presentationMode={state.presentationMode}
           sceneIndex={state.sceneIndex}
           scenes={presets[currentPreset]?.scenes}

@@ -22,7 +22,7 @@ const edgeTypes = {
   animated: AnimatedEdge,
 };
 
-const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS, fitViewTrigger, presentationMode, sceneIndex, scenes, onNextScene, onPrevScene, onExitPresentation }) => {
+const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS, fitViewTrigger, onNodeRename, presentationMode, sceneIndex, scenes, onNextScene, onPrevScene, onExitPresentation }) => {
   const { fitView } = useReactFlow();
 
   useEffect(() => {
@@ -49,6 +49,14 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick
         defaultViewport={DEFAULT_VIEWPORT}
         className="bg-white"
         onPaneClick={onPaneClick}
+        onNodeDoubleClick={onNodeRename ? (event, node) => {
+          if (node.type === 'component') {
+            const newLabel = window.prompt('Edit label:', node.data.label);
+            if (newLabel !== null && newLabel.trim()) {
+              onNodeRename(node.data.componentId || node.id, newLabel.trim());
+            }
+          }
+        } : undefined}
         defaultEdgeOptions={{
           type: 'smoothstep',
           animated: false,
