@@ -80,16 +80,23 @@ const reducer = (state, action) => {
     case 'CHANGE_PRESET': {
       const preset = presets[action.presetId];
       if (!preset) return state;
-      return buildPresetState(action.presetId, preset, flattenComponents(preset));
+      return { ...buildPresetState(action.presetId, preset, flattenComponents(preset)), fitViewTrigger: (state.fitViewTrigger || 0) + 1 };
+    }
+    case 'TOGGLE_MANY': {
+      const idSet = new Set(action.ids);
+      const toggled = state.components.map(c =>
+        idSet.has(c.id) ? { ...c, visible: action.visible } : c
+      );
+      return { ...state, components: fixOverlaps(toggled), fitViewTrigger: (state.fitViewTrigger || 0) + 1 };
     }
     case 'TOGGLE_COMPONENT': {
       const toggled = state.components.map(c =>
         c.id === action.id ? { ...c, visible: !c.visible } : c
       );
-      return { ...state, components: fixOverlaps(toggled) };
+      return { ...state, components: fixOverlaps(toggled), fitViewTrigger: (state.fitViewTrigger || 0) + 1 };
     }
     case 'SHOW_ALL':
-      return { ...state, components: fixOverlaps(state.components.map(c => ({ ...c, visible: true }))) };
+      return { ...state, components: fixOverlaps(state.components.map(c => ({ ...c, visible: true }))), fitViewTrigger: (state.fitViewTrigger || 0) + 1 };
     case 'HIDE_ALL':
       return { ...state, components: state.components.map(c => ({ ...c, visible: false })) };
     case 'SELECT_NODE':
@@ -114,6 +121,7 @@ function App() {
   const {
     currentPreset, components, connections, selectedNodeId,
     boundaryBoxes, zoneLabels, zoneDefinitions, componentGroups,
+    fitViewTrigger,
   } = state;
 
   const { connectedNodes } = useConnectedNodes(components, connections, selectedNodeId);
@@ -148,6 +156,10 @@ function App() {
     dispatch({ type: 'TOGGLE_COMPONENT', id });
   }, []);
 
+  const handleToggleMany = useCallback((ids, visible) => {
+    dispatch({ type: 'TOGGLE_MANY', ids, visible });
+  }, []);
+
   const handleShowAll = useCallback(() => dispatch({ type: 'SHOW_ALL' }), []);
   const handleHideAll = useCallback(() => dispatch({ type: 'HIDE_ALL' }), []);
 
@@ -171,6 +183,7 @@ function App() {
         <ToggleSidebar
           components={components}
           onToggle={handleToggle}
+          onToggleMany={handleToggleMany}
           onShowAll={handleShowAll}
           onHideAll={handleHideAll}
           currentPreset={currentPreset}
@@ -188,6 +201,7 @@ function App() {
           selectedNodeId={selectedNodeId}
           onPaneClick={handlePaneClick}
           zoneLabels={zoneLabels}
+          fitViewTrigger={fitViewTrigger}
         />
       </div>
     </ReactFlowProvider>

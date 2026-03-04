@@ -205,7 +205,7 @@ export const dedicatedSaas = {
           type: 'component',
           label: 'Public Application Integrations',
           description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
-          position: { x: 240, y: 750 },  // 40px spacing from External LLM
+          position: { x: 20, y: 1050 },
           visible: false,
           icon: 'link',
           zone: 'public'
@@ -215,7 +215,7 @@ export const dedicatedSaas = {
           type: 'component',
           label: 'Weaviate',
           description: 'Dedicated cloud-hosted vector database',
-          position: { x: 240, y: 900 },  // Row 2, col 2
+          position: { x: 240, y: 1050 },
           visible: false,
           icon: 'database',
           zone: 'public'
@@ -225,7 +225,7 @@ export const dedicatedSaas = {
           type: 'component',
           label: 'Pinecone',
           description: 'Dedicated vector database instance',
-          position: { x: 20, y: 1050 },  // Row 3, col 1
+          position: { x: 20, y: 1200 },
           visible: false,
           icon: 'database',
           zone: 'public'

@@ -89,40 +89,38 @@ const buildZoneBackgroundNodes = (zoneDefinitions) => {
 
 /**
  * Build boundary box nodes with dynamic sizing based on visible children.
+ * Auto-scales to tightly surround active components.
  */
 const buildBoundaryBoxNodes = (boundaryBoxes, components) => {
-  return boundaryBoxes.map((box) => {
-    const childComponents = components.filter(c => c.visible && c.parentBoundary === box.id);
-
-    let width = box.width;
-    let height = box.height;
-    const x = box.x;
-    const y = box.y;
-
-    if (childComponents.length > 0) {
+  return boundaryBoxes
+    .filter((box) => {
+      // Hide boundary box if no children are visible
+      const hasVisibleChildren = components.some(c => c.visible && c.parentBoundary === box.id);
+      return hasVisibleChildren;
+    })
+    .map((box) => {
+      const childComponents = components.filter(c => c.visible && c.parentBoundary === box.id);
       const PADDING = box.padding || DEFAULT_BOUNDARY_PADDING;
+
       const childPositions = childComponents.map(c => c.position);
       const maxX = Math.max(...childPositions.map(p => p.x));
       const maxY = Math.max(...childPositions.map(p => p.y));
 
-      const rightEdge = maxX + COMPONENT_WIDTH;
-      const bottomEdge = maxY + COMPONENT_HEIGHT;
+      // Tight fit: size to exactly contain visible children + padding
+      const width = maxX + COMPONENT_WIDTH + PADDING;
+      const height = maxY + COMPONENT_HEIGHT + PADDING;
 
-      width = Math.max(rightEdge + PADDING, width);
-      height = Math.max(bottomEdge + PADDING, height);
-    }
-
-    return {
-      id: box.id || `boundary-${box.label}`,
-      type: 'boundaryBox',
-      position: { x, y },
-      data: { label: box.label, width, height, color: box.color },
-      draggable: true,
-      selectable: true,
-      zIndex: -1,
-      style: { width, height },
-    };
-  });
+      return {
+        id: box.id || `boundary-${box.label}`,
+        type: 'boundaryBox',
+        position: { x: box.x, y: box.y },
+        data: { label: box.label, width, height, color: box.color },
+        draggable: false,
+        selectable: false,
+        zIndex: -1,
+        style: { width, height },
+      };
+    });
 };
 
 /**

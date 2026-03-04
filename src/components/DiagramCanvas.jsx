@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactFlow, {
   Background,
-  Controls,
-  MiniMap,
   Panel,
+  useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import ComponentNode from './ComponentNode';
@@ -17,7 +16,18 @@ const nodeTypes = {
   zoneBackground: ZoneBackgroundNode,
 };
 
-const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS }) => {
+const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS, fitViewTrigger }) => {
+  const { fitView } = useReactFlow();
+
+  useEffect(() => {
+    if (fitViewTrigger) {
+      // Short delay to let ReactFlow process the new nodes first
+      const timeout = setTimeout(() => {
+        fitView({ padding: 0.15, duration: 300, includeHiddenNodes: false });
+      }, 50);
+      return () => clearTimeout(timeout);
+    }
+  }, [fitViewTrigger, fitView]);
 
   return (
     <div className="flex-1 h-full relative">
@@ -65,13 +75,6 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick
           )}
         </Panel>
 
-        <Controls />
-        <MiniMap
-          nodeColor={(node) => node.data?.zone === 'public' ? '#93c5fd' : '#d1d5db'}
-          className="border border-gray-200 rounded-lg"
-          style={{ background: '#f8fafc' }}
-          maskColor="rgba(0, 0, 0, 0.08)"
-        />
       </ReactFlow>
     </div>
   );

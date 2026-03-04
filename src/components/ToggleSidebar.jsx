@@ -75,7 +75,7 @@ const GroupRow = ({ group, onToggle }) => (
   </label>
 );
 
-const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPreset, onPresetChange, onCopyLink, linkCopied, componentGroups = [] }) => {
+const ToggleSidebar = ({ components, onToggle, onToggleMany, onShowAll, onHideAll, currentPreset, onPresetChange, onCopyLink, linkCopied, componentGroups = [] }) => {
   const publicComponents = components.filter(c => c.zone === 'public');
   const privateComponents = components.filter(c => c.zone === 'private');
 
@@ -98,9 +98,10 @@ const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPres
 
   const handleGroupToggle = (group) => {
     const newState = !group.allVisible;
-    group.components.forEach(component => {
-      if (component.visible !== newState) onToggle(component.id);
-    });
+    const idsToToggle = group.components
+      .filter(c => c.visible !== newState)
+      .map(c => c.id);
+    if (idsToToggle.length > 0) onToggleMany(idsToToggle, newState);
   };
 
   const filteredPublic = publicComponents.filter(c => !groupedComponentIds.has(c.id));

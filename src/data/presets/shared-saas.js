@@ -187,7 +187,7 @@ export const sharedSaas = {
           type: 'component',
           label: 'Office 365',
           description: 'Microsoft Office 365 - Email, SharePoint, Teams integration',
-          position: { x: 20, y: 850 },
+          position: { x: 240, y: 700 },
           visible: false,
           icon: 'monitor',
           zone: 'public'
@@ -207,7 +207,7 @@ export const sharedSaas = {
           type: 'component',
           label: 'Weaviate',
           description: 'Cloud-hosted vector database for AI-native applications',
-          position: { x: 240, y: 850 }, // Row 2, col 2 (aligned with Public App Integrations)
+          position: { x: 240, y: 1000 },
           visible: false,
           icon: 'database',
           zone: 'public'
@@ -217,7 +217,7 @@ export const sharedSaas = {
           type: 'component',
           label: 'Pinecone',
           description: 'Vector database for AI embeddings and semantic search',
-          position: { x: 20, y: 1000 }, // Row 3, col 1 (moved to new row to stay in zone)
+          position: { x: 20, y: 1150 },
           visible: false,
           icon: 'database',
           zone: 'public'
