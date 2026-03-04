@@ -347,7 +347,9 @@ export const dedicatedSaas = {
       height: 640, // Minimum height: Key LLM at y=490 + 110 (height) + 40 (padding) = 640px
       padding: 40, // Padding around boundary content for dynamic sizing
       color: '#3b82f6',
-      zone: 'public', // This boundary box belongs to the public zone
+      badgeLabel: 'Airia Managed',
+      badgeColor: 'indigo',
+      zone: 'public',
       // Explicit containment rules for this boundary
       containmentRules: {
         description: 'Dedicated Airia-managed infrastructure per company in the public cloud',

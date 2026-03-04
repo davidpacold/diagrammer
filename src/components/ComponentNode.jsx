@@ -1,40 +1,43 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
 
+const BADGE_COLOR_MAP = {
+  indigo: 'bg-indigo-100 text-indigo-700 border-indigo-300',
+  green: 'bg-green-100 text-green-700 border-green-300',
+  blue: 'bg-blue-100 text-blue-700 border-blue-300',
+  orange: 'bg-orange-100 text-orange-700 border-orange-300',
+  purple: 'bg-purple-100 text-purple-700 border-purple-300',
+};
+
+const BADGE_DOT_MAP = {
+  indigo: 'bg-indigo-500',
+  blue: 'bg-blue-500',
+  purple: 'bg-purple-500',
+};
+
 const ComponentNode = ({ data, id }) => {
   const handleClick = (e) => {
     e.stopPropagation();
     if (data.onNodeClick) {
-      // Toggle selection: if already selected, deselect
       data.onNodeClick(data.isSelected ? null : id);
     }
   };
 
-  // Determine zone badge color
   const zoneBadgeColor = data.zone === 'public'
     ? 'bg-blue-100 text-blue-700 border-blue-300'
     : data.zone === 'private'
     ? 'bg-gray-100 text-gray-700 border-gray-300'
     : 'bg-yellow-100 text-yellow-700 border-yellow-300';
 
-  // Check if component is in a boundary
-  const isInBoundary = data.parentBoundary != null;
-  // Database, AI services, and kubernetes-cluster containers should be marked as External
-  const isAiriaManaged = isInBoundary &&
-    data.parentBoundary !== 'database-container' &&
-    data.parentBoundary !== 'kubernetes-cluster' &&
-    data.parentBoundary !== 'ai-services-container';
-  const boundaryBadge = isAiriaManaged ? 'Airia Managed' : 'External';
-  const boundaryBadgeColor = isAiriaManaged
-    ? 'bg-indigo-100 text-indigo-700 border-indigo-300'
-    : 'bg-green-100 text-green-700 border-green-300';
+  const badgeLabel = data.badgeLabel || 'External';
+  const badgeColor = data.badgeColor || 'green';
+  const boundaryBadgeColor = BADGE_COLOR_MAP[badgeColor] || BADGE_COLOR_MAP.green;
+  const showDot = badgeLabel !== 'External' && BADGE_DOT_MAP[badgeColor];
 
-  // Build detailed tooltip
   const tooltip = [
     data.description,
     `\nZone: ${data.zone || 'not set'}`,
-    isInBoundary ? `Location: Inside ${data.parentBoundary}` : 'Location: Outside boundaries',
-    data.position ? `Position: (${Math.round(data.position?.x || 0)}, ${Math.round(data.position?.y || 0)})` : ''
+    data.parentBoundary ? `Location: ${badgeLabel}` : 'Location: Outside boundaries',
   ].filter(Boolean).join('\n');
 
   return (
@@ -59,7 +62,7 @@ const ComponentNode = ({ data, id }) => {
           </span>
         )}
         <span className={`text-[9px] px-1.5 py-0.5 rounded border font-medium ${boundaryBadgeColor}`}>
-          {boundaryBadge}
+          {badgeLabel}
         </span>
       </div>
 
@@ -71,10 +74,10 @@ const ComponentNode = ({ data, id }) => {
         </div>
       </div>
 
-      {/* Visual indicator for boundary membership */}
-      {isAiriaManaged && (
-        <div className="absolute top-0 right-0 w-3 h-3 bg-indigo-500 rounded-bl-lg"
-             title="Inside Airia Managed" />
+      {/* Visual indicator for managed boundary membership */}
+      {showDot && (
+        <div className={`absolute top-0 right-0 w-3 h-3 ${showDot} rounded-bl-lg`}
+             title={badgeLabel} />
       )}
 
       <Handle type="source" position={Position.Right} className="w-3 h-3" />

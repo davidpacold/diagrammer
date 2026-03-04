@@ -274,6 +274,8 @@ export const customerHosted = {
       height: 190,  // Height: 40 (padding) + 110 (Platform) + 40 (padding) = 190
       padding: 40,
       color: '#326ce5',  // Kubernetes blue
+      badgeLabel: 'Customer Hosted',
+      badgeColor: 'blue',
       zone: 'private',
       containmentRules: {
         description: 'Customer-hosted Kubernetes cluster running Airia Platform',
@@ -304,6 +306,8 @@ export const customerHosted = {
       height: 320,  // Height: 40 (top pad) + 110 (PostgreSQL) + 40 (spacing) + 110 (Cassandra) + 20 (bottom pad) = 320
       padding: 40,
       color: '#059669',  // Database green
+      badgeLabel: 'External',
+      badgeColor: 'green',
       zone: 'private',
       containmentRules: {
         description: 'Database cluster with PostgreSQL and Cassandra',
@@ -334,6 +338,8 @@ export const customerHosted = {
       height: 320,  // Height: 40 (top pad) + 110 (LLM) + 40 (spacing) + 110 (Vision) + 20 (bottom pad) = 320
       padding: 40,
       color: '#7c3aed',  // Purple for AI services
+      badgeLabel: 'External',
+      badgeColor: 'green',
       zone: 'private',
       containmentRules: {
         description: 'AI services including LLM and Vision models',

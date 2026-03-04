@@ -151,6 +151,12 @@ export const useNodes = ({ components, connections, selectedNodeId, boundaryBoxe
             isSelected: selectedNodeId === c.id,
             isConnected: connectedNodes.has(c.id),
             onNodeClick: setSelectedNodeId,
+            badgeLabel: c.parentBoundary
+              ? (boundaryBoxes.find(b => b.id === c.parentBoundary)?.badgeLabel || 'External')
+              : 'External',
+            badgeColor: c.parentBoundary
+              ? (boundaryBoxes.find(b => b.id === c.parentBoundary)?.badgeColor || 'green')
+              : 'green',
           },
         };
 

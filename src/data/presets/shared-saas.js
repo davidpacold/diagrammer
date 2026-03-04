@@ -348,6 +348,8 @@ export const sharedSaas = {
       height: 470, // Minimum height - will grow dynamically based on visible children
       padding: 30, // Padding around boundary content for dynamic sizing
       color: '#3b82f6',
+      badgeLabel: 'Airia Managed',
+      badgeColor: 'indigo',
       zone: 'public',
       // Explicit containment rules for this boundary
       containmentRules: {
