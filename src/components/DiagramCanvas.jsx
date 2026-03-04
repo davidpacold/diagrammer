@@ -9,11 +9,16 @@ import ComponentNode from './ComponentNode';
 import BoundaryBoxNode from './BoundaryBoxNode';
 import ZoneBackgroundNode from './ZoneBackgroundNode';
 import { EDGE_STYLES, DEFAULT_ZONE_LABELS, GRID_SIZE, DEFAULT_VIEWPORT } from '../constants';
+import AnimatedEdge from './AnimatedEdge';
 
 const nodeTypes = {
   component: ComponentNode,
   boundaryBox: BoundaryBoxNode,
   zoneBackground: ZoneBackgroundNode,
+};
+
+const edgeTypes = {
+  animated: AnimatedEdge,
 };
 
 const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS, fitViewTrigger }) => {
@@ -39,6 +44,7 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         defaultViewport={DEFAULT_VIEWPORT}
         className="bg-white"
         onPaneClick={onPaneClick}

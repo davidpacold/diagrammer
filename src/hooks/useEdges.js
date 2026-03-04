@@ -17,8 +17,9 @@ export const useEdges = ({ components, connections, connectedNodes, selectedNode
 
         return {
           ...edge,
+          type: 'animated',
           style: isHighlighted ? { ...EDGE_STYLES.highlighted } : { ...EDGE_STYLES.default },
-          animated: isHighlighted,
+          animated: false,
         };
       });
   }, [components, connections, connectedNodes, selectedNodeId]);
