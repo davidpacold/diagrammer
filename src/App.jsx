@@ -8,6 +8,7 @@ import { validateBoundaryContainment, logValidationErrors } from './utils/bounda
 import { logComponentPositions } from './utils/positionDebugger';
 import { useNodes } from './hooks/useNodes';
 import { useEdges } from './hooks/useEdges';
+import { useUrlState, parseUrlState } from './hooks/useUrlState';
 import { DEFAULT_ZONE_LABELS } from './constants';
 
 // Helper function to flatten zone-based components into a single array
@@ -28,18 +29,46 @@ const flattenComponents = (preset) => {
   return preset.components || [];
 };
 
+// Initialize state from URL or defaults
+const getInitialState = () => {
+  const urlState = parseUrlState();
+  const presetId = (urlState?.preset && presets[urlState.preset]) ? urlState.preset : 'shared-saas';
+  const preset = presets[presetId];
+
+  let components = flattenComponents(preset);
+
+  // Apply hidden state from URL
+  if (urlState?.hidden?.length > 0) {
+    const hiddenSet = new Set(urlState.hidden);
+    components = components.map(c => ({
+      ...c,
+      visible: hiddenSet.has(c.id) ? false : c.visible,
+    }));
+  }
+
+  return {
+    presetId,
+    preset,
+    components,
+    selectedNodeId: urlState?.selected || null,
+  };
+};
+
 function App() {
-  const [currentPreset, setCurrentPreset] = useState('shared-saas');
-  const [components, setComponents] = useState(flattenComponents(presets['shared-saas']));
-  const [connections, setConnections] = useState(presets['shared-saas'].connections);
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
-  const [boundaryBoxes, setBoundaryBoxes] = useState(presets['shared-saas'].boundaryBoxes || []);
-  const [columnHeaders, setColumnHeaders] = useState(presets['shared-saas'].columnHeaders || []);
-  const [zoneLabels, setZoneLabels] = useState(presets['shared-saas'].zoneLabels || DEFAULT_ZONE_LABELS);
-  const [zoneDefinitions, setZoneDefinitions] = useState(presets['shared-saas'].zoneDefinitions || null);
+  const initial = getInitialState();
+
+  const [currentPreset, setCurrentPreset] = useState(initial.presetId);
+  const [components, setComponents] = useState(initial.components);
+  const [connections, setConnections] = useState(initial.preset.connections);
+  const [selectedNodeId, setSelectedNodeId] = useState(initial.selectedNodeId);
+  const [boundaryBoxes, setBoundaryBoxes] = useState(initial.preset.boundaryBoxes || []);
+  const [columnHeaders, setColumnHeaders] = useState(initial.preset.columnHeaders || []);
+  const [zoneLabels, setZoneLabels] = useState(initial.preset.zoneLabels || DEFAULT_ZONE_LABELS);
+  const [zoneDefinitions, setZoneDefinitions] = useState(initial.preset.zoneDefinitions || null);
 
   const nodes = useNodes({ components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions, setSelectedNodeId });
   const edges = useEdges({ components, connections, selectedNodeId });
+  const { copyLink, copied } = useUrlState(currentPreset, components, selectedNodeId);
 
   // Handle node position changes (drag) with snap-to-grid
   const onNodesChange = useCallback((changes) => {
@@ -113,6 +142,8 @@ function App() {
           onHideAll={handleHideAll}
           currentPreset={currentPreset}
           onPresetChange={handlePresetChange}
+          onCopyLink={copyLink}
+          linkCopied={copied}
         />
         <DiagramCanvas
           nodes={nodes}

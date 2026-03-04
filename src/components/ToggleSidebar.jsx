@@ -24,7 +24,7 @@ const CollapsibleSection = ({ title, children, defaultOpen = true }) => {
   );
 };
 
-const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPreset, onPresetChange }) => {
+const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPreset, onPresetChange, onCopyLink, linkCopied }) => {
   const publicComponents = components.filter(c => c.zone === 'public');
   const privateComponents = components.filter(c => c.zone === 'private');
   const isDedicatedSaas = currentPreset === 'dedicated-saas';
@@ -179,9 +179,27 @@ const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPres
         </CollapsibleSection>
       </div>
 
-      <div className="pt-3 mt-3 border-t border-gray-200">
+      <div className="pt-3 mt-3 border-t border-gray-200 space-y-2">
+        {onCopyLink && (
+          <button
+            onClick={onCopyLink}
+            className="w-full text-xs px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+          >
+            {linkCopied ? (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Copied!
+              </>
+            ) : (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Share this view
+              </>
+            )}
+          </button>
+        )}
         <p className="text-[10px] text-gray-400 leading-relaxed">
-          Toggle components to show or hide. Click a node on the canvas to trace its downstream connections.
+          Toggle components to show or hide. Click a node to trace connections.
         </p>
       </div>
     </div>
