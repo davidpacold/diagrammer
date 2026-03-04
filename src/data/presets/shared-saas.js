@@ -54,7 +54,7 @@ export const sharedSaas = {
           label: 'Customer B',
           description: 'Customer B end users',
           position: { x: 20, y: 190 },
-          visible: true,
+          visible: false,
           icon: 'users',
           zone: 'public'
         },
@@ -64,7 +64,7 @@ export const sharedSaas = {
           label: 'Customer C',
           description: 'Customer C end users',
           position: { x: 20, y: 340 },
-          visible: true,
+          visible: false,
           icon: 'users',
           zone: 'public'
         },
@@ -86,7 +86,7 @@ export const sharedSaas = {
         {
           id: 'airia-platform-na',
           type: 'component',
-          label: 'Airia Platform (NA)',
+          label: 'Airia Platform',
           description: 'North America region - Airia AI platform orchestration layer',
           position: { x: 30, y: 180 },  // Relative to boundary, absolute: (290, 200)
           visible: true,
