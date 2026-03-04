@@ -70,6 +70,7 @@ const getInitialState = () => {
   return {
     ...buildPresetState(presetId, preset, components),
     selectedNodeId: urlState?.selected || null,
+    fitViewTrigger: 1,
   };
 };
 
