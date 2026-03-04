@@ -24,39 +24,30 @@ const CollapsibleSection = ({ title, children, defaultOpen = true }) => {
   );
 };
 
-const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPreset, onPresetChange, onCopyLink, linkCopied }) => {
+const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPreset, onPresetChange, onCopyLink, linkCopied, componentGroups = [] }) => {
   const publicComponents = components.filter(c => c.zone === 'public');
   const privateComponents = components.filter(c => c.zone === 'private');
-  const isDedicatedSaas = currentPreset === 'dedicated-saas';
 
-  const getCompanyGroups = () => {
-    if (!isDedicatedSaas) return null;
+  // Build set of component IDs that belong to any group (excluded from zone lists)
+  const groupedComponentIds = new Set(componentGroups.flatMap(g => g.componentIds));
 
-    const companies = ['a', 'b', 'c'];
-    return companies.map(company => {
-      const companyId = company.toUpperCase();
-      const userComponent = components.find(c => c.id === `company-${company}-users`);
-      const cdnComponent = components.find(c => c.id === `cdn-company-${company}`);
-      const platformComponent = components.find(c => c.id === `airia-platform-company-${company}`);
+  const resolveGroups = () => {
+    if (componentGroups.length === 0) return null;
 
-      const allComponents = [userComponent, cdnComponent, platformComponent].filter(Boolean);
-      const allVisible = allComponents.every(c => c.visible);
-      const someVisible = allComponents.some(c => c.visible);
+    return componentGroups.map(group => {
+      const groupComponents = group.componentIds
+        .map(id => components.find(c => c.id === id))
+        .filter(Boolean);
+      const allVisible = groupComponents.every(c => c.visible);
+      const someVisible = groupComponents.some(c => c.visible);
 
-      return {
-        id: `company-${company}`,
-        label: `Company ${companyId}`,
-        icon: 'server',
-        components: allComponents,
-        allVisible,
-        someVisible
-      };
+      return { ...group, components: groupComponents, allVisible, someVisible };
     });
   };
 
-  const handleCompanyToggle = (companyGroup) => {
-    const newState = !companyGroup.allVisible;
-    companyGroup.components.forEach(component => {
+  const handleGroupToggle = (group) => {
+    const newState = !group.allVisible;
+    group.components.forEach(component => {
       if (component.visible !== newState) {
         onToggle(component.id);
       }
@@ -64,16 +55,7 @@ const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPres
   };
 
   const renderComponentList = (componentList) => {
-    let filteredList = componentList;
-    if (isDedicatedSaas) {
-      filteredList = componentList.filter(c =>
-        !c.id.includes('company-a-users') &&
-        !c.id.includes('company-b-users') &&
-        !c.id.includes('company-c-users') &&
-        !c.id.includes('cdn-company-') &&
-        !c.id.includes('airia-platform-company-')
-      );
-    }
+    const filteredList = componentList.filter(c => !groupedComponentIds.has(c.id));
 
     return (
       <div className="space-y-1">
@@ -99,14 +81,14 @@ const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPres
     );
   };
 
-  const renderCompanyGroups = () => {
-    const companyGroups = getCompanyGroups();
-    if (!companyGroups) return null;
+  const renderComponentGroups = () => {
+    const groups = resolveGroups();
+    if (!groups) return null;
 
     return (
-      <CollapsibleSection title="Companies">
+      <CollapsibleSection title="Groups">
         <div className="space-y-1">
-          {companyGroups.map((group) => (
+          {groups.map((group) => (
             <label
               key={group.id}
               className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 rounded cursor-pointer transition-colors"
@@ -117,7 +99,7 @@ const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPres
                 ref={el => {
                   if (el) el.indeterminate = group.someVisible && !group.allVisible;
                 }}
-                onChange={() => handleCompanyToggle(group)}
+                onChange={() => handleGroupToggle(group)}
                 className="w-3.5 h-3.5 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500"
               />
               {iconMap[group.icon]
@@ -170,7 +152,7 @@ const ToggleSidebar = ({ components, onToggle, onShowAll, onHideAll, currentPres
       </div>
 
       <div className="flex-1 min-h-0">
-        {isDedicatedSaas && renderCompanyGroups()}
+        {componentGroups.length > 0 && renderComponentGroups()}
         <CollapsibleSection title="Public / Internet">
           {renderComponentList(publicComponents)}
         </CollapsibleSection>

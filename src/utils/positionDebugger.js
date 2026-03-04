@@ -3,7 +3,8 @@
  * Use in development mode to debug positioning issues
  */
 
-import { COMPONENT_WIDTH, COMPONENT_HEIGHT, MIN_SPACING } from '../constants';
+import { COMPONENT_WIDTH, COMPONENT_HEIGHT } from '../constants';
+import { checkOverlap } from './rectUtils';
 
 export const logComponentPositions = (components, boundaryBoxes) => {
   console.group('🔍 Component Positions Debug');
@@ -80,26 +81,9 @@ export const logComponentPositions = (components, boundaryBoxes) => {
           }
         }
 
-        // Check overlap with spacing buffer
-        const r1 = {
-          x: pos1.x - MIN_SPACING / 2,
-          y: pos1.y - MIN_SPACING / 2,
-          width: COMPONENT_WIDTH + MIN_SPACING,
-          height: COMPONENT_HEIGHT + MIN_SPACING
-        };
-        const r2 = {
-          x: pos2.x - MIN_SPACING / 2,
-          y: pos2.y - MIN_SPACING / 2,
-          width: COMPONENT_WIDTH + MIN_SPACING,
-          height: COMPONENT_HEIGHT + MIN_SPACING
-        };
-
-        const doesOverlap = !(
-          r1.x + r1.width <= r2.x ||
-          r2.x + r2.width <= r1.x ||
-          r1.y + r1.height <= r2.y ||
-          r2.y + r2.height <= r1.y
-        );
+        const rect1 = { x: pos1.x, y: pos1.y, width: COMPONENT_WIDTH, height: COMPONENT_HEIGHT };
+        const rect2 = { x: pos2.x, y: pos2.y, width: COMPONENT_WIDTH, height: COMPONENT_HEIGHT };
+        const doesOverlap = checkOverlap(rect1, rect2);
 
         if (doesOverlap) {
           const horizontalGap = Math.min(

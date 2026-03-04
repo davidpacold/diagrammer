@@ -3,32 +3,8 @@
  * Programmatically verifies layout correctness
  */
 
-import { COMPONENT_WIDTH, COMPONENT_HEIGHT, MIN_SPACING, ZONE_BOUNDARY_X } from '../constants';
-
-/**
- * Check if two rectangles overlap
- */
-const checkOverlap = (rect1, rect2) => {
-  const r1 = {
-    x: rect1.x - MIN_SPACING / 2,
-    y: rect1.y - MIN_SPACING / 2,
-    width: rect1.width + MIN_SPACING,
-    height: rect1.height + MIN_SPACING
-  };
-  const r2 = {
-    x: rect2.x - MIN_SPACING / 2,
-    y: rect2.y - MIN_SPACING / 2,
-    width: rect2.width + MIN_SPACING,
-    height: rect2.height + MIN_SPACING
-  };
-
-  return !(
-    r1.x + r1.width <= r2.x ||
-    r2.x + r2.width <= r1.x ||
-    r1.y + r1.height <= r2.y ||
-    r2.y + r2.height <= r1.y
-  );
-};
+import { COMPONENT_WIDTH, COMPONENT_HEIGHT, ZONE_BOUNDARY_X } from '../constants';
+import { checkOverlap } from './rectUtils';
 
 /**
  * Validate entire preset layout

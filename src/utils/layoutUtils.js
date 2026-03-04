@@ -1,38 +1,12 @@
 // Utility functions for automatic layout and collision detection
 
 import { COMPONENT_WIDTH, COMPONENT_HEIGHT, MIN_SPACING, GRID_SIZE } from '../constants';
+import { checkOverlap } from './rectUtils';
 
 // Grid system for Visio-style alignment
 const GRID_COLUMNS = 2; // Default columns for grid layout
 const GRID_ROW_SPACING = 150; // Vertical spacing between rows
 const GRID_COL_SPACING = 200; // Horizontal spacing between columns
-
-/**
- * Check if two card rectangles overlap (including spacing buffer)
- */
-export const checkOverlap = (rect1, rect2) => {
-  // Add spacing buffer to both rectangles
-  const r1 = {
-    x: rect1.x - MIN_SPACING / 2,
-    y: rect1.y - MIN_SPACING / 2,
-    width: rect1.width + MIN_SPACING,
-    height: rect1.height + MIN_SPACING
-  };
-  const r2 = {
-    x: rect2.x - MIN_SPACING / 2,
-    y: rect2.y - MIN_SPACING / 2,
-    width: rect2.width + MIN_SPACING,
-    height: rect2.height + MIN_SPACING
-  };
-
-  // Check if rectangles with buffers overlap
-  return !(
-    r1.x + r1.width <= r2.x ||
-    r2.x + r2.width <= r1.x ||
-    r1.y + r1.height <= r2.y ||
-    r2.y + r2.height <= r1.y
-  );
-};
 
 /**
  * Resolve overlaps between components using a simple force-directed approach

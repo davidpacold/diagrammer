@@ -376,6 +376,26 @@ export const dedicatedSaas = {
       }
     }
   ],
-  columnHeaders: []
+  columnHeaders: [],
+  componentGroups: [
+    {
+      id: 'company-a',
+      label: 'Company A',
+      icon: 'server',
+      componentIds: ['company-a-users', 'cdn-company-a', 'airia-platform-company-a'],
+    },
+    {
+      id: 'company-b',
+      label: 'Company B',
+      icon: 'server',
+      componentIds: ['company-b-users', 'cdn-company-b', 'airia-platform-company-b'],
+    },
+    {
+      id: 'company-c',
+      label: 'Company C',
+      icon: 'server',
+      componentIds: ['company-c-users', 'cdn-company-c', 'airia-platform-company-c'],
+    },
+  ],
 };
 

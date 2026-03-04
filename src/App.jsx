@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useReducer, useCallback, useEffect } from 'react';
 import { ReactFlowProvider } from 'reactflow';
 import DiagramCanvas from './components/DiagramCanvas';
 import ToggleSidebar from './components/ToggleSidebar';
@@ -29,7 +29,19 @@ const flattenComponents = (preset) => {
   return preset.components || [];
 };
 
-// Initialize state from URL or defaults (called lazily, only once)
+// Build state from a preset definition
+const buildPresetState = (presetId, preset, components) => ({
+  currentPreset: presetId,
+  components,
+  connections: preset.connections,
+  selectedNodeId: null,
+  boundaryBoxes: preset.boundaryBoxes || [],
+  zoneLabels: preset.zoneLabels || DEFAULT_ZONE_LABELS,
+  zoneDefinitions: preset.zoneDefinitions || null,
+  componentGroups: preset.componentGroups || [],
+});
+
+// Initialize state from URL or defaults
 const getInitialState = () => {
   const urlState = parseUrlState();
   const presetId = (urlState?.preset && presets[urlState.preset]) ? urlState.preset : 'shared-saas';
@@ -37,7 +49,6 @@ const getInitialState = () => {
 
   let components = flattenComponents(preset);
 
-  // Apply hidden state from URL
   if (urlState?.hidden?.length > 0) {
     const hiddenSet = new Set(urlState.hidden);
     components = components.map(c => ({
@@ -47,89 +58,87 @@ const getInitialState = () => {
   }
 
   return {
-    presetId,
-    preset,
-    components,
+    ...buildPresetState(presetId, preset, components),
     selectedNodeId: urlState?.selected || null,
   };
 };
 
-function App() {
-  // Lazy initialization — getInitialState runs exactly once
-  const [initialState] = useState(getInitialState);
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'CHANGE_PRESET': {
+      const preset = presets[action.presetId];
+      if (!preset) return state;
+      return buildPresetState(action.presetId, preset, flattenComponents(preset));
+    }
+    case 'TOGGLE_COMPONENT':
+      return {
+        ...state,
+        components: state.components.map(c =>
+          c.id === action.id ? { ...c, visible: !c.visible } : c
+        ),
+      };
+    case 'SHOW_ALL':
+      return { ...state, components: state.components.map(c => ({ ...c, visible: true })) };
+    case 'HIDE_ALL':
+      return { ...state, components: state.components.map(c => ({ ...c, visible: false })) };
+    case 'SELECT_NODE':
+      return { ...state, selectedNodeId: state.selectedNodeId === action.id ? null : action.id };
+    case 'CLEAR_SELECTION':
+      return { ...state, selectedNodeId: null };
+    case 'UPDATE_POSITION':
+      return {
+        ...state,
+        components: state.components.map(c =>
+          c.id === action.id ? { ...c, position: action.position } : c
+        ),
+      };
+    default:
+      return state;
+  }
+};
 
-  const [currentPreset, setCurrentPreset] = useState(initialState.presetId);
-  const [components, setComponents] = useState(initialState.components);
-  const [connections, setConnections] = useState(initialState.preset.connections);
-  const [selectedNodeId, setSelectedNodeId] = useState(initialState.selectedNodeId);
-  const [boundaryBoxes, setBoundaryBoxes] = useState(initialState.preset.boundaryBoxes || []);
-  const [columnHeaders, setColumnHeaders] = useState(initialState.preset.columnHeaders || []);
-  const [zoneLabels, setZoneLabels] = useState(initialState.preset.zoneLabels || DEFAULT_ZONE_LABELS);
-  const [zoneDefinitions, setZoneDefinitions] = useState(initialState.preset.zoneDefinitions || null);
+function App() {
+  const [state, dispatch] = useReducer(reducer, null, getInitialState);
+
+  const {
+    currentPreset, components, connections, selectedNodeId,
+    boundaryBoxes, zoneLabels, zoneDefinitions, componentGroups,
+  } = state;
 
   const nodes = useNodes({ components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions });
   const edges = useEdges({ components, connections, selectedNodeId });
   const { copyLink, copied } = useUrlState(currentPreset, components, selectedNodeId);
 
-  // Handle node click at canvas level (avoids embedding callbacks in node data)
   const handleNodeClick = useCallback((_event, node) => {
     if (node.type === 'component') {
-      setSelectedNodeId(prev => prev === node.id ? null : node.id);
+      dispatch({ type: 'SELECT_NODE', id: node.id });
     }
   }, []);
 
-  // Handle node position changes (drag) with snap-to-grid
   const onNodesChange = useCallback((changes) => {
     changes.forEach(change => {
       if (change.type === 'position' && change.position) {
         const position = change.dragging === false
           ? snapPositionToGrid(change.position)
           : change.position;
-
-        setComponents(prev =>
-          prev.map(c =>
-            c.id === change.id ? { ...c, position } : c
-          )
-        );
+        dispatch({ type: 'UPDATE_POSITION', id: change.id, position });
       }
     });
   }, []);
 
-  // Handle edge changes
   const onEdgesChange = useCallback(() => {}, []);
 
-  // Toggle component visibility
   const handleToggle = useCallback((id) => {
-    setComponents(prev =>
-      prev.map(c =>
-        c.id === id ? { ...c, visible: !c.visible } : c
-      )
-    );
+    dispatch({ type: 'TOGGLE_COMPONENT', id });
   }, []);
 
-  const handleShowAll = useCallback(() => {
-    setComponents(prev => prev.map(c => ({ ...c, visible: true })));
-  }, []);
+  const handleShowAll = useCallback(() => dispatch({ type: 'SHOW_ALL' }), []);
+  const handleHideAll = useCallback(() => dispatch({ type: 'HIDE_ALL' }), []);
 
-  const handleHideAll = useCallback(() => {
-    setComponents(prev => prev.map(c => ({ ...c, visible: false })));
-  }, []);
-
-  // Handle preset change
   const handlePresetChange = useCallback((presetId) => {
-    const preset = presets[presetId];
-    if (preset) {
-      setCurrentPreset(presetId);
-      setComponents(flattenComponents(preset));
-      setConnections(preset.connections);
-      setBoundaryBoxes(preset.boundaryBoxes || []);
-      setColumnHeaders(preset.columnHeaders || []);
-      setZoneLabels(preset.zoneLabels || DEFAULT_ZONE_LABELS);
-      setZoneDefinitions(preset.zoneDefinitions || null);
-    }
+    dispatch({ type: 'CHANGE_PRESET', presetId });
   }, []);
 
-  // Validate boundary containment rules in development
   useEffect(() => {
     if (import.meta.env.DEV) {
       const validationResult = validateBoundaryContainment(components, boundaryBoxes);
@@ -152,6 +161,7 @@ function App() {
           onPresetChange={handlePresetChange}
           onCopyLink={copyLink}
           linkCopied={copied}
+          componentGroups={componentGroups}
         />
         <DiagramCanvas
           nodes={nodes}
@@ -160,7 +170,7 @@ function App() {
           onEdgesChange={onEdgesChange}
           onNodeClick={handleNodeClick}
           selectedNodeId={selectedNodeId}
-          onPaneClick={() => setSelectedNodeId(null)}
+          onPaneClick={() => dispatch({ type: 'CLEAR_SELECTION' })}
           zoneLabels={zoneLabels}
         />
       </div>

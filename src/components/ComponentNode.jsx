@@ -2,26 +2,7 @@ import React from 'react';
 import { Handle, Position } from 'reactflow';
 import { iconMap } from './icons';
 import Tooltip from './Tooltip';
-
-const CATEGORY_COLORS = {
-  users: '#6b7280',
-  globe: '#3b82f6',
-  layers: '#4f46e5',
-  key: '#f59e0b',
-  cpu: '#ec4899',
-  database: '#10b981',
-  shield: '#f59e0b',
-  link: '#8b5cf6',
-  server: '#3b82f6',
-  scale: '#3b82f6',
-  door: '#3b82f6',
-  memory: '#10b981',
-  message: '#8b5cf6',
-  box: '#10b981',
-  monitor: '#f59e0b',
-  eye: '#ec4899',
-  network: '#3b82f6',
-};
+import { CATEGORY_COLORS } from '../constants';
 
 const BADGE_COLOR_MAP = {
   indigo: 'bg-indigo-100 text-indigo-700 border-indigo-300',

@@ -33,12 +33,23 @@ export const EDGE_STYLES = {
   highlighted: { stroke: '#3b82f6', strokeWidth: 3 },
 };
 
-// Component type accent colors (left border on cards)
-export const TYPE_ACCENT_COLORS = {
-  infrastructure: '#3b82f6',
-  data: '#10b981',
-  security: '#f59e0b',
-  integration: '#8b5cf6',
-  user: '#6b7280',
-  ai: '#ec4899',
+// Icon-based accent colors (left border on component cards)
+export const CATEGORY_COLORS = {
+  users: '#6b7280',
+  globe: '#3b82f6',
+  layers: '#4f46e5',
+  key: '#f59e0b',
+  cpu: '#ec4899',
+  database: '#10b981',
+  shield: '#f59e0b',
+  link: '#8b5cf6',
+  server: '#3b82f6',
+  scale: '#3b82f6',
+  door: '#3b82f6',
+  memory: '#10b981',
+  message: '#8b5cf6',
+  box: '#10b981',
+  monitor: '#f59e0b',
+  eye: '#ec4899',
+  network: '#3b82f6',
 };
