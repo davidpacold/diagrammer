@@ -3,6 +3,8 @@
  * Use in development mode to debug positioning issues
  */
 
+import { COMPONENT_WIDTH, COMPONENT_HEIGHT, MIN_SPACING } from '../constants';
+
 export const logComponentPositions = (components, boundaryBoxes) => {
   console.group('🔍 Component Positions Debug');
 
@@ -47,9 +49,6 @@ export const logComponentPositions = (components, boundaryBoxes) => {
 
   // Check for overlaps
   console.group('⚠️  Overlap Detection');
-  const COMPONENT_WIDTH = 180;
-  const COMPONENT_HEIGHT = 110;
-  const MIN_SPACING = 40;
 
   const overlaps = [];
 

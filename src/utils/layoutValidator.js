@@ -3,10 +3,7 @@
  * Programmatically verifies layout correctness
  */
 
-const COMPONENT_WIDTH = 180;
-const COMPONENT_HEIGHT = 110;
-const MIN_SPACING = 40;
-const ZONE_BOUNDARY_X = 550;
+import { COMPONENT_WIDTH, COMPONENT_HEIGHT, MIN_SPACING, ZONE_BOUNDARY_X } from '../constants';
 
 /**
  * Check if two rectangles overlap
