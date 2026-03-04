@@ -44,7 +44,7 @@ export const dedicatedSaas = {
           description: 'Company A end users',
           position: { x: -250, y: 40 },  // Moved left to prevent overlap with boundary (x: 0)
           visible: true,
-          icon: '👥',
+          icon: 'users',
           zone: 'public'
         },
         {
@@ -54,7 +54,7 @@ export const dedicatedSaas = {
           description: 'Company B end users',
           position: { x: -250, y: 190 },  // Consistent 150px spacing, moved left to prevent overlap
           visible: true,
-          icon: '👥',
+          icon: 'users',
           zone: 'public'
         },
         {
@@ -64,7 +64,7 @@ export const dedicatedSaas = {
           description: 'Company C end users',
           position: { x: -250, y: 340 },  // Consistent 150px spacing, moved left to prevent overlap
           visible: true,
-          icon: '👥',
+          icon: 'users',
           zone: 'public'
         },
 
@@ -76,7 +76,7 @@ export const dedicatedSaas = {
           description: 'Dedicated CDN for Company A',
           position: { x: 40, y: 40 },
           visible: true,
-          icon: '🌐',
+          icon: 'globe',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -87,7 +87,7 @@ export const dedicatedSaas = {
           description: 'Dedicated CDN for Company B',
           position: { x: 40, y: 190 },  // Aligned with Company B Users at y=190
           visible: true,
-          icon: '🌐',
+          icon: 'globe',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -98,7 +98,7 @@ export const dedicatedSaas = {
           description: 'Dedicated CDN for Company C',
           position: { x: 40, y: 340 },  // Aligned with Company C Users at y=340
           visible: true,
-          icon: '🌐',
+          icon: 'globe',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -109,7 +109,7 @@ export const dedicatedSaas = {
           description: 'Dedicated platform instance for Company A',
           position: { x: 260, y: 40 },  // Moved from 230 to 260 for 40px spacing (40+180+40=260)
           visible: true,
-          icon: '✨',
+          icon: 'layers',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -120,7 +120,7 @@ export const dedicatedSaas = {
           description: 'Dedicated platform instance for Company B',
           position: { x: 260, y: 190 },  // Aligned with Company B Users at y=190 (40px spacing from CDN)
           visible: true,
-          icon: '✨',
+          icon: 'layers',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -131,7 +131,7 @@ export const dedicatedSaas = {
           description: 'Dedicated platform instance for Company C',
           position: { x: 260, y: 340 },  // Aligned with Company C Users at y=340 (40px spacing from CDN)
           visible: true,
-          icon: '✨',
+          icon: 'layers',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -142,7 +142,7 @@ export const dedicatedSaas = {
           description: 'Shared Airia-managed LLM service for all companies',
           position: { x: 150, y: 490 },  // Centered below Company C row (340 + 110 + 40 = 490)
           visible: true,
-          icon: '🔑',
+          icon: 'key',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -153,7 +153,7 @@ export const dedicatedSaas = {
           description: 'Cloud SIEM - Splunk Cloud, Datadog Security, etc.',
           position: { x: 20, y: 900 },  // Row 2, col 1
           visible: false,
-          icon: '🛡️',
+          icon: 'shield',
           zone: 'public'
         },
 
@@ -167,7 +167,7 @@ export const dedicatedSaas = {
           description: 'External LLM providers - OpenAI, Anthropic, etc.',
           position: { x: 20, y: 750 },  // Moved down to avoid Company C overlap
           visible: true,
-          icon: '🤖',
+          icon: 'cpu',
           zone: 'public'
         },
         {
@@ -177,7 +177,7 @@ export const dedicatedSaas = {
           description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
           position: { x: 240, y: 750 },  // 40px spacing from External LLM
           visible: false,
-          icon: '🔗',
+          icon: 'link',
           zone: 'public'
         },
         {
@@ -187,7 +187,7 @@ export const dedicatedSaas = {
           description: 'Dedicated cloud-hosted vector database',
           position: { x: 240, y: 900 },  // Row 2, col 2
           visible: false,
-          icon: '🔷',
+          icon: 'database',
           zone: 'public'
         },
         {
@@ -197,7 +197,7 @@ export const dedicatedSaas = {
           description: 'Dedicated vector database instance',
           position: { x: 20, y: 1050 },  // Row 3, col 1
           visible: false,
-          icon: '🌲',
+          icon: 'database',
           zone: 'public'
         }
       ]
@@ -213,7 +213,7 @@ export const dedicatedSaas = {
           description: 'Customer internal admins and support staff',
           position: { x: 600, y: 40 },  // Row 1, Col 1 - Changed from y: 500
           visible: true,
-          icon: '👨‍💼',
+          icon: 'users',
           zone: 'private'
         },
         {
@@ -223,7 +223,7 @@ export const dedicatedSaas = {
           description: 'Dedicated connector for customer on-premises systems',
           position: { x: 820, y: 40 },  // Row 1, Col 2 (820px ensures 40px spacing: 600+180+40=820)
           visible: false,
-          icon: '🔌',
+          icon: 'link',
           zone: 'private'
         },
         {
@@ -233,7 +233,7 @@ export const dedicatedSaas = {
           description: 'Customer self-hosted vector database',
           position: { x: 600, y: 190 },  // Row 2, Col 1
           visible: false,
-          icon: '🔷',
+          icon: 'database',
           zone: 'private'
         },
         {
@@ -243,7 +243,7 @@ export const dedicatedSaas = {
           description: 'Customer self-hosted LLM service',
           position: { x: 820, y: 190 },  // Row 2, Col 2 (aligned with Cloud Connector)
           visible: false,
-          icon: '🧠',
+          icon: 'cpu',
           zone: 'private'
         },
         {
@@ -253,7 +253,7 @@ export const dedicatedSaas = {
           description: 'Customer on-premises database',
           position: { x: 600, y: 340 },  // Row 3, Col 1 - Same as before (good spacing)
           visible: false,
-          icon: '🗄️',
+          icon: 'database',
           zone: 'private'
         },
         {
@@ -263,7 +263,7 @@ export const dedicatedSaas = {
           description: 'Customer private API endpoints',
           position: { x: 820, y: 340 },  // Row 3, Col 2 (aligned with Cloud Connector)
           visible: false,
-          icon: '🔐',
+          icon: 'key',
           zone: 'private'
         },
         {
@@ -273,7 +273,7 @@ export const dedicatedSaas = {
           description: 'On-premises SIEM - Splunk Enterprise, QRadar, etc.',
           position: { x: 600, y: 490 },  // Row 4, Col 1 - Changed from y: 600
           visible: false,
-          icon: '🔒',
+          icon: 'shield',
           zone: 'private'
         }
       ]

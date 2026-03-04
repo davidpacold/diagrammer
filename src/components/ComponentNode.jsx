@@ -1,5 +1,6 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
+import { iconMap } from './icons';
 
 const BADGE_COLOR_MAP = {
   indigo: 'bg-indigo-100 text-indigo-700 border-indigo-300',
@@ -68,7 +69,10 @@ const ComponentNode = ({ data, id }) => {
 
       {/* Main content */}
       <div className="flex items-center gap-2">
-        <span className="text-2xl">{data.icon}</span>
+        {iconMap[data.icon]
+          ? React.createElement(iconMap[data.icon], { size: 28, className: 'text-gray-600 shrink-0' })
+          : <span className="text-2xl">{data.icon}</span>
+        }
         <div className="flex flex-col">
           <div className="font-semibold text-sm text-gray-800 leading-tight">{data.label}</div>
         </div>

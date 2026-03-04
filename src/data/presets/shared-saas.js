@@ -45,7 +45,7 @@ export const sharedSaas = {
           description: 'Customer A end users',
           position: { x: 20, y: 40 },
           visible: true,
-          icon: '👥',
+          icon: 'users',
           zone: 'public'
         },
         {
@@ -55,7 +55,7 @@ export const sharedSaas = {
           description: 'Customer B end users',
           position: { x: 20, y: 190 },
           visible: true,
-          icon: '👥',
+          icon: 'users',
           zone: 'public'
         },
         {
@@ -65,7 +65,7 @@ export const sharedSaas = {
           description: 'Customer C end users',
           position: { x: 20, y: 340 },
           visible: true,
-          icon: '👥',
+          icon: 'users',
           zone: 'public'
         },
 
@@ -79,7 +79,7 @@ export const sharedSaas = {
           description: 'Shared CDN - CloudFlare for all tenants',
           position: { x: 30, y: 30 },  // Relative to boundary (260, 20), absolute: (290, 50)
           visible: true,
-          icon: '🌐',
+          icon: 'globe',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -90,7 +90,7 @@ export const sharedSaas = {
           description: 'North America region - Airia AI platform orchestration layer',
           position: { x: 30, y: 180 },  // Relative to boundary, absolute: (290, 200)
           visible: true,
-          icon: '✨',
+          icon: 'layers',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -101,7 +101,7 @@ export const sharedSaas = {
           description: 'Airia-managed LLM service - Optimized models for key extraction',
           position: { x: 30, y: 330 },  // Relative to boundary, absolute: (290, 350)
           visible: true,
-          icon: '🔑',
+          icon: 'key',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -112,7 +112,7 @@ export const sharedSaas = {
           description: 'Europe region - Airia AI platform orchestration layer',
           position: { x: 30, y: 480 },  // Relative to boundary, absolute: (290, 500)
           visible: false,
-          icon: '✨',
+          icon: 'layers',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -123,7 +123,7 @@ export const sharedSaas = {
           description: 'Asia-Pacific region (Singapore, Australia) - Airia AI platform orchestration layer',
           position: { x: 30, y: 630 },  // Relative to boundary, absolute: (290, 650)
           visible: false,
-          icon: '✨',
+          icon: 'layers',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -134,7 +134,7 @@ export const sharedSaas = {
           description: 'Middle East & North Africa region - Airia AI platform orchestration layer',
           position: { x: 30, y: 780 },  // Relative to boundary, absolute: (290, 800)
           visible: false,
-          icon: '✨',
+          icon: 'layers',
           zone: 'public',
           parentBoundary: 'airia-managed'
         },
@@ -149,7 +149,7 @@ export const sharedSaas = {
           description: 'External LLM providers - OpenAI, Anthropic, etc.',
           position: { x: 20, y: 700 },
           visible: true,
-          icon: '🤖',
+          icon: 'cpu',
           zone: 'public'
         },
         {
@@ -159,7 +159,7 @@ export const sharedSaas = {
           description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
           position: { x: 240, y: 700 }, // 40px spacing from External LLM: 20+180+40=240 (240+180=420 < 550)
           visible: false,
-          icon: '🔗',
+          icon: 'link',
           zone: 'public'
         },
         {
@@ -169,7 +169,7 @@ export const sharedSaas = {
           description: 'Cloud SIEM - Splunk Cloud, Datadog Security, etc.',
           position: { x: 20, y: 850 }, // Row 2, col 1
           visible: false,
-          icon: '🛡️',
+          icon: 'shield',
           zone: 'public'
         },
         {
@@ -179,7 +179,7 @@ export const sharedSaas = {
           description: 'Cloud-hosted vector database for AI-native applications',
           position: { x: 240, y: 850 }, // Row 2, col 2 (aligned with Public App Integrations)
           visible: false,
-          icon: '🔷',
+          icon: 'database',
           zone: 'public'
         },
         {
@@ -189,7 +189,7 @@ export const sharedSaas = {
           description: 'Vector database for AI embeddings and semantic search',
           position: { x: 20, y: 1000 }, // Row 3, col 1 (moved to new row to stay in zone)
           visible: false,
-          icon: '🌲',
+          icon: 'database',
           zone: 'public'
         }
       ]
@@ -205,7 +205,7 @@ export const sharedSaas = {
           description: 'Internal admins and support staff',
           position: { x: 600, y: 40 },  // Row 1, Col 1 - Changed from y: 500
           visible: true,
-          icon: '👨‍💼',
+          icon: 'users',
           zone: 'private'
         },
         {
@@ -215,7 +215,7 @@ export const sharedSaas = {
           description: 'Connector for customer on-premises systems to Airia Cloud',
           position: { x: 820, y: 40 },  // Row 1, Col 2 (820px ensures 40px spacing: 600+180+40=820)
           visible: false,
-          icon: '🔌',
+          icon: 'link',
           zone: 'private'
         },
         {
@@ -225,7 +225,7 @@ export const sharedSaas = {
           description: 'Self-hosted vector database for on-premises AI applications',
           position: { x: 600, y: 190 },  // Row 2, Col 1 - Changed from y: 100
           visible: false,
-          icon: '🔷',
+          icon: 'database',
           zone: 'private'
         },
         {
@@ -235,7 +235,7 @@ export const sharedSaas = {
           description: 'Self-hosted LLM service for sensitive data',
           position: { x: 820, y: 190 },  // Row 2, Col 2 (aligned with Cloud Connector)
           visible: false,
-          icon: '🧠',
+          icon: 'cpu',
           zone: 'private'
         },
         {
@@ -245,7 +245,7 @@ export const sharedSaas = {
           description: 'Customer on-premises database',
           position: { x: 600, y: 340 },  // Row 3, Col 1 - Changed from y: 360
           visible: false,
-          icon: '🗄️',
+          icon: 'database',
           zone: 'private'
         },
         {
@@ -255,7 +255,7 @@ export const sharedSaas = {
           description: 'Customer private API endpoints',
           position: { x: 820, y: 340 },  // Row 3, Col 2 (aligned with Cloud Connector)
           visible: false,
-          icon: '🔐',
+          icon: 'key',
           zone: 'private'
         },
         {
@@ -265,7 +265,7 @@ export const sharedSaas = {
           description: 'On-premises SIEM - Splunk Enterprise, QRadar, etc.',
           position: { x: 600, y: 490 },  // Row 4, Col 1 - Changed from y: 600
           visible: false,
-          icon: '🔒',
+          icon: 'shield',
           zone: 'private'
         }
       ]

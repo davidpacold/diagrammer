@@ -9,7 +9,7 @@ export const initialComponents = [
     position: { x: 100, y: 100 },
     visible: true,
     zone: 'public',
-    icon: '🌐'
+    icon: 'globe'
   },
   {
     id: 'loadbalancer',
@@ -19,7 +19,7 @@ export const initialComponents = [
     position: { x: 100, y: 250 },
     visible: true,
     zone: 'public',
-    icon: '⚖️'
+    icon: 'scale'
   },
   {
     id: 'apigateway',
@@ -29,7 +29,7 @@ export const initialComponents = [
     position: { x: 400, y: 150 },
     visible: true,
     zone: 'private',
-    icon: '🚪'
+    icon: 'door'
   },
   {
     id: 'appserver1',
@@ -39,7 +39,7 @@ export const initialComponents = [
     position: { x: 400, y: 300 },
     visible: true,
     zone: 'private',
-    icon: '🖥️'
+    icon: 'server'
   },
   {
     id: 'appserver2',
@@ -49,7 +49,7 @@ export const initialComponents = [
     position: { x: 550, y: 300 },
     visible: true,
     zone: 'private',
-    icon: '🖥️'
+    icon: 'server'
   },
   {
     id: 'cache',
@@ -59,7 +59,7 @@ export const initialComponents = [
     position: { x: 700, y: 150 },
     visible: true,
     zone: 'private',
-    icon: '💾'
+    icon: 'memory'
   },
   {
     id: 'database-primary',
@@ -69,7 +69,7 @@ export const initialComponents = [
     position: { x: 700, y: 300 },
     visible: true,
     zone: 'private',
-    icon: '🗄️'
+    icon: 'database'
   },
   {
     id: 'database-replica',
@@ -79,7 +79,7 @@ export const initialComponents = [
     position: { x: 850, y: 300 },
     visible: true,
     zone: 'private',
-    icon: '🗄️'
+    icon: 'database'
   },
   {
     id: 'messagequeue',
@@ -89,7 +89,7 @@ export const initialComponents = [
     position: { x: 700, y: 450 },
     visible: true,
     zone: 'private',
-    icon: '📬'
+    icon: 'message'
   },
   {
     id: 'storage',
@@ -99,7 +99,7 @@ export const initialComponents = [
     position: { x: 400, y: 450 },
     visible: true,
     zone: 'private',
-    icon: '📦'
+    icon: 'box'
   },
   {
     id: 'monitoring',
@@ -109,7 +109,7 @@ export const initialComponents = [
     position: { x: 850, y: 450 },
     visible: true,
     zone: 'private',
-    icon: '📊'
+    icon: 'monitor'
   }
 ];
 

@@ -45,7 +45,7 @@ export const customerHosted = {
           description: 'Customer A end users',
           position: { x: 20, y: 40 },
           visible: true,
-          icon: '👥',
+          icon: 'users',
           zone: 'public'
         },
 
@@ -57,7 +57,7 @@ export const customerHosted = {
           description: 'External LLM providers - OpenAI, Anthropic, etc.',
           position: { x: 20, y: 700 },
           visible: true,
-          icon: '🤖',
+          icon: 'cpu',
           zone: 'public'
         },
         {
@@ -67,7 +67,7 @@ export const customerHosted = {
           description: 'Third-party SaaS integrations - Salesforce, Slack, etc.',
           position: { x: 240, y: 700 },
           visible: false,
-          icon: '🔗',
+          icon: 'link',
           zone: 'public'
         },
         {
@@ -77,7 +77,7 @@ export const customerHosted = {
           description: 'Cloud SIEM - Splunk Cloud, Datadog Security, etc.',
           position: { x: 20, y: 850 },
           visible: false,
-          icon: '🛡️',
+          icon: 'shield',
           zone: 'public'
         },
         {
@@ -87,7 +87,7 @@ export const customerHosted = {
           description: 'Cloud-hosted vector database for AI-native applications',
           position: { x: 240, y: 850 },
           visible: false,
-          icon: '🔷',
+          icon: 'database',
           zone: 'public'
         },
         {
@@ -97,7 +97,7 @@ export const customerHosted = {
           description: 'Vector database for AI embeddings and semantic search',
           position: { x: 20, y: 1000 },
           visible: false,
-          icon: '🌲',
+          icon: 'database',
           zone: 'public'
         }
       ]
@@ -115,7 +115,7 @@ export const customerHosted = {
           description: 'Internal admins and support staff',
           position: { x: 600, y: 40 },
           visible: true,
-          icon: '👨‍💼',
+          icon: 'users',
           zone: 'private'
         },
         {
@@ -125,7 +125,7 @@ export const customerHosted = {
           description: 'Kubernetes ingress controller for routing traffic',
           position: { x: 600, y: 190 },
           visible: true,
-          icon: '🚪',
+          icon: 'network',
           zone: 'private'
         },
         {
@@ -135,7 +135,7 @@ export const customerHosted = {
           description: 'Object storage for documents and files (S3-compatible)',
           position: { x: 1120, y: 550 },  // Column 3, below AI Services container (510 + 40 spacing)
           visible: true,
-          icon: '🗂️',
+          icon: 'box',
           zone: 'private'
         },
         {
@@ -145,7 +145,7 @@ export const customerHosted = {
           description: 'Self-hosted vector database for on-premises AI applications',
           position: { x: 600, y: 490 },
           visible: false,
-          icon: '🔷',
+          icon: 'database',
           zone: 'private'
         },
         {
@@ -155,7 +155,7 @@ export const customerHosted = {
           description: 'On-premises SIEM - Splunk Enterprise, QRadar, etc.',
           position: { x: 600, y: 640 },
           visible: false,
-          icon: '🔒',
+          icon: 'shield',
           zone: 'private'
         },
 
@@ -168,7 +168,7 @@ export const customerHosted = {
           description: 'Customer-hosted Airia Platform running in Kubernetes',
           position: { x: 40, y: 40 },  // Relative to Kubernetes boundary
           visible: true,
-          icon: '✨',
+          icon: 'layers',
           zone: 'private',
           parentBoundary: 'kubernetes-cluster'
         },
@@ -181,7 +181,7 @@ export const customerHosted = {
           description: 'Customer private API endpoints',
           position: { x: 1120, y: 40 },
           visible: false,
-          icon: '🔐',
+          icon: 'key',
           zone: 'private'
         },
 
@@ -194,7 +194,7 @@ export const customerHosted = {
           description: 'Self-hosted LLM service for sensitive data',
           position: { x: 40, y: 40 },  // Relative to AI Services boundary
           visible: true,
-          icon: '🧠',
+          icon: 'cpu',
           zone: 'private',
           parentBoundary: 'ai-services-container'
         },
@@ -205,7 +205,7 @@ export const customerHosted = {
           description: 'Self-hosted vision/multimodal AI model for image and video analysis',
           position: { x: 40, y: 190 },  // Below Private LLM: 40 + 110 + 40 = 190
           visible: true,
-          icon: '👁️',
+          icon: 'eye',
           zone: 'private',
           parentBoundary: 'ai-services-container'
         },
@@ -219,7 +219,7 @@ export const customerHosted = {
           description: 'PostgreSQL relational database',
           position: { x: 40, y: 40 },  // Relative to database container boundary
           visible: true,
-          icon: '🐘',
+          icon: 'database',
           zone: 'private',
           parentBoundary: 'database-container'
         },
@@ -230,7 +230,7 @@ export const customerHosted = {
           description: 'Cassandra distributed NoSQL database',
           position: { x: 40, y: 190 },  // Below PostgreSQL: 40 + 110 + 40 = 190
           visible: true,
-          icon: '💍',
+          icon: 'database',
           zone: 'private',
           parentBoundary: 'database-container'
         }

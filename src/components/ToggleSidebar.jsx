@@ -1,5 +1,6 @@
 import React from 'react';
 import PresetSelector from './PresetSelector';
+import { iconMap } from './icons';
 
 const ToggleSidebar = ({ components, onToggle, currentPreset, onPresetChange }) => {
   // Group components by zone
@@ -27,7 +28,7 @@ const ToggleSidebar = ({ components, onToggle, currentPreset, onPresetChange }) 
       return {
         id: `company-${company}`,
         label: `Company ${companyId}`,
-        icon: '🏢',
+        icon: 'server',
         components: allComponents,
         allVisible,
         someVisible
@@ -73,7 +74,10 @@ const ToggleSidebar = ({ components, onToggle, currentPreset, onPresetChange }) 
                 onChange={() => onToggle(component.id)}
                 className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="text-xl">{component.icon}</span>
+              {iconMap[component.icon]
+                ? React.createElement(iconMap[component.icon], { size: 20, className: 'text-gray-600 shrink-0' })
+                : <span className="text-xl">{component.icon}</span>
+              }
               <span className="text-sm font-medium text-gray-800">{component.label}</span>
             </label>
           ))}
@@ -104,7 +108,10 @@ const ToggleSidebar = ({ components, onToggle, currentPreset, onPresetChange }) 
                 onChange={() => handleCompanyToggle(group)}
                 className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <span className="text-xl">{group.icon}</span>
+              {iconMap[group.icon]
+                ? React.createElement(iconMap[group.icon], { size: 20, className: 'text-gray-600 shrink-0' })
+                : <span className="text-xl">{group.icon}</span>
+              }
               <span className="text-sm font-medium text-gray-800">{group.label}</span>
               <span className="text-xs text-gray-500 ml-auto">
                 ({group.components.filter(c => c.visible).length}/{group.components.length})
