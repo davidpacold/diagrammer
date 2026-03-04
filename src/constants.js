@@ -45,6 +45,27 @@ export const EDGE_COLORS = {
   byok: '#f59e0b',      // Amber for BYOK connections
 };
 
+// Icon background colors for card redesign
+export const ICON_BG_COLORS = {
+  users: 'bg-gray-100',
+  globe: 'bg-blue-100',
+  layers: 'bg-indigo-100',
+  key: 'bg-amber-100',
+  cpu: 'bg-pink-100',
+  database: 'bg-emerald-100',
+  shield: 'bg-amber-100',
+  link: 'bg-violet-100',
+  server: 'bg-blue-100',
+  monitor: 'bg-amber-100',
+  message: 'bg-violet-100',
+  box: 'bg-emerald-100',
+  scale: 'bg-blue-100',
+  door: 'bg-blue-100',
+  memory: 'bg-emerald-100',
+  eye: 'bg-pink-100',
+  network: 'bg-blue-100',
+};
+
 // Icon-based accent colors (left border on component cards)
 export const CATEGORY_COLORS = {
   users: '#6b7280',
