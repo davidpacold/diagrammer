@@ -2,6 +2,26 @@ import React from 'react';
 import { Handle, Position } from 'reactflow';
 import { iconMap } from './icons';
 
+const CATEGORY_COLORS = {
+  users: '#6b7280',
+  globe: '#3b82f6',
+  layers: '#4f46e5',
+  key: '#f59e0b',
+  cpu: '#ec4899',
+  database: '#10b981',
+  shield: '#f59e0b',
+  link: '#8b5cf6',
+  server: '#3b82f6',
+  scale: '#3b82f6',
+  door: '#3b82f6',
+  memory: '#10b981',
+  message: '#8b5cf6',
+  box: '#10b981',
+  monitor: '#f59e0b',
+  eye: '#ec4899',
+  network: '#3b82f6',
+};
+
 const BADGE_COLOR_MAP = {
   indigo: 'bg-indigo-100 text-indigo-700 border-indigo-300',
   green: 'bg-green-100 text-green-700 border-green-300',
@@ -43,13 +63,14 @@ const ComponentNode = ({ data, id }) => {
 
   return (
     <div
-      className={`px-4 py-3 bg-white rounded-lg shadow-md hover:shadow-xl transition-all w-[180px] cursor-pointer relative ${
+      className={`px-4 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all w-[180px] cursor-pointer relative ${
         data.isSelected
           ? 'border-4 border-blue-500 ring-2 ring-blue-200'
           : data.isConnected
           ? 'border-3 border-blue-300 ring-1 ring-blue-100'
           : 'border-2 border-gray-300'
       }`}
+      style={{ borderLeftColor: CATEGORY_COLORS[data.icon] || '#94a3b8', borderLeftWidth: '4px' }}
       title={tooltip}
       onClick={handleClick}
     >

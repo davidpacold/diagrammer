@@ -125,7 +125,10 @@ const ToggleSidebar = ({ components, onToggle, currentPreset, onPresetChange }) 
 
   return (
     <div className="w-64 h-full bg-white border-r border-gray-200 p-4 overflow-y-auto">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">Architecture Diagram</h2>
+      <div className="mb-6">
+        <h2 className="text-lg font-bold text-gray-800">Airia</h2>
+        <p className="text-xs text-gray-500 mt-0.5">Architecture Diagram</p>
+      </div>
 
       <PresetSelector currentPreset={currentPreset} onPresetChange={onPresetChange} />
 
@@ -137,7 +140,7 @@ const ToggleSidebar = ({ components, onToggle, currentPreset, onPresetChange }) 
 
       <div className="mt-8 pt-4 border-t border-gray-200">
         <p className="text-xs text-gray-500">
-          Toggle components to show/hide them on the diagram. Drag components to reposition.
+          Toggle components on or off. Click a node on the canvas to trace its connections.
         </p>
       </div>
     </div>

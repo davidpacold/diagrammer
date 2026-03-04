@@ -17,15 +17,17 @@ const BoundaryBoxNode = ({ data }) => {
         <div
           style={{
             position: 'absolute',
-            top: '-25px',
-            left: '10px',
-            color: data.color || '#3b82f6',
-            fontSize: '14px',
+            top: '-12px',
+            left: '12px',
+            color: 'white',
+            fontSize: '11px',
             fontWeight: '600',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            background: 'white',
-            padding: '0 8px',
+            fontFamily: "'Inter', system-ui, sans-serif",
+            background: data.color || '#3b82f6',
+            padding: '2px 10px',
+            borderRadius: '10px',
             pointerEvents: 'none',
+            letterSpacing: '0.025em',
           }}
         >
           {data.label}

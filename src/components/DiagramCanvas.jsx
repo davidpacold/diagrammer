@@ -37,40 +37,39 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNod
           style: { ...EDGE_STYLES.default },
         }}
       >
-        <Background color="#cbd5e1" gap={GRID_SIZE} size={1} />
+        <Background color="#e2e8f0" gap={20} size={1} />
 
         {/* Zone labels as panels */}
-        <Panel position="top-left" className="bg-blue-50 bg-opacity-70 px-4 py-2 rounded-md pointer-events-none">
-          <span className="text-sm font-semibold text-gray-700 uppercase">
+        <Panel position="top-left" className="bg-blue-50 px-4 py-1.5 rounded-full pointer-events-none shadow-sm border border-blue-100">
+          <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">
             {zoneLabels.left}
           </span>
         </Panel>
-        <Panel position="top-right" className="bg-gray-100 bg-opacity-70 px-4 py-2 rounded-md pointer-events-none">
-          <span className="text-sm font-semibold text-gray-700 uppercase">
+        <Panel position="top-right" className="bg-gray-50 px-4 py-1.5 rounded-full pointer-events-none shadow-sm border border-gray-200">
+          <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
             {zoneLabels.right}
           </span>
         </Panel>
 
         {/* Connection hint */}
-        <Panel position="top-center" className="pointer-events-none flex flex-col items-center gap-2">
-          {selectedNodeId && (
-            <div className="bg-blue-50 border border-blue-200 text-blue-800 px-3 py-1 rounded text-xs">
-              Showing connections for selected component
+        <Panel position="top-center" className="pointer-events-none">
+          {selectedNodeId ? (
+            <div className="bg-indigo-50 border border-indigo-200 text-indigo-700 px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+              Showing downstream connections
             </div>
-          )}
-          {!selectedNodeId && (
-            <div className="bg-gray-50 border border-gray-200 text-gray-600 px-3 py-1 rounded text-xs">
-              Click a component to highlight its connections
+          ) : (
+            <div className="bg-white/80 border border-gray-200 text-gray-500 px-3 py-1 rounded-full text-xs shadow-sm">
+              Click a component to trace connections
             </div>
           )}
         </Panel>
 
         <Controls />
         <MiniMap
-          nodeColor={(node) => {
-            return node.data.zone === 'public' ? '#93c5fd' : '#cbd5e1';
-          }}
-          className="bg-white border border-gray-200"
+          nodeColor={(node) => node.data?.zone === 'public' ? '#93c5fd' : '#d1d5db'}
+          className="border border-gray-200 rounded-lg"
+          style={{ background: '#f8fafc' }}
+          maskColor="rgba(0, 0, 0, 0.08)"
         />
       </ReactFlow>
     </div>
