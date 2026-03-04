@@ -34,6 +34,15 @@ export const DEFAULT_VIEWPORT = { x: 150, y: 50, zoom: 0.7 };
 export const EDGE_STYLES = {
   default: { stroke: '#94a3b8', strokeWidth: 2 },
   highlighted: { stroke: '#3b82f6', strokeWidth: 3 },
+  dashed: { stroke: '#94a3b8', strokeWidth: 2, strokeDasharray: '6 3' },
+  dotted: { stroke: '#94a3b8', strokeWidth: 2, strokeDasharray: '2 4' },
+};
+
+export const EDGE_COLORS = {
+  managed: '#4f46e5',   // Indigo for Airia-managed connections
+  external: '#94a3b8',  // Gray for external services
+  customer: '#10b981',  // Green for customer connections
+  byok: '#f59e0b',      // Amber for BYOK connections
 };
 
 // Icon-based accent colors (left border on component cards)

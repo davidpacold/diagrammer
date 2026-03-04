@@ -1,5 +1,5 @@
 import React from 'react';
-import { getSmoothStepPath } from 'reactflow';
+import { getSmoothStepPath, EdgeLabelRenderer } from 'reactflow';
 
 const AnimatedEdge = ({
   id,
@@ -22,6 +22,8 @@ const AnimatedEdge = ({
   });
 
   const isHighlighted = style.stroke === '#3b82f6';
+  const labelX = (sourceX + targetX) / 2;
+  const labelY = (sourceY + targetY) / 2;
 
   return (
     <>
@@ -33,6 +35,22 @@ const AnimatedEdge = ({
         style={style}
         fill="none"
       />
+
+      {/* Edge label */}
+      {data?.label && (
+        <EdgeLabelRenderer>
+          <div
+            style={{
+              position: 'absolute',
+              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+              pointerEvents: 'none',
+            }}
+            className="text-[9px] font-medium text-gray-400 bg-white/90 px-1.5 py-0.5 rounded border border-gray-200"
+          >
+            {data.label}
+          </div>
+        </EdgeLabelRenderer>
+      )}
 
       {/* Animated particles when highlighted */}
       {isHighlighted && (
