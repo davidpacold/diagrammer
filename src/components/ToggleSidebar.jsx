@@ -75,7 +75,7 @@ const GroupRow = ({ group, onToggle }) => (
   </label>
 );
 
-const ToggleSidebar = ({ components, onToggle, onToggleMany, onShowAll, onHideAll, currentPreset, onPresetChange, onCopyLink, linkCopied, componentGroups = [] }) => {
+const ToggleSidebar = ({ components, onToggle, onToggleMany, onShowAll, onHideAll, currentPreset, onPresetChange, onCopyLink, linkCopied, componentGroups = [], onStartPresentation, presentationMode, scenes }) => {
   const publicComponents = components.filter(c => c.zone === 'public');
   const privateComponents = components.filter(c => c.zone === 'private');
 
@@ -176,6 +176,15 @@ const ToggleSidebar = ({ components, onToggle, onToggleMany, onShowAll, onHideAl
 
       {/* Footer */}
       <div className="px-3 py-2 border-t border-gray-100">
+        {!presentationMode && scenes?.length > 0 && (
+          <button
+            onClick={onStartPresentation}
+            className="w-full text-[11px] px-2 py-1.5 bg-gray-800 hover:bg-gray-900 text-white rounded-md transition-colors flex items-center justify-center gap-1 mb-1.5"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Present
+          </button>
+        )}
         {onCopyLink && (
           <button
             onClick={onCopyLink}

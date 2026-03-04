@@ -10,6 +10,7 @@ import BoundaryBoxNode from './BoundaryBoxNode';
 import ZoneBackgroundNode from './ZoneBackgroundNode';
 import { EDGE_STYLES, DEFAULT_ZONE_LABELS, GRID_SIZE, DEFAULT_VIEWPORT } from '../constants';
 import AnimatedEdge from './AnimatedEdge';
+import PresentationBar from './PresentationBar';
 
 const nodeTypes = {
   component: ComponentNode,
@@ -21,7 +22,7 @@ const edgeTypes = {
   animated: AnimatedEdge,
 };
 
-const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS, fitViewTrigger }) => {
+const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS, fitViewTrigger, presentationMode, sceneIndex, scenes, onNextScene, onPrevScene, onExitPresentation }) => {
   const { fitView } = useReactFlow();
 
   useEffect(() => {
@@ -82,6 +83,17 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick
         </Panel>
 
       </ReactFlow>
+
+      {presentationMode && scenes && scenes[sceneIndex] && (
+        <PresentationBar
+          scene={scenes[sceneIndex]}
+          sceneIndex={sceneIndex}
+          totalScenes={scenes.length}
+          onPrev={onPrevScene}
+          onNext={onNextScene}
+          onExit={onExitPresentation}
+        />
+      )}
     </div>
   );
 };

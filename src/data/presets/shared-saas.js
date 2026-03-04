@@ -461,6 +461,32 @@ export const sharedSaas = {
       }
     }
   ],
-  columnHeaders: []
+  columnHeaders: [],
+  scenes: [
+    {
+      title: 'Customer Entry',
+      description: 'End users connect through CloudFlare WAF and CDN for security and performance.',
+      visible: ['customer-1', 'cdn'],
+      select: 'cdn',
+    },
+    {
+      title: 'Platform Orchestration',
+      description: 'The Airia Platform orchestrates AI workflows, routing requests to the right services.',
+      visible: ['customer-1', 'cdn', 'airia-platform-na'],
+      select: 'airia-platform-na',
+    },
+    {
+      title: 'Managed LLM Access',
+      description: 'Airia Key LLM provides managed access to multiple LLM providers with a single API key.',
+      visible: ['customer-1', 'cdn', 'airia-platform-na', 'airia-key-llm', 'llm-openai-managed', 'llm-anthropic-managed', 'llm-google-managed'],
+      select: 'airia-key-llm',
+    },
+    {
+      title: 'Multi-Tenant Architecture',
+      description: 'Multiple customers share the same infrastructure, with isolated data and configurations.',
+      visible: ['customer-1', 'customer-2', 'customer-3', 'cdn', 'airia-platform-na', 'airia-key-llm', 'llm-openai-managed', 'llm-anthropic-managed', 'llm-google-managed'],
+      select: null,
+    },
+  ],
 };
 

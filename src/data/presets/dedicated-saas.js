@@ -460,6 +460,26 @@ export const dedicatedSaas = {
     }
   ],
   columnHeaders: [],
+  scenes: [
+    {
+      title: 'Dedicated Resources',
+      description: 'Each company gets their own dedicated CDN and platform instance for full isolation.',
+      visible: ['company-a-users', 'cdn-company-a', 'airia-platform-company-a'],
+      select: 'airia-platform-company-a',
+    },
+    {
+      title: 'Managed LLM Layer',
+      description: 'Shared Airia Key LLM provides managed access to LLM providers across all tenants.',
+      visible: ['company-a-users', 'cdn-company-a', 'airia-platform-company-a', 'airia-key-llm', 'llm-openai-managed', 'llm-anthropic-managed', 'llm-google-managed'],
+      select: 'airia-key-llm',
+    },
+    {
+      title: 'Multi-Company View',
+      description: 'Multiple companies each get isolated infrastructure within the Airia Managed boundary.',
+      visible: ['company-a-users', 'cdn-company-a', 'airia-platform-company-a', 'company-b-users', 'cdn-company-b', 'airia-platform-company-b', 'airia-key-llm', 'llm-openai-managed', 'llm-anthropic-managed', 'llm-google-managed'],
+      select: null,
+    },
+  ],
   componentGroups: [
     {
       id: 'company-a',
