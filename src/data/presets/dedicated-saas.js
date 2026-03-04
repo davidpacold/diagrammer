@@ -167,35 +167,67 @@ export const dedicatedSaas = {
           zone: 'public'
         },
 
-        // External Services (below Airia Managed boundary)
-        // Row 1 (y=750): External LLM, Public App Integrations
-        // Row 2 (y=900): SIEM, Weaviate, Pinecone
+        // Managed LLM providers (inside Airia Managed boundary, linked from Airia Key LLM)
         {
-          id: 'llm-openai',
+          id: 'llm-openai-managed',
           type: 'component',
-          label: 'OpenAI',
-          description: 'OpenAI API - GPT-4, GPT-4o, embeddings',
-          position: { x: 20, y: 750 },
+          label: 'OpenAI (Airia Key)',
+          description: 'OpenAI via Airia-managed API key - GPT-4, GPT-4o, embeddings',
+          position: { x: 150, y: 640 },
           visible: true,
+          icon: 'cpu',
+          zone: 'public',
+          parentBoundary: 'airia-managed'
+        },
+        {
+          id: 'llm-anthropic-managed',
+          type: 'component',
+          label: 'Anthropic (Airia Key)',
+          description: 'Anthropic via Airia-managed API key - Claude models',
+          position: { x: 150, y: 790 },
+          visible: true,
+          icon: 'cpu',
+          zone: 'public',
+          parentBoundary: 'airia-managed'
+        },
+        {
+          id: 'llm-google-managed',
+          type: 'component',
+          label: 'Google AI (Airia Key)',
+          description: 'Google AI via Airia-managed API key - Gemini models',
+          position: { x: 150, y: 940 },
+          visible: true,
+          icon: 'cpu',
+          zone: 'public',
+          parentBoundary: 'airia-managed'
+        },
+        // BYOK LLM providers (outside boundary, linked from company platforms)
+        {
+          id: 'llm-openai-byok',
+          type: 'component',
+          label: 'OpenAI (BYOK)',
+          description: 'OpenAI via customer API key - Bring Your Own Key',
+          position: { x: -250, y: 750 },
+          visible: false,
           icon: 'cpu',
           zone: 'public'
         },
         {
-          id: 'llm-anthropic',
+          id: 'llm-anthropic-byok',
           type: 'component',
-          label: 'Anthropic',
-          description: 'Anthropic API - Claude models',
-          position: { x: 240, y: 750 },
-          visible: true,
+          label: 'Anthropic (BYOK)',
+          description: 'Anthropic via customer API key - Bring Your Own Key',
+          position: { x: -250, y: 900 },
+          visible: false,
           icon: 'cpu',
           zone: 'public'
         },
         {
-          id: 'llm-google',
+          id: 'llm-google-byok',
           type: 'component',
-          label: 'Google AI',
-          description: 'Google AI - Gemini models',
-          position: { x: 20, y: 900 },
+          label: 'Google AI (BYOK)',
+          description: 'Google AI via customer API key - Bring Your Own Key',
+          position: { x: -250, y: 1050 },
           visible: true,
           icon: 'cpu',
           zone: 'public'
@@ -329,26 +361,26 @@ export const dedicatedSaas = {
     { id: 'e1a-cb', source: 'airia-platform-company-b', target: 'airia-cloud-connector', animated: false },
     { id: 'e1a-cc', source: 'airia-platform-company-c', target: 'airia-cloud-connector', animated: false },
 
-    // Airia Key LLM to LLM providers
-    { id: 'e-llm-openai', source: 'airia-key-llm', target: 'llm-openai', animated: false },
-    { id: 'e-llm-anthropic', source: 'airia-key-llm', target: 'llm-anthropic', animated: false },
-    { id: 'e-llm-google', source: 'airia-key-llm', target: 'llm-google', animated: false },
+    // Airia Key LLM to managed LLM providers (inside boundary)
+    { id: 'e-llm-openai-managed', source: 'airia-key-llm', target: 'llm-openai-managed', animated: false },
+    { id: 'e-llm-anthropic-managed', source: 'airia-key-llm', target: 'llm-anthropic-managed', animated: false },
+    { id: 'e-llm-google-managed', source: 'airia-key-llm', target: 'llm-google-managed', animated: false },
 
     // Company platforms to Airia Key LLM (managed)
     { id: 'e2a-ca', source: 'airia-platform-company-a', target: 'airia-key-llm', animated: false },
     { id: 'e2a-cb', source: 'airia-platform-company-b', target: 'airia-key-llm', animated: false },
     { id: 'e2a-cc', source: 'airia-platform-company-c', target: 'airia-key-llm', animated: false },
 
-    // Company platforms to LLM providers (bring your own API key)
-    { id: 'e-byok-openai-ca', source: 'airia-platform-company-a', target: 'llm-openai', animated: false },
-    { id: 'e-byok-anthropic-ca', source: 'airia-platform-company-a', target: 'llm-anthropic', animated: false },
-    { id: 'e-byok-google-ca', source: 'airia-platform-company-a', target: 'llm-google', animated: false },
-    { id: 'e-byok-openai-cb', source: 'airia-platform-company-b', target: 'llm-openai', animated: false },
-    { id: 'e-byok-anthropic-cb', source: 'airia-platform-company-b', target: 'llm-anthropic', animated: false },
-    { id: 'e-byok-google-cb', source: 'airia-platform-company-b', target: 'llm-google', animated: false },
-    { id: 'e-byok-openai-cc', source: 'airia-platform-company-c', target: 'llm-openai', animated: false },
-    { id: 'e-byok-anthropic-cc', source: 'airia-platform-company-c', target: 'llm-anthropic', animated: false },
-    { id: 'e-byok-google-cc', source: 'airia-platform-company-c', target: 'llm-google', animated: false },
+    // Company platforms to BYOK LLM providers (outside boundary)
+    { id: 'e-byok-openai-ca', source: 'airia-platform-company-a', target: 'llm-openai-byok', animated: false },
+    { id: 'e-byok-anthropic-ca', source: 'airia-platform-company-a', target: 'llm-anthropic-byok', animated: false },
+    { id: 'e-byok-google-ca', source: 'airia-platform-company-a', target: 'llm-google-byok', animated: false },
+    { id: 'e-byok-openai-cb', source: 'airia-platform-company-b', target: 'llm-openai-byok', animated: false },
+    { id: 'e-byok-anthropic-cb', source: 'airia-platform-company-b', target: 'llm-anthropic-byok', animated: false },
+    { id: 'e-byok-google-cb', source: 'airia-platform-company-b', target: 'llm-google-byok', animated: false },
+    { id: 'e-byok-openai-cc', source: 'airia-platform-company-c', target: 'llm-openai-byok', animated: false },
+    { id: 'e-byok-anthropic-cc', source: 'airia-platform-company-c', target: 'llm-anthropic-byok', animated: false },
+    { id: 'e-byok-google-cc', source: 'airia-platform-company-c', target: 'llm-google-byok', animated: false },
 
     // Company platforms to public integrations
     { id: 'e3-ca', source: 'airia-platform-company-a', target: 'public-app-integrations', animated: false },
@@ -406,15 +438,18 @@ export const dedicatedSaas = {
           'airia-platform-company-a',   // Dedicated platform instance for Company A
           'airia-platform-company-b',   // Dedicated platform instance for Company B
           'airia-platform-company-c',   // Dedicated platform instance for Company C
-          'airia-key-llm'               // Shared Airia-managed LLM service
+          'airia-key-llm',              // Shared Airia-managed LLM service
+          'llm-openai-managed',         // OpenAI (Airia Key)
+          'llm-anthropic-managed',      // Anthropic (Airia Key)
+          'llm-google-managed'          // Google AI (Airia Key)
         ],
         mustExclude: [
           'company-a-users',            // Company A end users (external)
           'company-b-users',            // Company B end users (external)
           'company-c-users',            // Company C end users (external)
-          'llm-openai',                 // OpenAI
-          'llm-anthropic',              // Anthropic
-          'llm-google',                 // Google AI
+          'llm-openai-byok',           // OpenAI (BYOK)
+          'llm-anthropic-byok',        // Anthropic (BYOK)
+          'llm-google-byok',           // Google AI (BYOK)
           'pinecone',                   // External vector DB
           'weaviate-public',            // External vector DB
           'public-app-integrations',    // External SaaS integrations
