@@ -37,14 +37,7 @@ const BADGE_DOT_MAP = {
   purple: 'bg-purple-500',
 };
 
-const ComponentNode = ({ data, id }) => {
-  const handleClick = (e) => {
-    e.stopPropagation();
-    if (data.onNodeClick) {
-      data.onNodeClick(data.isSelected ? null : id);
-    }
-  };
-
+const ComponentNode = ({ data }) => {
   const zoneBadgeColor = data.zone === 'public'
     ? 'bg-blue-100 text-blue-700 border-blue-300'
     : data.zone === 'private'
@@ -63,11 +56,10 @@ const ComponentNode = ({ data, id }) => {
         data.isSelected
           ? 'border-4 border-blue-500 ring-2 ring-blue-200'
           : data.isConnected
-          ? 'border-3 border-blue-300 ring-1 ring-blue-100'
+          ? 'border-2 border-blue-300 ring-1 ring-blue-100'
           : 'border-2 border-gray-300'
       }`}
       style={{ borderLeftColor: CATEGORY_COLORS[data.icon] || '#94a3b8', borderLeftWidth: '4px' }}
-      onClick={handleClick}
     >
       <Handle type="target" position={Position.Left} className="w-3 h-3" />
 

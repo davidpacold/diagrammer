@@ -29,7 +29,7 @@ const flattenComponents = (preset) => {
   return preset.components || [];
 };
 
-// Initialize state from URL or defaults
+// Initialize state from URL or defaults (called lazily, only once)
 const getInitialState = () => {
   const urlState = parseUrlState();
   const presetId = (urlState?.preset && presets[urlState.preset]) ? urlState.preset : 'shared-saas';
@@ -55,20 +55,28 @@ const getInitialState = () => {
 };
 
 function App() {
-  const initial = getInitialState();
+  // Lazy initialization — getInitialState runs exactly once
+  const [initialState] = useState(getInitialState);
 
-  const [currentPreset, setCurrentPreset] = useState(initial.presetId);
-  const [components, setComponents] = useState(initial.components);
-  const [connections, setConnections] = useState(initial.preset.connections);
-  const [selectedNodeId, setSelectedNodeId] = useState(initial.selectedNodeId);
-  const [boundaryBoxes, setBoundaryBoxes] = useState(initial.preset.boundaryBoxes || []);
-  const [columnHeaders, setColumnHeaders] = useState(initial.preset.columnHeaders || []);
-  const [zoneLabels, setZoneLabels] = useState(initial.preset.zoneLabels || DEFAULT_ZONE_LABELS);
-  const [zoneDefinitions, setZoneDefinitions] = useState(initial.preset.zoneDefinitions || null);
+  const [currentPreset, setCurrentPreset] = useState(initialState.presetId);
+  const [components, setComponents] = useState(initialState.components);
+  const [connections, setConnections] = useState(initialState.preset.connections);
+  const [selectedNodeId, setSelectedNodeId] = useState(initialState.selectedNodeId);
+  const [boundaryBoxes, setBoundaryBoxes] = useState(initialState.preset.boundaryBoxes || []);
+  const [columnHeaders, setColumnHeaders] = useState(initialState.preset.columnHeaders || []);
+  const [zoneLabels, setZoneLabels] = useState(initialState.preset.zoneLabels || DEFAULT_ZONE_LABELS);
+  const [zoneDefinitions, setZoneDefinitions] = useState(initialState.preset.zoneDefinitions || null);
 
-  const nodes = useNodes({ components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions, setSelectedNodeId });
+  const nodes = useNodes({ components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions });
   const edges = useEdges({ components, connections, selectedNodeId });
   const { copyLink, copied } = useUrlState(currentPreset, components, selectedNodeId);
+
+  // Handle node click at canvas level (avoids embedding callbacks in node data)
+  const handleNodeClick = useCallback((_event, node) => {
+    if (node.type === 'component') {
+      setSelectedNodeId(prev => prev === node.id ? null : node.id);
+    }
+  }, []);
 
   // Handle node position changes (drag) with snap-to-grid
   const onNodesChange = useCallback((changes) => {
@@ -123,9 +131,9 @@ function App() {
 
   // Validate boundary containment rules in development
   useEffect(() => {
-    const validationResult = validateBoundaryContainment(components, boundaryBoxes);
-    if (process.env.NODE_ENV === 'development') {
-      console.group(`🔍 Boundary Validation - ${currentPreset}`);
+    if (import.meta.env.DEV) {
+      const validationResult = validateBoundaryContainment(components, boundaryBoxes);
+      console.group(`Boundary Validation - ${currentPreset}`);
       logValidationErrors(validationResult);
       console.groupEnd();
       logComponentPositions(components, boundaryBoxes);
@@ -150,6 +158,7 @@ function App() {
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
+          onNodeClick={handleNodeClick}
           selectedNodeId={selectedNodeId}
           onPaneClick={() => setSelectedNodeId(null)}
           zoneLabels={zoneLabels}

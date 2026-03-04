@@ -17,7 +17,7 @@ const nodeTypes = {
   zoneBackground: ZoneBackgroundNode,
 };
 
-const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS }) => {
+const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, onNodeClick, selectedNodeId, onPaneClick, zoneLabels = DEFAULT_ZONE_LABELS }) => {
 
   return (
     <div className="flex-1 h-full relative">
@@ -27,6 +27,7 @@ const DiagramCanvas = ({ nodes, edges, onNodesChange, onEdgesChange, selectedNod
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
         defaultViewport={{ x: 150, y: 50, zoom: 0.7 }}
         className="bg-white"
