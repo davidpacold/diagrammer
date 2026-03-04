@@ -5,6 +5,7 @@ import ToggleSidebar from './components/ToggleSidebar';
 import { initialComponents, initialConnections } from './data/components';
 import { presets } from './data/presets';
 import { snapPositionToGrid } from './utils/layoutUtils';
+import { getConnectedNodes } from './utils/graphUtils';
 import { validateBoundaryContainment, logValidationErrors } from './utils/boundaryValidation';
 import { logComponentPositions } from './utils/positionDebugger';
 import { ZONE_BOUNDARY_X, DEFAULT_BOUNDARY_PADDING, ZONE_COLORS, EDGE_STYLES, DEFAULT_ZONE_LABELS, COMPONENT_WIDTH, COMPONENT_HEIGHT } from './constants';
@@ -81,22 +82,8 @@ function App() {
       }
     };
 
-    // Build connected nodes set for node highlighting (forward direction only)
-    const getConnectedNodes = (nodeId, visitedNodes = new Set()) => {
-      if (!nodeId || visitedNodes.has(nodeId)) return visitedNodes;
-      visitedNodes.add(nodeId);
-
-      connections.forEach(edge => {
-        // Only follow forward direction (source → target)
-        if (edge.source === nodeId && components.find(c => c.id === edge.target && c.visible)) {
-          getConnectedNodes(edge.target, visitedNodes);
-        }
-      });
-
-      return visitedNodes;
-    };
-
-    const connectedNodes = selectedNodeId ? getConnectedNodes(selectedNodeId) : new Set();
+    const visibleIds = new Set(components.filter(c => c.visible).map(c => c.id));
+    const connectedNodes = selectedNodeId ? getConnectedNodes(selectedNodeId, connections, visibleIds) : new Set();
 
     const componentNodes = components
       .filter(c => c.visible)
@@ -235,31 +222,13 @@ function App() {
     });
 
     return [...zoneBackgroundNodes, ...boundaryBoxNodes, ...componentNodesWithParents];
-  }, [components, selectedNodeId, boundaryBoxes, zoneDefinitions]);
+  }, [components, connections, selectedNodeId, boundaryBoxes, zoneDefinitions]);
 
   // Filter edges to only show those between visible nodes and apply highlighting
   const edges = useMemo(() => {
     const visibleIds = new Set(components.filter(c => c.visible).map(c => c.id));
 
-    // Build a set of all connected nodes recursively from selectedNodeId (forward only)
-    const getConnectedNodes = (nodeId, visitedNodes = new Set()) => {
-      if (!nodeId || visitedNodes.has(nodeId)) return visitedNodes;
-
-      visitedNodes.add(nodeId);
-
-      // Find all edges connected to this node (forward direction only)
-      connections
-        .filter(edge => visibleIds.has(edge.source) && visibleIds.has(edge.target))
-        .forEach(edge => {
-          if (edge.source === nodeId) {
-            getConnectedNodes(edge.target, visitedNodes);
-          }
-        });
-
-      return visitedNodes;
-    };
-
-    const connectedNodes = selectedNodeId ? getConnectedNodes(selectedNodeId) : new Set();
+    const connectedNodes = selectedNodeId ? getConnectedNodes(selectedNodeId, connections, visibleIds) : new Set();
 
     return connections
       .filter(edge => visibleIds.has(edge.source) && visibleIds.has(edge.target))
