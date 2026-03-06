@@ -92,7 +92,8 @@ const buildZoneBackgroundNodes = (zoneDefinitions) => {
  * Auto-scales in all directions to surround active components.
  */
 const buildBoundaryBoxNodes = (boundaryBoxes, components) => {
-  return boundaryBoxes
+  // First pass: build nodes for boxes with component children
+  const componentBoxNodes = boundaryBoxes
     .filter((box) => {
       const hasVisibleChildren = components.some(c => c.visible && c.parentBoundary === box.id);
       return hasVisibleChildren;
@@ -107,11 +108,9 @@ const buildBoundaryBoxNodes = (boundaryBoxes, components) => {
       const maxX = Math.max(...childPositions.map(p => p.x));
       const maxY = Math.max(...childPositions.map(p => p.y));
 
-      // Calculate offsets when children extend beyond the padding area
       const offsetX = Math.min(minX - PADDING, 0);
       const offsetY = Math.min(minY - PADDING, 0);
 
-      // Size to contain all children in every direction
       const width = (maxX + COMPONENT_WIDTH + PADDING) - offsetX;
       const height = (maxY + COMPONENT_HEIGHT + PADDING) - offsetY;
 
@@ -126,6 +125,31 @@ const buildBoundaryBoxNodes = (boundaryBoxes, components) => {
         style: { width, height },
       };
     });
+
+  // Second pass: build wrapper boxes that contain other boundary boxes
+  const wrapperBoxIds = new Set(componentBoxNodes.map(n => n.id));
+  const wrapperBoxNodes = boundaryBoxes
+    .filter((box) => {
+      if (wrapperBoxIds.has(box.id)) return false;
+      const childBoxIds = box.containmentRules?.mustContain || [];
+      return childBoxIds.some(id => wrapperBoxIds.has(id));
+    })
+    .map((box) => {
+      const width = box.width || 800;
+      const height = box.height || 700;
+      return {
+        id: box.id || `boundary-${box.label}`,
+        type: 'boundaryBox',
+        position: { x: box.x, y: box.y },
+        data: { label: box.label, width, height, color: box.color, offsetX: 0, offsetY: 0 },
+        draggable: false,
+        selectable: false,
+        zIndex: -2,
+        style: { width, height },
+      };
+    });
+
+  return [...wrapperBoxNodes, ...componentBoxNodes];
 };
 
 /**
@@ -133,6 +157,10 @@ const buildBoundaryBoxNodes = (boundaryBoxes, components) => {
  */
 export const useNodes = ({ components, connectedNodes, selectedNodeId, boundaryBoxes, zoneDefinitions }) => {
   return useMemo(() => {
+
+    const zoneBackgroundNodes = buildZoneBackgroundNodes(zoneDefinitions);
+    const boundaryBoxNodes = buildBoundaryBoxNodes(boundaryBoxes, components);
+    const renderedBoundaryIds = new Set(boundaryBoxNodes.map(n => n.id));
 
     const componentNodes = components
       .filter(c => c.visible)
@@ -151,24 +179,25 @@ export const useNodes = ({ components, connectedNodes, selectedNodeId, boundaryB
             parentBoundary: c.parentBoundary,
             isSelected: selectedNodeId === c.id,
             isConnected: connectedNodes.has(c.id),
-            badgeLabel: c.parentBoundary
-              ? (boundaryBoxes.find(b => b.id === c.parentBoundary)?.badgeLabel || 'External')
-              : (c.zone === 'private' ? 'Internal' : 'External'),
-            badgeColor: c.parentBoundary
-              ? (boundaryBoxes.find(b => b.id === c.parentBoundary)?.badgeColor || 'green')
-              : (c.zone === 'private' ? 'blue' : 'green'),
+            badgeLabel: c.badgeLabel
+              ? c.badgeLabel
+              : c.parentBoundary
+                ? (boundaryBoxes.find(b => b.id === c.parentBoundary)?.badgeLabel || 'External')
+                : (c.zone === 'private' ? 'Internal' : 'External'),
+            badgeColor: c.badgeColor
+              ? c.badgeColor
+              : c.parentBoundary
+                ? (boundaryBoxes.find(b => b.id === c.parentBoundary)?.badgeColor || 'green')
+                : (c.zone === 'private' ? 'blue' : 'green'),
           },
         };
 
-        if (c.parentBoundary) {
+        if (c.parentBoundary && renderedBoundaryIds.has(c.parentBoundary)) {
           node.parentNode = c.parentBoundary;
         }
 
         return node;
       });
-
-    const zoneBackgroundNodes = buildZoneBackgroundNodes(zoneDefinitions);
-    const boundaryBoxNodes = buildBoundaryBoxNodes(boundaryBoxes, components);
 
     return [...zoneBackgroundNodes, ...boundaryBoxNodes, ...componentNodes];
   }, [components, connectedNodes, selectedNodeId, boundaryBoxes, zoneDefinitions]);
