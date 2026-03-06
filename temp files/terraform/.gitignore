@@ -1,0 +1,189 @@
+# ============================================================================
+# TERRAFORM FILES
+# ============================================================================
+
+# Terraform state files - contain sensitive infrastructure state
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform variable files - may contain sensitive configuration
+*.tfvars
+*.tfvars.json
+
+# Exception: Keep example and template files for documentation
+!terraform.tfvars.example
+!terraform.tfvars.medium-example
+!terraform.tfvars.large-example
+
+# Terraform plan files - may contain sensitive data
+tfplan
+*.tfplan
+*.tfplan.*
+
+# Terraform lock files for modules
+.terraform.lock.hcl
+
+# Terraform directories
+.terraform/
+.terraform.d/
+
+# Terraform crash log files
+crash.log
+crash.*.log
+
+# Override files (used for local customizations)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+terraform.rc
+
+# ============================================================================
+# AZURE SPECIFIC FILES
+# ============================================================================
+
+# Azure CLI configuration and cache
+.azure/
+
+# Azure Service Principal files
+*.azureauth
+
+# Azure Key Vault certificates and keys
+*.pem
+*.csr
+*.key
+*.p12
+*.pfx
+
+# Azure DevOps variable files
+pipeline-variables.yml
+azure-pipelines-variables.yml
+
+# ============================================================================
+# KUBERNETES AND HELM FILES
+# ============================================================================
+
+# Kubernetes config files with sensitive cluster access
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+
+# Helm value files that may contain secrets
+values-secrets.yaml
+secrets.yaml
+*-secrets.yml
+*-secrets.yaml
+
+# ============================================================================
+# SECURITY AND SENSITIVE FILES
+# ============================================================================
+
+# SSL Certificates and private keys
+*.crt
+*.cer
+*.der
+
+# SSH keys
+id_rsa
+id_rsa.pub
+*.ppk
+
+# Environment variable files
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Secret and password files
+secrets.txt
+passwords.txt
+*.secret
+
+# Azure storage account keys
+storage-keys.txt
+connection-strings.txt
+
+# ============================================================================
+# DEVELOPMENT AND TEMPORARY FILES
+# ============================================================================
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+terraform.log
+
+# Backup and temporary files
+*.bak
+*.tmp
+*.temp
+*~
+.#*
+#*#
+
+# Test files
+test-*.tf
+test-*.tfvars
+temp-*.tf
+temp-*.tfvars
+
+# ============================================================================
+# DOCUMENTATION BUILD FILES
+# ============================================================================
+
+# Generated documentation
+docs/_build/
+site/
+
+# Node modules (if using docs generators)
+node_modules/
+
+# ============================================================================
+# CI/CD FILES (that may contain secrets)
+# ============================================================================
+
+# GitHub Actions secrets
+.github/secrets/
+
+# Azure DevOps variable groups export
+variable-groups.json
+
+# Jenkins credential files
+credentials.xml
+
+# ============================================================================
+# NOTES FOR DEVELOPERS
+# ============================================================================
+
+# This .gitignore is designed to:
+# 1. Protect sensitive Terraform state and variable files
+# 2. Keep example/template files for documentation
+# 3. Prevent accidental commit of Azure credentials and certificates
+# 4. Exclude temporary and development files
+# 5. Allow version control of infrastructure code while maintaining security
+#
+# IMPORTANT: Never commit:
+# - terraform.tfvars with real subscription IDs or passwords
+# - SSL certificates or private keys  
+# - Azure service principal credentials
+# - Kubernetes config files with cluster access
+# - Any file containing actual secrets or API keys

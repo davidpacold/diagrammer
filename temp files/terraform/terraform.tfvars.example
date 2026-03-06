@@ -1,0 +1,288 @@
+# Airia on Azure Infrastructure Configuration - Example Template
+# Deploys: AKS cluster, PostgreSQL database, Application Gateway, Azure OpenAI,
+#          Document Intelligence, ML Workspace with Llama Vision, and associated networking
+#
+# IMPORTANT: This is a template configuration file. Update values as needed for your deployment.
+# - Replace placeholder values with your actual Azure subscription ID and desired configuration
+# - Sensitive variables like passwords should be set via environment variables
+# - Only uncomment variables you want to override from defaults
+
+# ============================================================================
+# REQUIRED VARIABLES - YOU MUST UPDATE THESE VALUES
+# ============================================================================
+
+subscription_id = "your-azure-subscription-id"  # Your Azure subscription ID
+resource_prefix = "airia"                       # Prefix for all resource names
+environment     = "dev"                         # Environment name (dev/staging/prod)
+
+# postgresql_admin_password - REQUIRED: Set via environment variable, do not hardcode here
+#   export TF_VAR_postgresql_admin_password="YourSecureP@ssword123"
+
+# Resource tags for organization and billing
+# owner       = "team@company.com"   # Contact email for these resources
+# cost_center = "engineering"         # Cost center for billing/chargeback
+# application = "airia"              # Default: "airia" - Application name tag
+
+# ============================================================================
+# INFRASTRUCTURE CONFIGURATION - OPTIONAL OVERRIDES (USES DEFAULTS)
+# ============================================================================
+
+# Optional: Azure region and versions (uncomment to override defaults)
+# NOTE: When uncommented, these will change the deployment region and software versions
+# location = "eastus"              # Default: "eastus" - Changes where all resources are deployed
+# kubernetes_version = "1.34"      # Default: "1.34" - Changes AKS cluster Kubernetes version
+# postgresql_version = "16"        # Default: "16" - Changes PostgreSQL server version
+
+# Optional: Custom network configuration (uncomment to override defaults)
+# NOTE: When uncommented, these will change the IP address ranges for your virtual network
+# vnet_address_space = "10.0.0.0/22"           # Default: "10.0.0.0/22" - Main VNet IP range (1,022 IPs)
+# aks_subnet_address_prefix = "10.0.0.0/23"    # Default: "10.0.0.0/23" - Kubernetes cluster subnet (512 IPs)
+# private_endpoints_subnet_address_prefix = "10.0.2.0/24"  # Default: "10.0.2.0/24" - Private endpoints subnet (256 IPs)
+# appgw_subnet_address_prefix = "10.0.3.0/24"  # Default: "10.0.3.0/24" - Application Gateway subnet (256 IPs)
+
+# ============================================================================
+# KUBERNETES CLUSTER CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Optional: Default node pool configuration (uncomment to override defaults)
+# NOTE: When uncommented, this will change the size and scaling behavior of your main Kubernetes nodes
+# default_node_pool = {
+#   name                 = "default"             # Default: "default" - Node pool name
+#   node_count           = 2                     # Default: 2 - Starting number of VM instances
+#   auto_scaling_enabled = true                  # Default: true - Enable automatic scaling
+#   min_count            = 2                     # Default: 2 - Minimum VMs when scaled down
+#   max_count            = 6                     # Default: 6 - Maximum VMs when scaled up
+#   vm_size              = "Standard_E4as_v5"    # Default: "Standard_E4as_v5" - VM type (4 vCPU, 32GB RAM)
+#   zones                = ["1", "2"]              # Default: ["1", "2"] - Availability zones
+#   max_pods             = 75                    # Default: 75 - Max pods per node
+#   max_surge            = "33%"                 # Default: "33%" - Rolling update strategy
+# }
+
+# GPU node pool - included by default with 0 nodes (Standard_NC4as_T4_v3, NVIDIA T4)
+# The GPU pool is pre-configured but starts with 0 nodes. Scale up when needed:
+#   az aks nodepool scale --resource-group <rg> --cluster-name <cluster> --name gpunodes --node-count 1
+# To customize the GPU pool, uncomment and override:
+# additional_node_pools = {
+#   gpu = {
+#     name                 = "gpunodes"
+#     vm_size              = "Standard_NC4as_T4_v3"  # 4 vCPU, 28GB RAM, 1x NVIDIA T4 (16GB)
+#     os_disk_size_gb      = 200
+#     os_disk_type         = "Managed"
+#     node_count           = 0                       # Default: 0 nodes (scale up when needed)
+#     auto_scaling_enabled = false                   # Default: no autoscaling
+#     min_count            = null
+#     max_count            = null
+#     max_pods             = 30
+#     max_surge            = "10%"
+#     node_taints          = ["gpu=true:NoSchedule"]
+#     node_labels = {
+#       "gpu" = "true"
+#     }
+#     zones      = ["1", "2"]
+#     gpu_driver = "Install"              # Auto-install NVIDIA GPU drivers
+#   }
+# }
+
+# ============================================================================
+# APPLICATION GATEWAY & SSL CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Optional: Health probe configuration (uncomment to override defaults)
+# NOTE: When uncommented, this will change how the Application Gateway checks backend health
+# health_probe_path = "/healthz"    # Default: "/healthz" - Health check endpoint path (e.g. "/ping" for Traefik)
+# health_probe_port = 10254         # Default: 10254 - Health check port (e.g. 80 for Traefik)
+# health_probe_host = ""            # Default: "" - Host header (empty = pick from backend settings)
+
+# Optional: Application Gateway configuration (uncomment to override defaults)
+# NOTE: When uncommented, this will change the size and capacity of your load balancer
+# appgw_sku_name = "Standard_v2"    # Default: "Standard_v2" - Application Gateway tier
+# appgw_sku_tier = "Standard_v2"    # Default: "Standard_v2" - Must match sku_name
+# appgw_capacity = 1                # Default: 1 instance - Increase for higher throughput
+
+# SSL Certificate Configuration for HTTPS
+# NOTE: Set sensitive certificate values via environment variables, do not hardcode here
+ssl_certificate_name = "your-certificate-name"       # Certificate name (safe to set here)
+# ssl_certificate_data and ssl_certificate_password - REQUIRED for HTTPS: Set via environment variables
+#   export TF_VAR_ssl_certificate_data="<base64-encoded-pfx-certificate>"
+#   export TF_VAR_ssl_certificate_password="<certificate-password>"
+
+# Nginx Internal LoadBalancer IP (obtained from: kubectl get svc ingress-nginx-controller -n airia)
+# nginx_internal_ip = "10.0.1.250"  # Default: "10.0.1.250" (nginx ingress internal LoadBalancer IP)
+
+# ============================================================================
+# POSTGRESQL DATABASE CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Optional: PostgreSQL server configuration (uncomment to override defaults)
+# NOTE: When uncommented, this will change the size, storage, and backup settings of your database
+# postgresql_admin_username = "airiaadmin"              # Default: "airiaadmin" - Database admin username
+# postgresql_sku_name = "GP_Standard_D4s_v3"            # Default: "GP_Standard_D4s_v3" - DB size (4 vCPU, 16GB RAM)
+# postgresql_storage_mb = 65536                         # Default: 65536 (64GB) - Database storage size
+# postgresql_backup_retention_days = 7                  # Default: 7 days - How long to keep backups
+# postgresql_geo_redundant_backup_enabled = false       # Default: false - Enable for disaster recovery (higher cost)
+# postgresql_auto_grow_enabled = true                   # Default: true - Automatically increase storage when needed
+
+# Optional: PostgreSQL maintenance window (uncomment to override defaults)
+# NOTE: When uncommented, this will change when Azure performs database maintenance
+# postgresql_maintenance_window = {
+#   day_of_week  = 0    # Default: 0 (Sunday) - Day for maintenance (0=Sunday, 1=Monday, etc.)
+#   start_hour   = 3    # Default: 3 (3:00 AM UTC) - Hour to start maintenance
+#   start_minute = 0    # Default: 0 - Minute to start maintenance
+# }
+
+# NOTE: PostgreSQL databases and extensions use comprehensive defaults from variables.tf
+# Default databases (15): auditlog, conversations, dataingest, datastore, identity, keycloak,
+#   marketplace, mcpgateway, metrics, platform, policyengine, rag, scheduler,
+#   sectoolkit, usercredentialstore
+# Default extensions: TIMESCALEDB, VECTOR, PGCRYPTO, UUID-OSSP, POSTGIS, PG_TRGM, FUZZYSTRMATCH, AGE, UNACCENT
+
+# ============================================================================
+# COSMOS DB CASSANDRA CONFIGURATION (DISABLED BY DEFAULT)
+# ============================================================================
+
+# Cosmos DB Cassandra is DISABLED by default to control costs
+# NOTE: When enabled, this will deploy Azure Cosmos DB with Cassandra API for NoSQL data storage
+# cosmos_cassandra_enabled = true                 # Default: false - Set to true to deploy Cosmos DB
+# cosmos_cassandra_serverless = true              # Default: true - Serverless mode (pay per use) vs provisioned throughput
+# cosmos_cassandra_serverless_throughput_limit = 4000  # Default: 4000 RU/s - Maximum throughput in serverless mode
+# cosmos_cassandra_consistency_level = "Session"        # Default: "Session" - Data consistency level
+# cosmos_cassandra_zone_redundant = false               # Default: false - Enable for high availability (higher cost)
+# cosmos_cassandra_private_endpoint_enabled = true      # Default: true - Access via private network only
+
+# Optional: Create custom keyspaces and tables (uncomment and customize as needed)
+# NOTE: When uncommented, this will create actual Cassandra keyspaces (databases) and tables
+# WARNING: Creating tables requires careful schema design. Only uncomment if you need specific data structures.
+# cosmos_cassandra_keyspaces = {
+#   "example_keyspace" = {
+#     # This will create a keyspace named "example_keyspace"
+#     # Serverless mode - no throughput configuration needed
+#   }
+# }
+
+# cosmos_cassandra_tables = {
+#   # NOTE: When uncommented, this will create actual database tables with the specified schema
+#   # Example table structure (customize for your application):
+#   # table_name = {
+#   #   name           = "table_name"        # Actual table name in Cassandra
+#   #   keyspace       = "keyspace_name"     # Must match a keyspace above
+#   #   partition_keys = ["partition_key"]   # Primary key for data distribution
+#   #   clustering_keys = [                  # Optional: for data ordering within partition
+#   #     {
+#   #       name     = "clustering_key"
+#   #       order_by = "Asc"  # or "Desc"
+#   #     }
+#   #   ]
+#   #   columns = [                          # Define all table columns
+#   #     { name = "column_name", type = "column_type" }  # e.g., "uuid", "text", "timestamp"
+#   #   ]
+#   #   default_ttl = 0                      # Time to live in seconds (0 = permanent, >0 = auto-delete)
+#   # }
+# }
+
+# ============================================================================
+# AZURE DOCUMENT INTELLIGENCE CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Azure Document Intelligence is ENABLED by default for document processing
+# NOTE: Deploys Azure Document Intelligence (Form Recognizer) for OCR, form recognition, and invoice processing
+
+# Optional: Disable Azure Document Intelligence Service
+# document_intelligence_enabled = false                        # Default: true - Set to false to skip Document Intelligence
+
+# Optional: Document Intelligence configuration (uncomment to override defaults)
+# document_intelligence_location = "eastus"                    # Default: uses resource group location - Document Intelligence region
+# document_intelligence_sku = "S0"                            # Default: "S0" - Service tier (F0=free, S0=standard)
+# document_intelligence_public_network_access_enabled = false # Default: false - Disable public internet access
+# document_intelligence_private_endpoint_enabled = true       # Default: true - Access via private network only
+
+# Optional: Store Document Intelligence keys in Key Vault
+# store_document_intelligence_keys_in_keyvault = false       # Default: false - Set to true to use Key Vault
+# key_vault_id = "key-vault-resource-id"                    # Required if storing keys - Full Key Vault resource ID
+
+# ============================================================================
+# AZURE MACHINE LEARNING WORKSPACE CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Azure Machine Learning is ENABLED by default for serverless model endpoints
+# NOTE: Deploys Azure ML workspace for hosting serverless AI model endpoints
+
+# Optional: Disable Azure Machine Learning Workspace
+# ml_workspace_enabled = false                             # Default: true - Set to false to skip ML workspace
+
+# Optional: ML workspace configuration (uncomment to override defaults)
+# ml_workspace_location = "eastus"                         # Default: uses resource group location - ML workspace region
+# ml_workspace_public_network_access_enabled = false      # Default: false - Disable public internet access
+# ml_workspace_private_endpoint_enabled = true            # Default: true - Access via private network only
+# ml_workspace_container_registry_enabled = true          # Default: true - Enable Azure Container Registry
+# ml_workspace_container_registry_sku = "Basic"           # Default: "Basic" - ACR tier (Basic/Standard/Premium)
+
+# ============================================================================
+# AZURE OPENAI SERVICE CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Azure OpenAI is ENABLED by default with GPT-4.1 series models
+# NOTE: Deploys Azure OpenAI Service with GPT-4.1-mini, GPT-4.1, and text-embedding-3-large
+
+# Optional: Disable Azure OpenAI Service
+# openai_enabled = false                        # Default: true - Set to false to skip OpenAI Service
+
+# Optional: OpenAI configuration (uncomment to override defaults)
+# openai_location = "eastus"                    # Default: uses resource group location - OpenAI region
+# openai_sku = "S0"                            # Default: "S0" - OpenAI service tier
+# openai_public_network_access_enabled = false # Default: false - Disable public internet access
+# openai_private_endpoint_enabled = true       # Default: true - Access via private network only
+
+# Optional: AI model deployment overrides
+# NOTE: All 3 models are deployed by default. Uncomment to change capacity or disable.
+# deploy_gpt_4_1 = true                        # Default: true - Deploy GPT-4.1 model
+# gpt_4_1_mini_capacity = 10                   # Default: 10 - GPT-4.1-mini tokens per minute (thousands)
+# gpt_4_1_capacity = 10                        # Default: 10 - GPT-4.1 tokens per minute (thousands)
+
+# deploy_text_embedding = true                 # Default: true - Deploy embedding model for vector search
+# text_embedding_capacity = 50                 # Default: 50 - Embedding tokens per minute (thousands)
+
+# Optional: Store OpenAI keys in Key Vault
+# store_openai_keys_in_keyvault = false       # Default: false - Set to true to use Key Vault
+# key_vault_id = "key-vault-resource-id"      # Required if storing keys - Full Key Vault resource ID
+
+# ============================================================================
+# STORAGE CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Optional: Azure Storage containers (uncomment to override defaults)
+# NOTE: When uncommented, this will create the specified blob storage containers
+# storage_containers = ["airia-default"]       # Default: ["airia-default"] - List of container names to create
+
+# Optional: Storage blob retention policies (uncomment to enable data protection)
+# NOTE: When enabled, deleted files are retained for the specified number of days (incurs storage costs)
+# WARNING: Retention policies consume additional storage space and increase costs
+# storage_blob_retention_days = 7              # Default: disabled - Days to retain deleted blobs (0 = disabled)
+# storage_container_retention_days = 7         # Default: disabled - Days to retain deleted containers (0 = disabled)
+
+# ============================================================================
+# SECURITY NOTES
+# ============================================================================
+
+# - All databases use private endpoints (no public access)
+# - Only Application Gateway has a public IP
+# - SSL/TLS encryption throughout
+# - Network security groups restrict access
+# - Managed identities for service authentication
+# - AKS applications can access storage via managed identity (no connection strings needed)
+# - Sensitive variables MUST be set via environment variables (never hardcode in tfvars):
+#   TF_VAR_postgresql_admin_password, TF_VAR_ssl_certificate_data, TF_VAR_ssl_certificate_password
+#   (see SSL Certificate and PostgreSQL sections above for full export commands)
+
+# ============================================================================
+# DEPLOYMENT CHECKLIST
+# ============================================================================
+
+# Before deploying:
+# □ Update subscription_id to your Azure subscription
+# □ Set sensitive values via environment variables (see sections above for full commands):
+#     TF_VAR_postgresql_admin_password, TF_VAR_ssl_certificate_data, TF_VAR_ssl_certificate_password
+# □ Update ssl_certificate_name with your certificate name
+# □ Review and adjust node pool sizing based on expected load
+# □ Enable only the AI services you need (each has cost implications)
+# □ Configure backup strategies for persistent data
+# □ Set up monitoring and alerting (outside of this Terraform)

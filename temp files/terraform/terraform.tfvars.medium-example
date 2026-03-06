@@ -1,0 +1,289 @@
+# Airia on Azure Infrastructure Configuration - Medium Production Deployment
+# Deploys: AKS cluster, PostgreSQL database, Application Gateway, Azure OpenAI,
+#          Document Intelligence, ML Workspace with Llama Vision, and associated networking
+#
+# This configuration is suitable for production workloads with moderate usage
+# Based on Medium sizing specifications from README.md
+#
+# IMPORTANT: When copying to terraform.tfvars, ensure:
+# - Replace placeholder values with your actual Azure subscription ID and desired configuration
+# - All string values remain on single lines (no line breaks within quotes)
+# - Keep # comment prefixes when leaving optional variables commented out
+# - Only uncomment variables you want to override from defaults
+# - Set sensitive variables like passwords via environment variables
+
+# ============================================================================
+# REQUIRED VARIABLES - YOU MUST UPDATE THESE VALUES
+# ============================================================================
+
+subscription_id = "your-azure-subscription-id"  # Replace with your Azure subscription ID
+resource_prefix = "airia"                       # Prefix for all resource names
+environment     = "prod"                        # Environment name (dev/staging/prod)
+
+# postgresql_admin_password - REQUIRED: Set via environment variable, do not hardcode here
+#   export TF_VAR_postgresql_admin_password="YourSecureP@ssword123"
+
+# Resource tags for organization and billing
+# owner       = "team@company.com"   # Contact email for these resources
+# cost_center = "engineering"         # Cost center for billing/chargeback
+# application = "airia"              # Default: "airia" - Application name tag
+
+# ============================================================================
+# INFRASTRUCTURE CONFIGURATION - MEDIUM PRODUCTION SIZING
+# ============================================================================
+
+# Azure region and versions
+location = "eastus"
+kubernetes_version = "1.34"
+postgresql_version = "16"
+
+# Network Configuration for Medium deployment
+# Using larger address spaces for production scale
+vnet_address_space = "10.0.0.0/21"              # 2,046 total IPs
+aks_subnet_address_prefix = "10.0.0.0/22"       # 1,022 IPs for AKS (more pods/services)
+private_endpoints_subnet_address_prefix = "10.0.4.0/24" # 254 IPs for private endpoints
+appgw_subnet_address_prefix = "10.0.5.0/24"     # 254 IPs for Application Gateway
+
+# ============================================================================
+# KUBERNETES CLUSTER CONFIGURATION - MEDIUM PRODUCTION SIZING
+# ============================================================================
+
+# Default node pool - CPU optimized for general workloads
+# Medium sizing from README.md: 5 nodes, 4-8 auto-scaling, Standard_D4ads_v5
+default_node_pool = {
+  name                 = "default"
+  node_count           = 5                        # Medium production: 5 nodes
+  auto_scaling_enabled = true
+  min_count           = 4                        # Minimum 4 nodes for HA
+  max_count           = 8                        # Scale up to 8 nodes for peak load
+  vm_size             = "Standard_E4as_v5"       # 4 vCPU, 32GB RAM per node (AMD EPYC)
+  zones               = ["1", "2"]               # Multi-zone for high availability
+  max_pods            = 75
+  max_surge           = "33%"
+}
+
+# GPU node pool - scaled up for medium production workloads
+# Medium sizing: 2 GPU nodes with autoscaling up to 4
+additional_node_pools = {
+  gpu = {
+    name                 = "gpunodes"
+    vm_size              = "Standard_NC4as_T4_v3"  # 4 vCPU, 28GB RAM, 1x NVIDIA T4 (16GB)
+    os_disk_size_gb      = 200
+    os_disk_type         = "Managed"
+    zones                = ["1", "2"]              # Multi-zone for HA
+    auto_scaling_enabled = true
+    min_count            = 2                       # Medium sizing: 2 GPU nodes minimum
+    max_count            = 4                       # Up to 4 GPU nodes for scaling
+    node_count           = 2
+    node_taints          = ["gpu=true:NoSchedule"]
+    node_labels = {
+      "gpu" = "true"
+    }
+    max_pods             = 30
+    max_surge            = "10%"
+    gpu_driver           = "Install"               # Auto-install NVIDIA GPU drivers
+  }
+}
+
+# ============================================================================
+# APPLICATION GATEWAY & SSL CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Health probe configuration (defaults target NGINX ingress controller)
+# health_probe_path = "/healthz"                 # Default: "/healthz" - Health check endpoint path
+# health_probe_port = 10254                      # Default: 10254 - NGINX health check port
+# health_probe_host = ""                         # Default: "" - Host header (empty = pick from backend settings)
+
+# Application Gateway sizing for medium production
+appgw_sku_name = "Standard_v2"
+appgw_sku_tier = "Standard_v2"
+appgw_capacity = 1                               # 1 instance (increase for higher throughput)
+nginx_internal_ip = "10.0.1.250"                # Static IP for nginx LoadBalancer
+
+# SSL Certificate Configuration for HTTPS
+# NOTE: Set sensitive certificate values via environment variables, do not hardcode here
+ssl_certificate_name = "your-certificate-name"       # Certificate name (safe to set here)
+# ssl_certificate_data and ssl_certificate_password - REQUIRED for HTTPS: Set via environment variables
+#   export TF_VAR_ssl_certificate_data="<base64-encoded-pfx-certificate>"
+#   export TF_VAR_ssl_certificate_password="<certificate-password>"
+
+# ============================================================================
+# POSTGRESQL DATABASE CONFIGURATION - MEDIUM PRODUCTION SIZING
+# ============================================================================
+
+postgresql_admin_username = "airiaadmin"
+postgresql_sku_name = "GP_Standard_D4s_v3"      # 4 vCPUs, 16 GB RAM for medium production
+postgresql_storage_mb = 131072                   # 128 GB storage
+postgresql_backup_retention_days = 14            # 14 days backup retention for production
+postgresql_geo_redundant_backup_enabled = false  # Enable for critical workloads requiring geo-redundancy
+postgresql_auto_grow_enabled = true
+
+# PostgreSQL maintenance window (UTC time) - scheduled for low usage period
+postgresql_maintenance_window = {
+  day_of_week  = 0    # Sunday
+  start_hour   = 3    # 3:00 AM UTC
+  start_minute = 0
+}
+
+# NOTE: PostgreSQL databases and extensions use comprehensive defaults from variables.tf
+# Default databases (15): auditlog, conversations, dataingest, datastore, identity, keycloak,
+#   marketplace, mcpgateway, metrics, platform, policyengine, rag, scheduler,
+#   sectoolkit, usercredentialstore
+# Default extensions: TIMESCALEDB, VECTOR, PGCRYPTO, UUID-OSSP, POSTGIS, PG_TRGM, FUZZYSTRMATCH, AGE, UNACCENT
+
+# ============================================================================
+# COSMOS DB CASSANDRA CONFIGURATION (DISABLED BY DEFAULT)
+# ============================================================================
+
+# Cosmos DB Cassandra is DISABLED by default to control costs
+# cosmos_cassandra_enabled = false                # Default: false (disabled to control costs)
+# cosmos_cassandra_serverless = true              # Default: true (cost-optimized)
+# cosmos_cassandra_serverless_throughput_limit = 4000  # Default: 4000 RU/s max for serverless
+# cosmos_cassandra_consistency_level = "Session"        # Default: "Session" 
+# cosmos_cassandra_zone_redundant = false               # Default: false (enable for HA)
+# cosmos_cassandra_private_endpoint_enabled = true      # Default: true (secure access)
+
+# Optional: Example keyspaces for medium deployment (uncomment and customize as needed)
+# cosmos_cassandra_keyspaces = {
+#   "example_keyspace" = {
+#     # Serverless mode - no throughput configuration needed
+#   }
+# }
+
+# Optional: Example tables (uncomment and customize as needed)
+# cosmos_cassandra_tables = {
+#   # Example table structure:
+#   # table_name = {
+#   #   name           = "table_name"
+#   #   keyspace       = "keyspace_name"
+#   #   partition_keys = ["partition_key"]
+#   #   clustering_keys = [
+#   #     {
+#   #       name     = "clustering_key"
+#   #       order_by = "Asc"  # or "Desc"
+#   #     }
+#   #   ]
+#   #   columns = [
+#   #     { name = "column_name", type = "column_type" }
+#   #   ]
+#   #   default_ttl = 0  # Time to live in seconds (0 = no TTL)
+#   # }
+# }
+
+# ============================================================================
+# AZURE DOCUMENT INTELLIGENCE CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Azure Document Intelligence is ENABLED by default for document processing
+# Includes OCR, form recognition, and invoice processing capabilities
+
+# Optional: Document Intelligence configuration for medium production workloads
+# document_intelligence_enabled = true                         # Default: true (enabled by default)
+# document_intelligence_location = "eastus"                    # Default: uses resource group location
+# document_intelligence_sku = "S0"                            # Default: "S0" (F0=free tier, S0=standard for production)
+# document_intelligence_public_network_access_enabled = false # Default: false (private endpoint only)
+# document_intelligence_private_endpoint_enabled = true       # Default: true (secure access)
+
+# Store Document Intelligence keys in Key Vault for security
+# store_document_intelligence_keys_in_keyvault = true        # Recommended for production
+# key_vault_id = "/subscriptions/{subscription}/resourceGroups/{rg}/providers/Microsoft.KeyVault/vaults/{vault-name}"
+
+# ============================================================================
+# AZURE MACHINE LEARNING WORKSPACE CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Azure Machine Learning is ENABLED by default for serverless model endpoints
+# Includes ML workspace, Container Registry, and Application Insights
+
+# Optional: ML workspace configuration for medium production workloads
+# ml_workspace_enabled = true                              # Default: true (enabled by default)
+# ml_workspace_location = "eastus"                         # Default: uses resource group location
+# ml_workspace_public_network_access_enabled = false      # Default: false (private endpoint only)
+# ml_workspace_private_endpoint_enabled = true            # Default: true (secure access)
+ml_workspace_container_registry_sku = "Standard"          # Recommended: "Standard" for production workloads
+ml_workspace_storage_replication_type = "GRS"             # Recommended: "GRS" for geo-redundant storage in production
+# ml_workspace_application_insights_retention_days = 90   # Extended retention for production monitoring
+
+# ============================================================================
+# AZURE OPENAI SERVICE CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Azure OpenAI is ENABLED by default with GPT-4.1 series models
+# Deploys GPT-4.1-mini, GPT-4.1, and text-embedding-3-large
+
+# Optional: OpenAI configuration for medium production workloads
+# openai_enabled = true                         # Default: true (enabled by default)
+# openai_location = "eastus"                    # Default: uses resource group location
+# openai_sku = "S0"                            # Default: "S0"
+# openai_public_network_access_enabled = false # Default: false (private endpoint only)
+# openai_private_endpoint_enabled = true       # Default: true (secure access)
+
+# AI model capacity for medium production
+# deploy_gpt_4_1 = true                        # Default: true (GPT-4.1 deployed by default)
+# gpt_4_1_mini_capacity = 30                   # 30K tokens per minute for medium production
+# gpt_4_1_capacity = 20                        # 20K tokens per minute for medium production
+
+# Text embedding for RAG and vector search
+# deploy_text_embedding = true                 # Default: true (recommended for RAG)
+# text_embedding_capacity = 120                # 120K tokens per minute for medium production
+
+# Store OpenAI keys in Key Vault for security
+# store_openai_keys_in_keyvault = true        # Recommended for production
+# key_vault_id = "/subscriptions/{subscription}/resourceGroups/{rg}/providers/Microsoft.KeyVault/vaults/{vault-name}"
+
+# ============================================================================
+# STORAGE CONFIGURATION (ENABLED BY DEFAULT)
+# ============================================================================
+
+# Azure Storage containers for application data
+storage_containers = ["airia-default", "airia-uploads", "airia-backups"]
+
+# Optional: Storage blob retention policies (uncomment to enable data protection)
+# NOTE: When enabled, deleted files are retained for the specified number of days (incurs storage costs)
+# WARNING: Retention policies consume additional storage space and increase costs
+# storage_blob_retention_days = 7              # Default: disabled - Days to retain deleted blobs (0 = disabled)
+# storage_container_retention_days = 7         # Default: disabled - Days to retain deleted containers (0 = disabled)
+
+# ============================================================================
+# SECURITY & PRODUCTION READINESS
+# ============================================================================
+
+# - All databases use private endpoints (no public access)
+# - Only Application Gateway has a public IP
+# - SSL/TLS encryption throughout
+# - Network security groups restrict access with proper outbound rules for AKS
+# - Managed identities for service authentication
+# - AKS applications can access storage via managed identity (no connection strings needed)
+# - 2-zone deployment for high availability
+# - Backup and disaster recovery configured
+# - Sensitive variables MUST be set via environment variables (never hardcode in tfvars):
+#   TF_VAR_postgresql_admin_password, TF_VAR_ssl_certificate_data, TF_VAR_ssl_certificate_password
+#   (see SSL Certificate and PostgreSQL sections above for full export commands)
+
+# ============================================================================
+# PRODUCTION DEPLOYMENT CHECKLIST
+# ============================================================================
+
+# Before deploying to production:
+# □ Update subscription_id to your production subscription
+# □ Set sensitive values via environment variables (see sections above for full commands):
+#     TF_VAR_postgresql_admin_password, TF_VAR_ssl_certificate_data, TF_VAR_ssl_certificate_password
+# □ Update ssl_certificate_name with your certificate name
+# □ Review and adjust node pool sizing based on expected load
+# □ Enable geo-redundant backup if required for compliance
+# □ Configure monitoring and alerting (outside of this Terraform)
+# □ Set up CI/CD pipeline for application deployments
+# □ Configure backup strategies for persistent data
+# □ Review and adjust Cosmos DB TTL settings for your use case
+# □ Enable only the AI services you need (each has cost implications)
+
+# ============================================================================
+# MEDIUM SIZING SUMMARY (from README.md)
+# ============================================================================
+
+# CPU Nodes: 5 nodes, 4-8 auto-scaling, Standard_E4as_v5 (4 vCPU, 32GB RAM)
+# GPU Nodes (gpunodes): 2 nodes, Standard_NC4as_T4_v3 (4 vCPU, 28GB RAM, 1x NVIDIA T4)
+# PostgreSQL: GP_Standard_D4s_v3 (4 vCPU, 16GB RAM), 128GB storage
+# Application Gateway: 1 instance (scale up as needed)
+# Storage: Multiple containers with managed identity access
+# Network: Larger address spaces for production scale (10.0.0.0/21), 2-zone availability
